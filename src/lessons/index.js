@@ -21,6 +21,6 @@ export const GUIDES = [
     summary: 'Board state, every legal move, a computer opponent with alpha-beta search, and the coach that grades and explains every move.', load: () => import('./chess.js') },
   { id: 'superbook', title: 'SuperBook', emoji: '📖', level: 'Advanced', time: 'about 3 hours', steps: 10, available: true,
     summary: 'Reading from web APIs, matching questions to answers, translations, and writing in sand on a canvas.', load: () => import('./superbook.js') },
-  { id: 'gotham', title: 'Gotham Hospital System', emoji: '🏥', level: 'Advanced', time: 'about 4 hours', steps: 0, available: false,
+  { id: 'gotham', title: 'Gotham Hospital System', emoji: '🏥', level: 'Advanced', time: 'about 4 hours', steps: 4, available: true,
     summary: 'Provider schedules, booking rules, patient charts, sign-in where the password picks your role, and the SQL behind them.', load: () => import('./gotham.js') },
 ];
