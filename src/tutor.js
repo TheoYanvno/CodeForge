@@ -7,6 +7,8 @@
 import { assemble, startOf, renderMarkdown, lineDiff, changedLines, Progress, lessonPlan, pace, clock, gradeQuiz } from './tutor-core.js';
 import { buildDocument } from './preview.js';
 import { GUIDES } from './lessons/index.js';
+import { Activity } from './activity.js';
+import * as pages from './pages.js';
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -15,6 +17,8 @@ const PANE_NAMES = { html: 'HTML', css: 'CSS', js: 'JavaScript' };
 const FILE_NAMES = { html: 'index.html', css: 'style.css', js: 'script.js' };
 
 const progress = new Progress();
+const activity = new Activity();
+let page = 'home';          // the dashboard page on screen when no guide is open
 let guide = null;           // the open guide (assembled)
 let at = 0;                 // the step on screen
 let view = 'changes';       // which code view is showing: 'changes', 'html', 'css' or 'js'
@@ -23,10 +27,27 @@ let lastTick = 0;           // when the timer last counted
 let unsaved = 0;            // seconds counted but not saved yet
 
 export function initTutor() {
+  $('brandLogo').innerHTML = pages.LOGO;
+  $('nav').addEventListener('click', (e) => { const b = e.target.closest('[data-page]'); if (b) showPage(b.dataset.page); });
   $('tutor').addEventListener('click', onClick);
-  $('home').addEventListener('click', (e) => { e.preventDefault(); showList(); });
-  const id = new URLSearchParams(location.search).get('guide');
-  if (id && GUIDES.some((g) => g.id === id && g.available)) openGuide(id); else showList();
+  $('home').addEventListener('click', (e) => { e.preventDefault(); showPage('home'); });
+  const params = new URLSearchParams(location.search);
+  const id = params.get('guide');
+  if (id && GUIDES.some((g) => g.id === id && g.available)) openGuide(id);
+  else showPage(pages.PAGES.some((x) => x.id === params.get('page')) ? params.get('page') : 'home');
+  showStreak();
+}
+
+/** Highlights a sidebar item and refreshes the streak card. */
+function showNav(active) {
+  $('nav').innerHTML = pages.sidebarNav(active);
+}
+function showStreak() { $('streak').innerHTML = pages.streakCard(activity); }
+
+/** Records that you studied today (for the streak) and refreshes the card. */
+function studied() {
+  activity.mark();
+  showStreak();
 }
 
 function toast(text) {
@@ -37,36 +58,35 @@ function toast(text) {
   toast.t = setTimeout(() => t.classList.remove('show'), 2200);
 }
 
-// ---- the list of guides ----
+// ---- the dashboard pages ----
 
-function showList() {
+/** Guide data for every available guide, for the pages that need quizzes or challenges. */
+const loadAll = () => Promise.all(GUIDES.filter((g) => g.available).map(async (g) => ({ guide: g, data: (await g.load()).default })));
+
+async function showPage(name = 'home') {
   stopTimer();
   guide = null;
-  history.replaceState(null, '', location.pathname);
-  const cards = GUIDES.map((g) => {
-    const p = progress.get(g.id);
-    const pct = g.steps ? Math.round((100 * p.done.length) / g.steps) : 0;
-    const status = !g.available ? '<span class="soon">Coming soon</span>'
-      : p.done.length ? `<span class="pct">${pct}% done</span>` : `<span class="pct">${g.steps} steps</span>`;
-    return `<li class="guide-card${g.available ? '' : ' locked'}">
-      <button ${g.available ? `data-open="${g.id}"` : 'disabled'}>
-        <span class="g-emoji" aria-hidden="true">${g.emoji}</span>
-        <span class="g-body"><strong>${esc(g.title)}</strong><span class="g-meta">${esc(g.level)} · ${esc(g.time)}</span>
-        <span class="g-sum">${esc(g.summary)}</span></span>
-        ${status}
-      </button>${g.available && p.done.length ? `<span class="bar"><span data-fill="${pct}"></span></span>` : ''}
-    </li>`;
-  }).join('');
-  $('tutor').innerHTML = `
-    <header class="t-head"><h2>Learn to build my projects</h2>
-      <p class="muted">Each guide rebuilds one of my portfolio projects from a blank page, one small step at a time.
-      Every step explains the idea, shows exactly what code it adds and why, and lets you see the result run.
-      Follow along in your own editor (VS Code works well): copy each step's code or download it as a page.
-      A short quiz after each step checks that you understood the idea, not just the code.</p></header>
-    <ol class="guides">${cards}</ol>`;
+  page = name;
+  history.replaceState(null, '', name === 'home' ? location.pathname : `?page=${name}`);
+  showNav(name);
+  const box = $('tutor');
+  if (name === 'home') box.innerHTML = pages.homePage(GUIDES, progress, activity);
+  else if (name === 'lessons') box.innerHTML = pages.lessonsPage(GUIDES, progress);
+  else if (name === 'projects') box.innerHTML = pages.projectsPage(GUIDES, progress);
+  else if (name === 'achievements') box.innerHTML = pages.achievementsPage(GUIDES, progress, activity);
+  else if (name === 'settings') box.innerHTML = pages.settingsPage();
+  else {
+    box.innerHTML = '<p class="muted t-loading">Loading…</p>';
+    const loaded = await loadAll();
+    if (page !== name || guide) return;             // you moved on while it loaded
+    box.innerHTML = name === 'challenges' ? pages.challengesPage(loaded, progress) : pages.progressPage(loaded, progress, activity);
+  }
   fillBars();
   window.scrollTo(0, 0);
 }
+
+/** "← All guides" goes back to the list you came from. */
+const showList = () => showPage(['projects', 'lessons', 'challenges', 'progress'].includes(page) ? page : 'lessons');
 
 const fillBars = () => { for (const el of document.querySelectorAll('[data-fill]')) el.style.width = `${el.dataset.fill}%`; };
 
@@ -75,6 +95,7 @@ const fillBars = () => { for (const el of document.querySelectorAll('[data-fill]
 async function openGuide(id) {
   const entry = GUIDES.find((g) => g.id === id);
   $('tutor').innerHTML = '<p class="muted t-loading">Loading the guide…</p>';
+  showNav(pages.BASICS.has(id) ? 'lessons' : 'projects');
   const data = (await entry.load()).default;
   guide = { ...entry, ...data, ...assemble(data.start, data.steps) };
   history.replaceState(null, '', `?guide=${id}`);
@@ -105,6 +126,7 @@ function stopTimer() {
 }
 
 function saveTime() {
+  if (guide && unsaved >= 1 && at < guide.steps.length) studied();
   if (guide && unsaved > 0 && at < guide.steps.length) progress.addTime(guide.id, at, unsaved);
   unsaved = 0;
 }
@@ -301,6 +323,7 @@ const renderInline = (text) => renderMarkdown(text).replace(/^<p>|<\/p>$/g, '');
 function answerQuiz(k, n) {
   const key = `${at}.${k}`;
   const p = progress.answer(guide.id, key, n);
+  studied();
   const q = guide.steps[at].quiz[k];
   document.querySelector(`.q[data-q="${k}"]`).outerHTML = quizQuestion(q, k, p.quiz[key]);
 }
@@ -329,10 +352,22 @@ function showFinish() {
   window.scrollTo(0, 0);
 }
 
+function exportProgress() {
+  const data = { app: 'CodeForge', exported: new Date().toISOString(), progress: progress.data, days: activity.days };
+  const url = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
+  const a = Object.assign(document.createElement('a'), { href: url, download: 'codeforge-progress.json' });
+  document.body.append(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  toast('Downloaded codeforge-progress.json');
+}
+
 function onClick(e) {
   const b = e.target.closest('button');
   if (!b) return;
   if (b.dataset.open) return openGuide(b.dataset.open);
+  if (b.dataset.page) return showPage(b.dataset.page);
   if (b.dataset.quiz) return answerQuiz(Number(b.dataset.quiz), Number(b.dataset.opt));
   if (b.dataset.view) { view = b.dataset.view; return showCode(); }
   if (b.dataset.go) { saveTime(); at = Number(b.dataset.go); return showStep(); }
@@ -347,6 +382,7 @@ function onClick(e) {
     case 'next':
       saveTime();
       progress.complete(guide.id, at);
+      studied();
       at += 1;
       return showStep();
     case 'retime':
@@ -355,6 +391,14 @@ function onClick(e) {
       lastTick = Date.now();
       showPace();
       return toast('Timer reset to 0:00');
+    case 'export': return exportProgress();
+    case 'reset-all':
+      if (!confirm('Reset all your CodeForge progress? Every guide\'s place, finished steps, time, quiz answers and your streak are cleared.')) return;
+      for (const g of GUIDES) progress.reset(g.id);
+      activity.reset();
+      showStreak();
+      toast('All progress reset');
+      return showPage('home');
     case 'reset':
       if (!confirm(`Reset your progress in the ${guide.title} guide? Your place, finished steps, time and quiz answers are cleared.`)) return;
       unsaved = 0;

@@ -4,16 +4,26 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>CodeForge</title>
-  <meta name="description" content="Step-by-step guides that teach you to build real projects: lesson plans, diagrams, the code for every step, quizzes and a pace timer.">
+  <meta name="description" content="Learn. Build. Master. Step-by-step coding courses, from installing your first editor to rebuilding real projects: lesson plans, diagrams, the code for every step, quizzes and a pace timer.">
+  <meta name="theme-color" content="#070b1f">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%233b82f6'/%3E%3Cstop offset='1' stop-color='%238b5cf6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M78 22 62 12H36L14 26v48l22 14h26l16-10' fill='none' stroke='url(%23g)' stroke-width='14' stroke-linejoin='round' stroke-linecap='round'/%3E%3Cpath d='M40 38 30 50l10 12M60 38l10 12-10 12M54 34l-8 32' fill='none' stroke='%23fff' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&display=swap">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="toolbar">
-    <h1><a id="home" href="./"><span class="logo">&lt;/&gt;</span> CodeForge</a></h1>
-    <p class="tagline">Learn to build real projects, one step at a time</p>
-  </header>
-
-  <main id="tutor" class="tutor" aria-live="polite" tabindex="-1"></main>
+  <div class="app">
+    <aside class="sidebar">
+      <a id="home" class="brand" href="./">
+        <span id="brandLogo" class="brand-logo"></span>
+        <span class="brand-text"><span class="brand-name">Code<span>Forge</span></span><span class="brand-tag">Learn. Build. Master.</span></span>
+      </a>
+      <nav id="nav" class="nav" aria-label="CodeForge"></nav>
+      <div id="streak" class="streak-card" aria-live="polite"></div>
+    </aside>
+    <main id="tutor" class="tutor" aria-live="polite" tabindex="-1"></main>
+  </div>
 
   <p id="toast" class="toast" role="status"></p>
   <script type="module" src="src/app.js"></script>
