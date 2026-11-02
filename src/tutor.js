@@ -6,7 +6,7 @@
 // (VS Code, for example): copy the code or download the step as a page. Guides live in src/lessons/.
 import { assemble, startOf, renderMarkdown, lineDiff, changedLines, Progress, lessonPlan, pace, clock, gradeQuiz } from './tutor-core.js';
 import { buildDocument } from './preview.js';
-import { GUIDES } from './lessons/index.js';
+import { GUIDES, COMING } from './lessons/index.js';
 import { Activity } from './activity.js';
 import * as pages from './pages.js';
 
@@ -71,8 +71,8 @@ async function showPage(name = 'home') {
   showNav(name);
   const box = $('tutor');
   if (name === 'home') box.innerHTML = pages.homePage(GUIDES, progress, activity);
-  else if (name === 'lessons') box.innerHTML = pages.lessonsPage(GUIDES, progress);
-  else if (name === 'projects') box.innerHTML = pages.projectsPage(GUIDES, progress);
+  else if (name === 'lessons') box.innerHTML = pages.lessonsPage(GUIDES, progress, COMING);
+  else if (name === 'projects') box.innerHTML = pages.projectsPage(GUIDES, progress, COMING);
   else if (name === 'achievements') box.innerHTML = pages.achievementsPage(GUIDES, progress, activity);
   else if (name === 'settings') box.innerHTML = pages.settingsPage();
   else {

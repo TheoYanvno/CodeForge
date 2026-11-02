@@ -65,3 +65,15 @@ test('every guide in the list has challenges, and the sidebar has every page', a
   assert.strictEqual((nav.match(/data-page=/g) ?? []).length, pages.PAGES.length);
   assert.match(nav, /class="nav-item active" data-page="progress" aria-current="page"/);
 });
+
+test('the security projects are listed as coming soon and do not count toward progress', async () => {
+  const { COMING } = await import('../src/lessons/index.js');
+  const { progress } = fresh();
+  assert.ok(COMING.length >= 10);
+  const html = pages.projectsPage(GUIDES, progress, COMING);
+  assert.match(html, /Security projects <span class="pill">Coming soon/);
+  for (const c of COMING) assert.ok(html.includes(c.title), c.title);
+  assert.doesNotMatch(html, /data-open="sentineledr"/, 'nothing to open yet');
+  assert.match(pages.lessonsPage(GUIDES, progress, COMING), /SentinelEDR/);
+  assert.strictEqual(pages.totals(GUIDES, progress).guides, GUIDES.filter((g) => g.available).length);
+});

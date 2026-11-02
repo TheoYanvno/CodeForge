@@ -213,19 +213,35 @@ export function homePage(guides, progress, activity) {
 
 // ---- Lessons and Projects ----
 
-export function lessonsPage(guides, progress) {
+/** The security projects on the roadmap, shown as coming soon. */
+export function comingSoon(list) {
+  if (!list?.length) return '';
+  return `<section class="coming">
+    <h3 class="section-title">🛡️ Security projects <span class="pill">Coming soon</span></h3>
+    <p class="muted small">Cybersecurity tools on my roadmap. Each gets a guide here once the project is built.</p>
+    <ul class="coming-grid">${list.map((c) => `<li class="coming-card">
+      <span class="g-emoji" aria-hidden="true">${c.emoji}</span>
+      <span class="g-body"><strong>${esc(c.title)}</strong><span class="g-meta">${esc(c.level)} · ${esc(c.status ?? 'Coming soon')}</span>
+      <span class="g-sum">${esc(c.summary)}</span></span>
+    </li>`).join('')}</ul>
+  </section>`;
+}
+
+export function lessonsPage(guides, progress, coming = []) {
   const basics = guides.filter((g) => BASICS.has(g.id));
   return `<header class="page-head"><h2>Lessons</h2>
       <p class="muted">Every guide, in the order they're meant to be taken. Each basics guide builds a small project of its own and teaches what the project guides right after it need. Follow along in your own editor: copy each step's code or download it as a page.</p></header>
     <ol class="guides">${guideCards(guides, progress)}</ol>
-    <p class="muted small">${basics.length} basics guides and ${guides.length - basics.length} project guides.</p>`;
+    <p class="muted small">${basics.length} basics guides and ${guides.length - basics.length} project guides.</p>
+    ${comingSoon(coming)}`;
 }
 
-export function projectsPage(guides, progress) {
+export function projectsPage(guides, progress, coming = []) {
   const projects = guides.filter((g) => !BASICS.has(g.id));
   return `<header class="page-head"><h2>Projects</h2>
       <p class="muted">Rebuild my portfolio projects from a blank page, one step at a time: games, tools, a blog, databases and a hospital system.</p></header>
-    <ol class="guides">${guideCards(projects, progress)}</ol>`;
+    <ol class="guides">${guideCards(projects, progress)}</ol>
+    ${comingSoon(coming)}`;
 }
 
 // ---- Coding Challenges ----

@@ -52,3 +52,28 @@ export const GUIDES = [
   { id: 'gotham', title: 'Gotham Hospital System', emoji: '🏥', level: 'Advanced', time: 'about 4.5 hours', steps: 10, available: true,
     summary: 'Provider schedules, booking rules, patient charts, sign-in where the password picks your role, and the SQL behind them.', load: () => import('./gotham.js') },
 ];
+
+// Security tools on my roadmap. Their guides are written once each project is built, so they're
+// listed as coming soon and don't count toward progress.
+export const COMING = [
+  { id: 'sentineledr', title: 'SentinelEDR', emoji: '🛡️', level: 'Advanced',
+    summary: 'Windows endpoint monitoring and detection: collecting endpoint telemetry and writing detections.' },
+  { id: 'netsentinel', title: 'NetSentinel', emoji: '🌐', level: 'Advanced',
+    summary: 'Network intrusion detection: packet analysis, protocols and network anomaly detection.' },
+  { id: 'logwatch', title: 'LogWatch', emoji: '📜', level: 'Advanced',
+    summary: 'A mini SIEM: log ingestion, normalizing events, searching and correlating them.' },
+  { id: 'vulnscope', title: 'VulnScope', emoji: '🔍', level: 'Intermediate',
+    summary: 'Asset and vulnerability management: an inventory, vulnerability details and risk priorities.' },
+  { id: 'fileshield', title: 'FileShield', emoji: '🗂️', level: 'Intermediate',
+    summary: 'File integrity and ransomware-behavior detection: hashing, baselines and behavior alerts.' },
+  { id: 'authguard', title: 'AuthGuard', emoji: '🔐', level: 'Intermediate',
+    summary: 'Identity and access management: secure sign-in, permissions and the account lifecycle.' },
+  { id: 'cloudsentinel', title: 'CloudSentinel', emoji: '☁️', level: 'Advanced',
+    summary: 'A cloud security posture scanner: least privilege and finding misconfigurations through cloud APIs.' },
+  { id: 'securecode', title: 'SecureCode', emoji: '🧪', level: 'Advanced',
+    summary: 'Static application security testing: reading code to find security flaws, built into a developer workflow.' },
+  { id: 'incidentiq', title: 'IncidentIQ', emoji: '🚨', level: 'Advanced',
+    summary: 'Incident response and SOAR: alert triage, cases with timelines and evidence, and controlled automation.' },
+  { id: 'threatintel', title: 'ThreatIntel', emoji: '🕵️', level: 'Advanced',
+    summary: 'Threat intelligence: collecting indicators of compromise, enriching them and scoring confidence.' },
+];
