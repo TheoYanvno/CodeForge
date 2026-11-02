@@ -52,4 +52,4 @@ What you learned, and some challenges.
 - `time:` is how many minutes a step should take. The ⏱ pace timer compares the learner's time with it.
 - `quiz:` asks a multiple-choice question after the step. Mark the right option `- [x]`, give at least three options and a `why:` line. Every step you write code in needs at least one question.
 - ```` ```svg Caption ```` is a diagram. It's shown as an image (so nothing in it can run) with the caption underneath. Every guide needs at least three.
-- `check:` lines are what **Check my work** looks for: `pane | label | /regex/flags | hint`. Comments in the learner's code are ignored. Each check should fail on the step's starting code and pass on its answer; the tests make sure of both.
+- `check:` lines list what the step has you write (`pane | label | /regex/flags | hint`). The labels are shown as **In this step you write**, and the regex keeps the guide honest: the tests make sure each one fails on the step's starting code and passes on its finished code, so the list always matches the code. Comments are ignored.

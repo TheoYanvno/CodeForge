@@ -1,7 +1,7 @@
 {
   "name": "live-code-editor",
   "version": "1.0.0",
-  "description": "Write HTML, CSS and JavaScript and watch the result update live as you type",
+  "description": "Step-by-step guides that teach you to build real projects: lesson plans, diagrams, the code for every step and quizzes",
   "type": "module",
   "scripts": {
     "start": "python3 -m http.server 8000",

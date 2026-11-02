@@ -148,7 +148,7 @@ From now on, the game thinks in cells. A cell at column 3, row 5 is drawn at pix
 
 ### What to write
 
-1. At the top of the JS pane, find the canvas and get its context, then define `SIZE` and `CELL`.
+1. At the top of your JavaScript, find the canvas and get its context, then define `SIZE` and `CELL`.
 2. Write a `draw()` function that fills the whole board with the background color (`fillRect(0, 0, canvas.width, canvas.height)`), then draws faint grid lines with a `for` loop.
 3. Call `draw()` once at the bottom.
 
@@ -483,7 +483,7 @@ The "no reversing" check compares against the *last queued* direction, not the c
 3. A `KEYS` object for the arrow keys and W/A/S/D, a `turn(name)` function with the two rules above, and a `keydown` listener that calls it.
 4. Call `e.preventDefault()` for game keys so the arrows don't scroll the page.
 
-> Tip: keys go to whatever has focus. **Click on the result once** so the game gets your key presses instead of the editor.
+> Tip: keys go to whatever has focus. **Click on the result once** so the game gets your key presses instead of the rest of the page.
 
 check: js | an OPPOSITE lookup | /const\s+OPPOSITE\s*=/
 check: js | a queue of turns | /queue\s*=\s*\[\]/
@@ -819,7 +819,7 @@ localStorage.getItem('snake-best');   // "12" (always a string)
 
 ### Storage can fail, so plan for it
 
-`localStorage` throws an error in some situations: private browsing on some browsers, a full disk, or a page that isn't allowed to use storage. **This editor's result frame is one of those**: it's sandboxed for safety, so `localStorage` throws here. If we didn't handle that, the whole game would break.
+`localStorage` throws an error in some situations: private browsing on some browsers, a full disk, or a page that isn't allowed to use storage. **The tutor's See it run frame is one of those**: it's sandboxed for safety, so `localStorage` throws here. If we didn't handle that, the whole game would break.
 
 Wrapping storage in `try { ... } catch {}` means: try it, and if it fails, carry on without it. Here the best score simply won't survive a refresh, but the game still works. In my real Snake game it saves normally.
 
@@ -859,8 +859,8 @@ check: js | the space bar starts a game | /e\.key\s*===\s*['"] ['"]/
 ```js state
 let snake, direction, queue, food, score, over, timer;
 
-// The best score is kept in the browser. Storage can be blocked (private windows, and this editor's
-// sandboxed preview), so every use is wrapped in try/catch and the game works either way.
+// The best score is kept in the browser. Storage can be blocked (private windows, and the tutor's
+// sandboxed See it run frame), so every use is wrapped in try/catch and the game works either way.
 let best = 0;
 try { best = Number(localStorage.getItem('snake-best')) || 0; } catch {}
 
@@ -955,7 +955,7 @@ document.addEventListener('keydown', (e) => {
 
 quiz: Why is every use of `localStorage` wrapped in `try/catch`?
 - [ ] It makes saving faster
-- [x] Storage can throw (private windows, sandboxed pages like this editor), and the game should keep working
+- [x] Storage can throw (private windows, sandboxed pages like the tutor's See it run frame), and the game should keep working
 - [ ] `localStorage` only works inside try blocks
 why: If storage fails, the catch lets the game carry on; the best score just won't be saved.
 
@@ -1213,8 +1213,8 @@ check: js | walls only count when they're on | /hitWall\s*=\s*walls\s*&&/
 ```js state
 let snake, direction, queue, food, score, over, walls, timer;
 
-// The best score is kept in the browser. Storage can be blocked (private windows, and this editor's
-// sandboxed preview), so every use is wrapped in try/catch and the game works either way.
+// The best score is kept in the browser. Storage can be blocked (private windows, and the tutor's
+// sandboxed See it run frame), so every use is wrapped in try/catch and the game works either way.
 let best = 0;
 try { best = Number(localStorage.getItem('snake-best')) || 0; } catch {}
 

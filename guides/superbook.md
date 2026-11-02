@@ -1835,7 +1835,7 @@ You can see the fallback working: these packs leave out the tagline, so it stays
 
 **Right to left.** Hebrew sets `<html dir="rtl">`, and the whole layout mirrors: flex rows reverse, text aligns right, and the language picker (placed with `inset-inline-end`) moves to the left. The canvas doesn't follow `dir`, so `SandWriter` is told: it sets `ctx.direction` and `textAlign`, starts each line at the right edge, grows the clip leftwards, and throws the grains the other way.
 
-**Remembered.** The choice is saved in `localStorage`, inside `try … catch`: storage can be blocked (this editor's preview blocks it), and then the page should still work, just without remembering.
+**Remembered.** The choice is saved in `localStorage`, inside `try … catch`: storage can be blocked (the tutor's See it run frame blocks it), and then the page should still work, just without remembering.
 
 ### Try it
 
@@ -2487,7 +2487,7 @@ $('lang').onchange = (e) => {
 };
 
 let saved = null;
-try { saved = localStorage.getItem(PREF); } catch { /* blocked, e.g. in this editor's preview */ }
+try { saved = localStorage.getItem(PREF); } catch { /* blocked, e.g. in the tutor's See it run frame */ }
 setLanguage(saved || 'en');
 $('lang').value = currentLang;
 applyLanguage();

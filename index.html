@@ -4,76 +4,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Code Tutor</title>
-  <meta name="description" content="Learn to build real projects step by step, with a live HTML, CSS and JavaScript editor next to every guide.">
+  <meta name="description" content="Step-by-step guides that teach you to build real projects: lesson plans, diagrams, the code for every step, quizzes and a pace timer.">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header class="toolbar">
-    <h1><span class="logo">&lt;/&gt;</span> Code Tutor</h1>
-    <div class="tools">
-      <button id="learn" class="learn" aria-pressed="false" aria-controls="tutor">🎓 Learn</button>
-      <select id="template" aria-label="Start from a template">
-        <option value="">Templates…</option>
-      </select>
-      <button id="save" title="Save in this browser (Ctrl+S)">Save</button>
-      <button id="openSaved">My projects</button>
-      <button id="share" title="Copy a link to this code">Share</button>
-      <label class="toggle"><input id="auto" type="checkbox" checked> Auto-run</label>
-      <button id="run" class="primary" title="Run (Ctrl+Enter)">▶ Run</button>
-    </div>
+    <h1><a id="home" href="./"><span class="logo">&lt;/&gt;</span> Code Tutor</a></h1>
+    <p class="tagline">Learn to build real projects, one step at a time</p>
   </header>
 
-  <nav class="tabs" aria-label="Panes">
-    <button data-pane="guide" class="guide-tab">Guide</button>
-    <button data-pane="html" aria-pressed="true">HTML</button>
-    <button data-pane="css">CSS</button>
-    <button data-pane="js">JS</button>
-    <button data-pane="result">Result</button>
-  </nav>
-
-  <main class="workspace">
-    <aside id="tutor" class="tutor pane" data-pane="guide" aria-label="Guide" tabindex="-1"></aside>
-    <section class="editors">
-      <div class="pane active" data-pane="html">
-        <h2>HTML</h2>
-        <div class="code"><pre class="gutter" aria-hidden="true"></pre><textarea id="html" spellcheck="false" aria-label="HTML code"></textarea></div>
-      </div>
-      <div class="pane" data-pane="css">
-        <h2>CSS</h2>
-        <div class="code"><pre class="gutter" aria-hidden="true"></pre><textarea id="css" spellcheck="false" aria-label="CSS code"></textarea></div>
-      </div>
-      <div class="pane" data-pane="js">
-        <h2>JavaScript</h2>
-        <div class="code"><pre class="gutter" aria-hidden="true"></pre><textarea id="js" spellcheck="false" aria-label="JavaScript code"></textarea></div>
-      </div>
-    </section>
-
-    <section class="output pane" data-pane="result">
-      <div class="frame-bar"><span>Result</span><span id="updated" class="muted"></span></div>
-      <!-- sandbox without allow-same-origin: the code runs in its own origin and can't touch this page or its storage -->
-      <iframe id="preview" title="Result" sandbox="allow-scripts allow-modals allow-forms allow-popups"></iframe>
-
-      <section class="console" aria-label="Console">
-        <div class="console-bar">
-          <button id="toggleConsole" class="link" aria-expanded="true">Console <span id="counts" class="counts"></span></button>
-          <button id="clearConsole" class="link">Clear</button>
-        </div>
-        <ol id="logs" class="logs" aria-live="polite"></ol>
-        <form id="evalForm" class="eval">
-          <span aria-hidden="true">›</span>
-          <input id="evalInput" autocomplete="off" spellcheck="false" placeholder="Run an expression in the page, e.g. document.title" aria-label="Run JavaScript in the result page">
-        </form>
-      </section>
-    </section>
-  </main>
-  <dialog id="savedDialog" aria-labelledby="savedTitle">
-    <form method="dialog">
-      <h2 id="savedTitle">My projects</h2>
-      <p class="muted small">Saved in this browser only. Use Share to move code to another device.</p>
-      <ul id="savedList" class="saved-list"></ul>
-      <button class="close">Close</button>
-    </form>
-  </dialog>
+  <main id="tutor" class="tutor" aria-live="polite" tabindex="-1"></main>
 
   <p id="toast" class="toast" role="status"></p>
   <script type="module" src="src/app.js"></script>

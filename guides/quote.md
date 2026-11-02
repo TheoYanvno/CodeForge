@@ -579,7 +579,7 @@ time: 20
 
 **Share** is a link to X's "post" page with the text in the URL. `encodeURIComponent()` makes quotes, `&` and other characters safe inside the link.
 
-**Save** keeps favorites as text in `localStorage`. Like copying, storage can be blocked: private browsing, a browser setting, or a sandbox. **This editor's preview blocks it**, so the code keeps a copy in a variable too: favorites work for as long as the page is open, and the page never crashes. On a normal page they're remembered next time.
+**Save** keeps favorites as text in `localStorage`. Like copying, storage can be blocked: private browsing, a browser setting, or a sandbox. **The tutor's See it run frame blocks it**, so the code keeps a copy in a variable too: favorites work for as long as the page is open, and the page never crashes. On a normal page they're remembered next time.
 
 | Action | Browser feature | If it's not allowed |
 |---|---|---|
@@ -618,7 +618,7 @@ let mode = 'quote';                 // 'quote', 'joke' or 'fav'
 let current = null;                 // the item on the card
 let typing = null;                  // the typewriter's timer
 let favorites = [];                 // [{ id?, text, kind }]
-// Saved while logged out: kept in this browser. Storage can be blocked (this editor's preview blocks it),
+// Saved while logged out: kept in this browser. Storage can be blocked (the tutor's See it run frame blocks it),
 // so a copy also lives in memory and the page keeps working.
 let memorySaved = [];
 const local = {
@@ -1501,7 +1501,7 @@ let current = null;                 // the item on the card
 let typing = null;                  // the typewriter's timer
 let favorites = [];                 // [{ id?, text, kind }]
 let user = null;                    // { id, username } when logged in
-// Saved while logged out: kept in this browser. Storage can be blocked (this editor's preview blocks it),
+// Saved while logged out: kept in this browser. Storage can be blocked (the tutor's See it run frame blocks it),
 // so a copy also lives in memory and the page keeps working.
 let memorySaved = [];
 const local = {

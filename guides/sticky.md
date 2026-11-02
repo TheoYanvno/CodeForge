@@ -1777,7 +1777,7 @@ Notes should still be there tomorrow. The browser version keeps them in **`local
 
 **Storage can fail**, so both are wrapped in `try`/`catch`. Private browsing, a full disk, a browser setting or a sandboxed page can all make `localStorage` throw. When it does, the app keeps working in memory instead of breaking.
 
-This editor's preview is exactly one of those cases: it runs your page in a sandbox where storage is blocked, so here the notes reset when the preview reloads, and nothing crashes. To see them remembered, run your finished page from a file or a local server, or try the [live demo](https://theoyanvno.github.io/sticky-notes/app/).
+The tutor's See it run frame is exactly one of those cases: it runs the page in a sandbox where storage is blocked, so there the notes reset when it reloads, and nothing crashes. To see them remembered, run your finished page from a file or a local server, or try the [live demo](https://theoyanvno.github.io/sticky-notes/app/).
 
 The saved object has a `version` number. That's for the future: if the format ever changes, the app can tell an old file from a new one (the real app does exactly that with notes from version 1.0).
 

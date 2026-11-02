@@ -1418,7 +1418,7 @@ Tasks should still be there tomorrow, and they should be able to leave this page
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 430 150" font-family="sans-serif"><rect x="15" y="50" width="100" height="40" rx="6" fill="#e2e8f0" stroke="#475569"/><text x="65" y="74" text-anchor="middle" font-size="11">your tasks</text><rect x="220" y="10" width="195" height="36" rx="6" fill="#fef9c3" stroke="#475569"/><text x="317" y="32" text-anchor="middle" font-size="11">localStorage (this browser)</text><line x1="115" y1="70" x2="220" y2="28" stroke="#475569" stroke-width="1.5"/><rect x="220" y="56" width="195" height="36" rx="6" fill="#ffedd5" stroke="#475569"/><text x="317" y="78" text-anchor="middle" font-size="11">.ics file (any calendar app)</text><line x1="115" y1="70" x2="220" y2="74" stroke="#475569" stroke-width="1.5"/><rect x="220" y="102" width="195" height="36" rx="6" fill="#bbf7d0" stroke="#475569"/><text x="317" y="124" text-anchor="middle" font-size="11">Google Calendar link (email reminders)</text><line x1="115" y1="70" x2="220" y2="120" stroke="#475569" stroke-width="1.5"/></svg>
 ```
 
-**Saving.** `save()` writes the tasks to `localStorage` as JSON after every `render()`, and `load()` reads them back at the start (or the example tasks, the first time). Both are wrapped in `try`/`catch`, because storage can be blocked: private browsing, a browser setting, or a sandboxed page. This editor's preview is one of those, so here your tasks reset when the preview reloads; the page keeps working anyway.
+**Saving.** `save()` writes the tasks to `localStorage` as JSON after every `render()`, and `load()` reads them back at the start (or the example tasks, the first time). Both are wrapped in `try`/`catch`, because storage can be blocked: private browsing, a browser setting, or a sandboxed page. The tutor's See it run frame is one of those, so there your tasks reset when it reloads; the page keeps working anyway.
 
 **Exporting.** iCalendar (`.ics`) is the plain-text format every calendar app imports: Google Calendar, Apple Calendar, Outlook. Each task becomes a `VEVENT`:
 
@@ -1437,7 +1437,7 @@ END:VEVENT
 | date and time | `DTSTART`, or `DTSTART;VALUE=DATE` for all-day |
 | repeat | `RRULE`, the standard repeat rule (weekdays is `FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR`) |
 
-The file uses `\r\n` line endings, which the format requires. To download it, the app wraps the text in a **`Blob`**, makes a temporary URL for it with `URL.createObjectURL()`, and clicks an invisible link with a `download` name. (The editor's preview may block downloads; open the finished page on its own to get the file.)
+The file uses `\r\n` line endings, which the format requires. To download it, the app wraps the text in a **`Blob`**, makes a temporary URL for it with `URL.createObjectURL()`, and clicks an invisible link with a `download` name. (The tutor's See it run frame may block downloads; open the finished page on its own to get the file.)
 
 check: js | tasks are saved | /localStorage\.setItem\(/
 check: js | a toIcs() function | /function\s+toIcs\s*\(/

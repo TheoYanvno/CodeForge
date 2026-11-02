@@ -1341,7 +1341,7 @@ time: 20
 </item>
 ```
 
-`rss(posts)` builds it with template literals. Text goes through `escapeXml()` (XML breaks on a stray `&` just like HTML does), and `toUTCString()` writes the date in the format RSS expects. The **RSS** link in the header opens a page showing the feed, with a **Download feed.xml** link made from a `Blob`. (The editor's preview may block downloads; the text is shown either way.)
+`rss(posts)` builds it with template literals. Text goes through `escapeXml()` (XML breaks on a stray `&` just like HTML does), and `toUTCString()` writes the date in the format RSS expects. The **RSS** link in the header opens a page showing the feed, with a **Download feed.xml** link made from a `Blob`. (The tutor's See it run frame may block downloads; the text is shown either way.)
 
 **Moved posts.** The real blog renamed some posts when it grew, and old links (bookmarks, other people's posts) still point to the old names. `REDIRECTS` maps old slugs to new ones:
 
@@ -1349,7 +1349,7 @@ time: 20
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 430 110" font-family="sans-serif"><rect x="10" y="20" width="170" height="34" rx="6" fill="#fde2e1" stroke="#b91c1c"/><text x="95" y="42" text-anchor="middle" font-size="10" font-family="monospace">#/post/beginner-friendly-builds</text><line x1="180" y1="37" x2="240" y2="37" stroke="#475569" stroke-width="2"/><text x="210" y="30" text-anchor="middle" font-size="10">REDIRECTS</text><rect x="240" y="20" width="180" height="34" rx="6" fill="#bbf7d0" stroke="#15803d"/><text x="330" y="42" text-anchor="middle" font-size="10" font-family="monospace">#/post/lordran-guide-hub</text><text x="215" y="84" text-anchor="middle" font-size="11" fill="#475569">location.replace() swaps the address without adding a history entry,</text><text x="215" y="100" text-anchor="middle" font-size="11" fill="#475569">so the Back button doesn't bounce you into the old link again</text></svg>
 ```
 
-`route()` checks it first and calls `location.replace()` with the page's own address and the new hash. Unlike setting `location.hash`, `replace()` doesn't add a history entry, so pressing Back doesn't land on the old address and bounce forward again. (The full address matters here: a bare `#/…` would be read against the editor's address, and the preview would try to leave.)
+`route()` checks it first and calls `location.replace()` with the page's own address and the new hash. Unlike setting `location.hash`, `replace()` doesn't add a history entry, so pressing Back doesn't land on the old address and bounce forward again. (The full address matters here: a bare `#/…` would be read against the tutor's address, and the See it run frame would try to leave.)
 
 The real Python build goes one step further: it refuses to build if a redirect points to a post that doesn't exist, or if a live post still uses an old name. A test also checks that every link between posts points to a real page.
 

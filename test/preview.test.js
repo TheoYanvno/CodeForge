@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { buildDocument, escapeScript, debounce, jsStartLine } from '../src/preview.js';
+import { buildDocument, escapeScript } from '../src/preview.js';
 
 test('wraps plain markup in a page with the CSS in the head and JS at the end of the body', () => {
   const doc = buildDocument({ html: '<h1>Hi</h1>', css: 'h1 { color: red }', js: 'console.log(1)' });
@@ -39,22 +39,7 @@ test('a page with <body> but no <head> gets one', () => {
   assert.match(doc, /<head>[\s\S]*p\{\}[\s\S]*<\/head>\s*<body class="a">/);
 });
 
-test('extra head content (like the console bridge) goes before the user CSS', () => {
+test('extra head content goes before the CSS', () => {
   const doc = buildDocument({ css: 'p{}' }, { head: '<script>bridge()</script>' });
   assert.ok(doc.indexOf('bridge()') < doc.indexOf('p{}'));
-});
-
-test('debounce runs once after calls stop', async () => {
-  let calls = 0;
-  const run = debounce(() => calls++, 20);
-  run(); run(); run();
-  await new Promise((r) => setTimeout(r, 50));
-  assert.equal(calls, 1);
-});
-
-test('finds the line where the JS starts, for error messages', () => {
-  const js = 'one()\ntwo()';
-  const doc = buildDocument({ html: '<p>a</p>\n<p>b</p>', js }, { head: '<script>\nbridge()\n</script>' });
-  const lines = doc.split('\n');
-  assert.equal(lines[jsStartLine(doc, js) - 1], 'one()');
 });
