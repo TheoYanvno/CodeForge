@@ -1230,6 +1230,1008 @@ initSqlJs({ locateFile: (file) => SQLJS + file })
   });
 ```
 
+## Session: Patients and reports
+
+## Step: Patient search and insurance
+time: 30
+
+A **Patients** tab joins the schedule. Two new ideas: a table that allows only one row per patient *and* coverage, and search that's safe with any text.
+
+**Insurance.** A patient has at most one primary and one secondary plan. `UNIQUE (patient_id, coverage)` enforces that. To change a plan you could check if one exists, then `UPDATE` or `INSERT`. An **upsert** does it in one statement:
+
+```sql
+INSERT INTO insurance (patient_id, coverage, payer, …) VALUES (?, ?, ?, …)
+ON CONFLICT (patient_id, coverage) DO UPDATE SET payer = excluded.payer, …
+```
+
+If the insert would break the unique rule, SQLite updates the existing row instead. `excluded` means "the row you tried to insert". The real project saves insurance exactly this way.
+
+**Search.** `searchPatients(text)` matches the full name, last name, MRN or an exact birth date:
+
+```sql
+WHERE first_name || ' ' || last_name LIKE ? OR last_name LIKE ? OR mrn LIKE ? OR birth_date = ?
+```
+
+`LIKE '%rom%'` matches anywhere in the text, ignoring case for English letters. The `%` signs are added in JavaScript, around the value, and the whole thing goes in as a parameter. Type `'; DROP TABLE patients; --` into the search box: it finds nobody, and nothing breaks, because it's only ever a value.
+
+**The chart.** `patientProfile(id)` gathers the patient row, their plans (primary first: `ORDER BY coverage = 'secondary'` sorts false, 0, before true, 1) and their visits with the provider's name. The page escapes every value with `esc()` before putting it in HTML, so a name with `<` in it shows as text.
+
+**Patients without insurance** show "Self-pay". The new `phone` and `allergies` columns are on the `patients` table; allergies go right on the chart, where a clinician needs them.
+
+### Try it
+
+Search `rom`, `GH-10023` and `1991-07-30`. Open Luis Romero: two plans. In the browser console, run `saveInsurance(5, { coverage: 'primary', payer: 'Test', member: 'X1' })` twice and look at his chart.
+
+check: js | one plan per coverage | /UNIQUE \(patient_id, coverage\)/
+check: js | an upsert | /ON CONFLICT \(patient_id, coverage\) DO UPDATE/
+check: js | safe search | /function\s+searchPatients\s*\(/
+check: js | a patient's chart | /function\s+patientProfile\s*\(/
+check: html | a patients tab | /data-tab="patients"/
+
+quiz: What does ON CONFLICT … DO UPDATE do?
+- [ ] Deletes the old row
+- [x] If the insert would break a unique rule, it updates the existing row instead
+- [ ] Shows an error
+why: Insert or update in one statement: an upsert.
+quiz: Why can't the search box text '; DROP TABLE patients; -- do any harm?
+- [ ] SQLite ignores semicolons
+- [x] It is passed as a ? parameter, so SQLite only ever compares it as a value
+- [ ] The box is too short
+why: Parameters keep data and SQL apart.
+
+```html page
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/sql-wasm.js"></script>
+<div id="app">
+<header class="top">
+  <strong>Gotham Hospital</strong> <span class="muted">Patient Portal</span>
+</header>
+  <nav class="tabs" id="tabs">
+    <button data-tab="schedule" class="on">Schedule</button>
+    <button data-tab="patients">Patients</button>
+  </nav>
+<main>
+  <section id="schedule" class="view">
+    <div class="bar">
+      <h2 id="title"></h2>
+    </div>
+    <div class="layout">
+      <div id="grid" class="grid"></div>
+    <aside id="panel" class="panel" hidden></aside>
+    </div>
+  </section>
+  <section id="patients" class="view" hidden>
+    <input id="search" type="search" placeholder="Search by name, MRN or birth date (YYYY-MM-DD)" autocomplete="off">
+    <div class="split"><ul id="results" class="results"></ul><article id="profile" class="profile"></article></div>
+  </section>
+</main>
+</div>
+<p class="note">Practice app: every person, phone number and plan here is made up.</p>
+```
+
+```js db
+// SQLite compiled to WebAssembly (sql.js): a real database inside the page
+const SQLJS = 'https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/';
+let db;
+
+const SCHEMA = `
+-- Business hours by weekday (0 = Sunday … 6 = Saturday). NULL means closed.
+CREATE TABLE clinic_hours (
+  weekday INTEGER PRIMARY KEY CHECK (weekday BETWEEN 0 AND 6),
+  opens   TEXT,
+  closes  TEXT,
+  CHECK ((opens IS NULL AND closes IS NULL) OR opens < closes)
+);
+CREATE TABLE providers (
+  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+  first_name TEXT NOT NULL,
+  last_name  TEXT NOT NULL,
+  credential TEXT NOT NULL CHECK (credential IN ('MD', 'DO', 'NP', 'PA')),
+  specialty  TEXT NOT NULL,
+  room       TEXT
+);
+-- Each provider's hours on the days they work (Monday–Friday only)
+CREATE TABLE provider_hours (
+  provider_id  INTEGER NOT NULL REFERENCES providers(id) ON DELETE CASCADE,
+  weekday      INTEGER NOT NULL CHECK (weekday BETWEEN 1 AND 5),
+  starts       TEXT NOT NULL,
+  ends         TEXT NOT NULL,
+  lunch_starts TEXT,
+  lunch_ends   TEXT,
+  PRIMARY KEY (provider_id, weekday),
+  CHECK (starts < ends)
+);
+CREATE TABLE patients (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  mrn         TEXT NOT NULL UNIQUE,            -- medical record number, e.g. GH-100231
+  first_name  TEXT NOT NULL,
+  last_name   TEXT NOT NULL,
+  birth_date  TEXT NOT NULL,                   -- YYYY-MM-DD
+  sex         TEXT NOT NULL CHECK (sex IN ('F', 'M', 'X')),
+  phone       TEXT,
+  allergies   TEXT
+);
+CREATE TABLE insurance (
+  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+  patient_id INTEGER NOT NULL REFERENCES patients(id) ON DELETE CASCADE,
+  coverage   TEXT NOT NULL CHECK (coverage IN ('primary', 'secondary')),
+  payer      TEXT NOT NULL,
+  plan_name  TEXT,
+  member_id  TEXT NOT NULL,
+  copay      REAL CHECK (copay >= 0),
+  UNIQUE (patient_id, coverage)                -- one primary and one secondary plan at most
+);
+CREATE TABLE appointments (
+  id           INTEGER PRIMARY KEY AUTOINCREMENT,
+  patient_id   INTEGER NOT NULL REFERENCES patients(id) ON DELETE CASCADE,
+  provider_id  INTEGER NOT NULL REFERENCES providers(id),
+  starts_at    TEXT NOT NULL,                  -- YYYY-MM-DD HH:MM
+  duration_min INTEGER NOT NULL DEFAULT 30 CHECK (duration_min IN (15, 30, 45, 60)),
+  visit_type   TEXT NOT NULL CHECK (visit_type IN ('New patient', 'Follow-up', 'Annual physical', 'Sick visit', 'Procedure', 'Telehealth')),
+  reason       TEXT NOT NULL,
+  status       TEXT NOT NULL DEFAULT 'scheduled'
+               CHECK (status IN ('scheduled', 'checked_in', 'completed', 'no_show', 'cancelled'))
+);
+-- A provider can't have two active visits starting at the same time.
+-- Partial index: cancelled visits don't count, so a cancelled slot can be booked again.
+CREATE UNIQUE INDEX uq_provider_start ON appointments(provider_id, starts_at) WHERE status <> 'cancelled';
+`;
+
+// Run a query with ? parameters and get rows back as plain objects
+function rows(sql, params = []) {
+  const stmt = db.prepare(sql);
+  stmt.bind(params);
+  const out = [];
+  while (stmt.step()) out.push(stmt.getAsObject());
+  stmt.free();
+  return out;
+}
+const one = (sql, params = []) => rows(sql, params)[0] ?? null;
+const run = (sql, params = []) => db.run(sql, params);
+const lastId = () => one('SELECT last_insert_rowid() AS id').id;
+
+// Create the tables and load the sample data in one transaction
+function build() {
+  run('PRAGMA foreign_keys = ON');
+  db.exec(SCHEMA);
+  run('BEGIN');
+  try {
+    for (let day = 0; day <= 6; day++) {
+      const open = day >= 1 && day <= 5;
+      run('INSERT INTO clinic_hours (weekday, opens, closes) VALUES (?, ?, ?)', [day, open ? CLINIC.opens : null, open ? CLINIC.closes : null]);
+    }
+    PROVIDERS.forEach((p) => {
+      run('INSERT INTO providers (first_name, last_name, credential, specialty, room) VALUES (?, ?, ?, ?, ?)', [p.first, p.last, p.credential, p.specialty, p.room]);
+      const id = lastId();
+      for (let day = 1; day <= 5; day++) {
+        if ((p.off ?? []).includes(day)) continue;
+        run('INSERT INTO provider_hours VALUES (?, ?, ?, ?, ?, ?)', [id, day, p.hours[0], p.hours[1], p.lunch[0], p.lunch[1]]);
+      }
+    });
+    for (const p of PATIENTS) {
+      run('INSERT INTO patients (mrn, first_name, last_name, birth_date, sex, phone, allergies) VALUES (?, ?, ?, ?, ?, ?, ?)',
+          [p.mrn, p.first, p.last, p.birth, p.sex, p.phone, p.allergies || null]);
+      const id = lastId();
+      for (const plan of p.insurance) saveInsurance(id, plan);
+    }
+    for (const [patient, provider, startsAt, minutes, type, reason, status] of VISITS) {
+      run('INSERT INTO appointments (patient_id, provider_id, starts_at, duration_min, visit_type, reason, status) VALUES (?, ?, ?, ?, ?, ?, ?)',
+          [patient + 1, provider + 1, startsAt, minutes, type, reason, status]);
+    }
+    run('COMMIT');
+  } catch (err) {
+    run('ROLLBACK');
+    throw err;
+  }
+}
+
+// ---------- Schedule ----------
+
+/** The providers, with their hours on one weekday (null hours = not working that day) */
+function providersOn(date) {
+  return rows(`SELECT p.id, p.first_name || ' ' || p.last_name || ', ' || p.credential AS name, p.specialty,
+                      h.starts, h.ends, h.lunch_starts AS lunchStarts, h.lunch_ends AS lunchEnds
+               FROM providers p LEFT JOIN provider_hours h ON h.provider_id = p.id AND h.weekday = ?
+               ORDER BY p.id`, [weekdayOf(date)]);
+}
+
+/** Every visit on one day, with the patient's name */
+function visitsOn(date) {
+  return rows(`SELECT a.id, a.provider_id AS providerId, a.patient_id AS patientId, strftime('%H:%M', a.starts_at) AS starts,
+                      a.duration_min AS minutes, a.visit_type AS type, a.reason, a.status,
+                      pa.first_name || ' ' || pa.last_name AS patient
+               FROM appointments a JOIN patients pa ON pa.id = a.patient_id
+               WHERE date(a.starts_at) = ? AND a.status <> 'cancelled'
+               ORDER BY a.starts_at`, [date]);
+}
+
+const clinicHours = (date) => one('SELECT opens, closes FROM clinic_hours WHERE weekday = ?', [weekdayOf(date)]);
+
+/**
+ * Reasons a visit can't be booked, in plain words. An empty list means it can be booked.
+ * Checks clinic hours, the provider's hours and lunch, the clock, and overlaps for the provider and the patient.
+ */
+function bookingProblems({ patientId = null, providerId, startsAt, duration = 30 }, now = NOW) {
+  const [date, time] = startsAt.split(' ');
+  const start = toMinutes(time);
+  const end = start + duration;
+  const problems = [];
+
+  const clinic = clinicHours(date);
+  if (!clinic?.opens) return ['The clinic is closed on weekends. Business hours are Monday–Friday.'];
+  if (start < toMinutes(clinic.opens) || end > toMinutes(clinic.closes)) problems.push(`Outside business hours (${clinic.opens}–${clinic.closes}).`);
+
+  const hours = one('SELECT starts, ends, lunch_starts AS lunchStarts, lunch_ends AS lunchEnds FROM provider_hours WHERE provider_id = ? AND weekday = ?',
+    [providerId, weekdayOf(date)]);
+  if (!hours) return [...problems, 'This provider does not work on that day.'];
+  if (start < toMinutes(hours.starts) || end > toMinutes(hours.ends)) problems.push(`Outside this provider's hours (${hours.starts}–${hours.ends}).`);
+  if (hours.lunchStarts && start < toMinutes(hours.lunchEnds) && end > toMinutes(hours.lunchStarts)) {
+    problems.push(`Overlaps the provider's lunch break (${hours.lunchStarts}–${hours.lunchEnds}).`);
+  }
+  if (startsAt < now) problems.push('That time has already passed.');
+
+  // Two visits overlap when one starts before the other ends AND ends after the other starts
+  const endsAt = `${date} ${toTime(end)}`;
+  const clash = (column, id) => one(`
+    SELECT strftime('%H:%M', starts_at) AS starts FROM appointments
+    WHERE ${column} = ? AND status <> 'cancelled' AND date(starts_at) = ?
+      AND starts_at < ?
+      AND strftime('%Y-%m-%d %H:%M', starts_at, '+' || duration_min || ' minutes') > ?
+    LIMIT 1`, [id, date, endsAt, startsAt]);
+  const theirs = clash('provider_id', providerId);
+  if (theirs) problems.push(`The provider already has a visit at ${theirs.starts}.`);
+  if (patientId) {
+    const mine = clash('patient_id', patientId);
+    if (mine) problems.push(`The patient already has a visit at ${mine.starts}.`);
+  }
+  return problems;
+}
+
+/** Open start times for a visit of `duration` minutes, every 15 minutes */
+function openSlots(providerId, date, duration = 30, now = NOW) {
+  const hours = one('SELECT starts, ends, lunch_starts AS ls, lunch_ends AS le FROM provider_hours WHERE provider_id = ? AND weekday = ?', [providerId, weekdayOf(date)]);
+  if (!hours) return [];
+  const busy = visitsOn(date).filter((a) => a.providerId === providerId).map((a) => [toMinutes(a.starts), toMinutes(a.starts) + a.minutes]);
+  if (hours.ls) busy.push([toMinutes(hours.ls), toMinutes(hours.le)]);
+  const slots = [];
+  for (let t = toMinutes(hours.starts); t + duration <= toMinutes(hours.ends); t += 15) {
+    const free = busy.every(([s, e]) => t + duration <= s || t >= e);
+    if (free && `${date} ${toTime(t)}` >= now) slots.push(toTime(t));
+  }
+  return slots;
+}
+
+/** Turns a database error into a message a person can act on */
+function friendly(err) {
+  const msg = String(err.message || err);
+  if (msg.includes('uq_provider_start') || msg.includes('UNIQUE constraint failed: appointments')) return 'That provider already has an appointment at that time.';
+  if (msg.includes('CHECK constraint')) return 'One of the values is not allowed.';
+  if (msg.includes('FOREIGN KEY')) return 'That patient or provider does not exist.';
+  return msg;
+}
+
+/** Books a visit: { ok: true, id } or { ok: false, problems } */
+function book(visit) {
+  const problems = bookingProblems(visit);
+  if (!visit.reason?.trim()) problems.push('Enter a reason for the visit.');
+  if (problems.length) return { ok: false, problems };
+  try {
+    run('INSERT INTO appointments (patient_id, provider_id, starts_at, duration_min, visit_type, reason) VALUES (?, ?, ?, ?, ?, ?)',
+      [visit.patientId, visit.providerId, visit.startsAt, visit.duration, visit.type, visit.reason.trim()]);
+    return { ok: true, id: lastId() };
+  } catch (err) {
+    return { ok: false, problems: [friendly(err)] };
+  }
+}
+
+const STATUSES = ['scheduled', 'checked_in', 'completed', 'no_show', 'cancelled'];
+function setStatus(id, status) {
+  if (!STATUSES.includes(status)) throw new Error(`Unknown status "${status}"`);
+  run('UPDATE appointments SET status = ? WHERE id = ?', [status, id]);
+}
+const visit = (id) => one(`SELECT a.id, a.provider_id AS providerId, a.starts_at AS startsAt, a.duration_min AS minutes, a.visit_type AS type,
+                                  a.reason, a.status, pa.first_name || ' ' || pa.last_name AS patient
+                           FROM appointments a JOIN patients pa ON pa.id = a.patient_id WHERE a.id = ?`, [id]);
+
+// ---------- Patients ----------
+
+/** Adds a plan, or replaces the patient's plan of the same coverage (upsert) */
+function saveInsurance(patientId, plan) {
+  run(`INSERT INTO insurance (patient_id, coverage, payer, plan_name, member_id, copay) VALUES (?, ?, ?, ?, ?, ?)
+       ON CONFLICT (patient_id, coverage) DO UPDATE SET
+         payer = excluded.payer, plan_name = excluded.plan_name, member_id = excluded.member_id, copay = excluded.copay`,
+      [patientId, plan.coverage, plan.payer, plan.plan ?? null, plan.member, plan.copay ?? null]);
+}
+
+/** Search by name, MRN or birth date. Every value is a ? parameter, never pasted into the SQL. */
+function searchPatients(text) {
+  const q = text.trim();
+  if (!q) return rows('SELECT id, mrn, first_name || \' \' || last_name AS name, birth_date AS birth FROM patients ORDER BY last_name, first_name LIMIT 50');
+  const like = `%${q}%`;
+  return rows(`SELECT id, mrn, first_name || ' ' || last_name AS name, birth_date AS birth FROM patients
+               WHERE first_name || ' ' || last_name LIKE ? OR last_name LIKE ? OR mrn LIKE ? OR birth_date = ?
+               ORDER BY last_name, first_name LIMIT 50`, [like, like, like, q]);
+}
+
+function patientProfile(id) {
+  const p = one('SELECT * FROM patients WHERE id = ?', [id]);
+  if (!p) return null;
+  return {
+    ...p,
+    insurance: rows("SELECT coverage, payer, plan_name AS plan, member_id AS member, copay FROM insurance WHERE patient_id = ? ORDER BY coverage = 'secondary'", [id]),
+    visits: rows(`SELECT a.starts_at AS startsAt, a.visit_type AS type, a.status, pr.last_name AS provider
+                  FROM appointments a JOIN providers pr ON pr.id = a.provider_id WHERE a.patient_id = ? ORDER BY a.starts_at DESC`, [id]),
+  };
+}
+```
+
+```js ui
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+const LONG_DATE = new Intl.DateTimeFormat('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+const longDate = (date) => LONG_DATE.format(parseDate(date));
+const state = { date: TODAY, picked: null };
+
+// What one quarter-hour cell is for one provider: closed, lunch or open
+function cellKind(p, t) {
+  if (!p.starts || t < toMinutes(p.starts) || t >= toMinutes(p.ends)) return 'closed';
+  if (p.lunchStarts && t >= toMinutes(p.lunchStarts) && t < toMinutes(p.lunchEnds)) return 'lunch';
+  return 'open';
+}
+
+/** One day: a row per quarter hour, a column per provider. A visit fills as many rows as it lasts. */
+function drawDay() {
+  const providers = providersOn(state.date);
+  const visits = visitsOn(state.date);
+  const hours = clinicHours(state.date);
+  $('title').textContent = longDate(state.date);
+  if (!hours?.opens) { $('grid').innerHTML = '<p class="muted" style="padding:12px">The clinic is closed on weekends.</p>'; return; }
+  const covered = new Set();          // cells already filled by a longer visit above
+  let body = '';
+  for (let t = toMinutes(hours.opens); t < toMinutes(hours.closes); t += 15) {
+    body += `<tr><td class="time">${t % 60 === 0 ? toTime(t) : ''}</td>`;
+    for (const p of providers) {
+      const key = `${p.id}|${toTime(t)}`;
+      if (covered.has(key)) continue;
+      const a = visits.find((x) => x.providerId === p.id && x.starts === toTime(t));
+      if (a) {
+        const span = a.minutes / 15;
+        for (let k = 1; k < span; k++) covered.add(`${p.id}|${toTime(t + 15 * k)}`);
+        body += `<td class="visit ${a.status}" rowspan="${span}" data-visit="${a.id}">${esc(a.patient)}<br><small>${esc(a.type)}</small></td>`;
+      } else {
+        const kind = cellKind(p, t);
+        body += kind === 'open' ? `<td class="open" data-slot="${key}"></td>` : `<td class="${kind}"></td>`;
+      }
+    }
+    body += '</tr>';
+  }
+  $('grid').innerHTML = `<table class="day"><thead><tr><th></th>${providers.map((p) => `<th>${esc(p.name)}<small>${esc(p.specialty)}${p.starts ? ` · ${p.starts}–${p.ends}` : ' · off today'}</small></th>`).join('')}</tr></thead><tbody>${body}</tbody></table>`;
+  if (state.picked) $('grid').querySelector(`[data-slot="${state.picked}"]`)?.classList.add('picked');
+}
+
+const TYPES = ['Follow-up', 'New patient', 'Annual physical', 'Sick visit', 'Procedure', 'Telehealth'];
+const STATUS_LABEL = { scheduled: 'Scheduled', checked_in: 'Check in', completed: 'Complete', no_show: 'No-show', cancelled: 'Cancel' };
+
+function showPanel(html) {
+  $('grid').parentElement.classList.toggle('with-panel', Boolean(html));
+  $('panel').hidden = !html;
+  $('panel').innerHTML = html || '';
+}
+
+/** An open cell: a booking form whose problems update as you change it */
+function drawBooking() {
+  const [providerId, time] = state.picked.split('|').map((x, i) => (i === 0 ? Number(x) : x));
+  const patients = rows('SELECT id, first_name || \' \' || last_name AS name FROM patients ORDER BY last_name');
+  if (!true) { showPanel(`<h3>${time}</h3><p class="muted">Your sign-in can view the schedule but not book visits.</p>`); return; }
+  showPanel(`<h3>Book at ${time}</h3>
+    <label>Patient<select id="bPatient">${patients.map((p) => `<option value="${p.id}">${esc(p.name)}</option>`).join('')}</select></label>
+    <label>Length<select id="bLength">${[15, 30, 45, 60].map((m) => `<option ${m === 30 ? 'selected' : ''}>${m}</option>`).join('')}</select></label>
+    <label>Visit type<select id="bType">${TYPES.map((x) => `<option>${x}</option>`).join('')}</select></label>
+    <label>Reason<input id="bReason" placeholder="e.g. Cough for a week"></label>
+    <div id="bCheck"></div>
+    <button class="primary" id="bBook" type="button">Book visit</button>
+    <p class="muted small">Other open times: <span id="bSlots"></span></p>`);
+  const check = () => {
+    const patientId = Number($('bPatient').value), duration = Number($('bLength').value), startsAt = `${state.date} ${time}`;
+    const problems = bookingProblems({ patientId, providerId, startsAt, duration });
+    $('bCheck').innerHTML = problems.length ? `<ul class="problems">${problems.map((p) => `<li>${esc(p)}</li>`).join('')}</ul>` : '<p class="ok">Open: this visit can be booked.</p>';
+    $('bSlots').textContent = openSlots(providerId, state.date, duration).slice(0, 8).join(', ') || 'none';
+  };
+  ['bPatient', 'bLength'].forEach((id) => $(id).addEventListener('change', check));
+  check();
+  $('bBook').addEventListener('click', () => {
+    const visitArgs = { patientId: Number($('bPatient').value), providerId, startsAt: `${state.date} ${time}`,
+                        duration: Number($('bLength').value), type: $('bType').value, reason: $('bReason').value };
+    const result = book(visitArgs);
+    if (!result.ok) { $('bCheck').innerHTML = `<ul class="problems">${result.problems.map((p) => `<li>${esc(p)}</li>`).join('')}</ul>`; return; }
+    state.picked = null;
+    showPanel('');
+    drawDay();
+  });
+}
+
+/** A booked visit: its details and the status buttons */
+function drawVisit(id) {
+  const a = visit(id);
+  const buttons = true ? Object.entries(STATUS_LABEL).filter(([s]) => s !== a.status && s !== 'scheduled')
+    .map(([s, label]) => `<button class="ghost" data-status="${s}" type="button">${label}</button>`).join('') +
+    (a.status !== 'scheduled' ? '<button class="ghost" data-status="scheduled" type="button">Reinstate</button>' : '') : '';
+  showPanel(`<h3>${esc(a.patient)}</h3><p>${a.startsAt.slice(11)} · ${a.minutes} min · ${esc(a.type)}<br>${esc(a.reason)}</p>
+    <p class="muted">Status: ${a.status.replace('_', ' ')}</p><div class="statuses">${buttons}</div>`);
+  $('panel').querySelectorAll('[data-status]').forEach((b) => b.addEventListener('click', () => {
+    setStatus(id, b.dataset.status);
+    drawDay();
+    drawVisit(id);
+  }));
+}
+
+function drawResults(text = $('search').value) {
+  const list = searchPatients(text);
+  $('results').innerHTML = list.length ? list.map((p) => `<li data-patient="${p.id}">${esc(p.name)}<small>${esc(p.mrn)} · born ${esc(p.birth)}</small></li>`).join('')
+    : '<li class="muted">No patients match.</li>';
+}
+
+function drawProfile(id) {
+  const p = patientProfile(id);
+  $('profile').innerHTML = `<h3>${esc(p.first_name)} ${esc(p.last_name)}</h3>
+    <dl><dt>MRN</dt><dd>${esc(p.mrn)}</dd><dt>Born</dt><dd>${esc(p.birth_date)}</dd><dt>Sex</dt><dd>${esc(p.sex)}</dd>
+    <dt>Phone</dt><dd>${esc(p.phone)}</dd><dt>Allergies</dt><dd>${esc(p.allergies || 'None recorded')}</dd></dl>
+    <h4>Insurance</h4>${p.insurance.length ? p.insurance.map((i) => `<p><strong>${i.coverage === 'primary' ? 'Primary' : 'Secondary'}:</strong> ${esc(i.payer)} ${esc(i.plan || '')} · member ${esc(i.member)}${i.copay != null ? ` · $${i.copay} copay` : ''}</p>`).join('') : '<p class="muted">Self-pay (no plan on file)</p>'}
+    <h4>Visits</h4><ul>${p.visits.map((a) => `<li>${a.startsAt} · ${esc(a.type)} with ${esc(a.provider)} · ${a.status.replace('_', ' ')}</li>`).join('') || '<li class="muted">None</li>'}</ul>`;
+}
+
+function showTab(tab) {
+  document.querySelectorAll('[data-tab]').forEach((b) => b.classList.toggle('on', b.dataset.tab === tab));
+  document.querySelectorAll('.view').forEach((s) => { s.hidden = s.id !== tab; });
+  if (tab === 'schedule') drawDay();
+  if (tab === 'patients') drawResults();
+}
+$('tabs').addEventListener('click', (e) => { const b = e.target.closest('[data-tab]'); if (b) showTab(b.dataset.tab); });
+$('search').addEventListener('input', (e) => drawResults(e.target.value));
+$('results').addEventListener('click', (e) => { const li = e.target.closest('[data-patient]'); if (li) drawProfile(Number(li.dataset.patient)); });
+
+$('grid').addEventListener('click', (e) => {
+  const slot = e.target.closest('[data-slot]');
+  const booked = e.target.closest('[data-visit]');
+  if (slot) {
+    state.picked = state.picked === slot.dataset.slot ? null : slot.dataset.slot;
+    drawDay();
+    if (state.picked) drawBooking(); else showPanel('');
+  } else if (booked) {
+    state.picked = null;
+    drawDay();
+    drawVisit(Number(booked.dataset.visit));
+  }
+});
+
+// Load SQLite, build the database, then draw the page
+initSqlJs({ locateFile: (file) => SQLJS + file })
+  .then((SQL) => {
+    db = new SQL.Database();
+    build();
+    showTab('schedule');
+  })
+  .catch((err) => {
+    document.body.insertAdjacentHTML('afterbegin', `<p class="error" style="padding:12px">Couldn't start the database: ${esc(err.message)}</p>`);
+    console.error(err);
+  });
+```
+
+## Step: Reports with SQL
+time: 25
+
+Clinic managers want numbers: how many visits each day, how many no-shows, which provider is busiest. The **Reports** tab gets them with two queries and no JavaScript loops.
+
+**Counting by status.** In SQLite a comparison is a number: `status = 'no_show'` is 1 when true and 0 when false. So `SUM(status = 'no_show')` counts the no-shows in each group:
+
+```sql
+SELECT date(starts_at) AS date, COUNT(*) AS total,
+       SUM(status = 'checked_in') AS checkedIn, SUM(status = 'completed') AS completed, SUM(status = 'no_show') AS noShows
+FROM appointments WHERE date(starts_at) BETWEEN ? AND ? AND status <> 'cancelled'
+GROUP BY date(starts_at)
+```
+
+`GROUP BY` makes one result row per day; `COUNT` and `SUM` work within each group. (In databases like PostgreSQL, write `COUNT(*) FILTER (WHERE status = 'no_show')` or `SUM(CASE WHEN … THEN 1 ELSE 0 END)` instead.)
+
+**A rate without dividing by zero.** The no-show rate is no-shows divided by visits that are over (completed or no-show). A provider with nothing finished yet would divide by zero. `NULLIF(x, 0)` returns `NULL` when `x` is 0, and anything divided by `NULL` is `NULL`, so the rate is simply missing, and the page shows "–". `100.0 *` makes the division decimal: in SQL, `1 / 3` on integers is 0.
+
+**Every provider, even with no visits.** The workload query starts `FROM providers LEFT JOIN appointments`. A plain `JOIN` would drop a provider with no visits that week; the `LEFT JOIN` keeps them with `NULL`s, `COUNT(a.id)` counts 0 (it skips `NULL`s), and `COALESCE(…, 0)` turns a `NULL` sum into 0. Notice the date filter is in the `ON` clause, not in `WHERE`: in `WHERE` it would throw away the `NULL` rows and undo the `LEFT JOIN`.
+
+### Try it
+
+Open Reports. Mark a visit No-show on the schedule and look again: the counts and Okafor's rate change.
+
+check: js | count by status | /SUM\(status = 'no_show'\) AS noShows/
+check: js | no division by zero | /NULLIF\(/
+check: js | keep providers with no visits | /FROM providers pr\s+LEFT JOIN appointments/
+check: html | a reports tab | /data-tab="reports"/
+
+quiz: Why is the date filter in the LEFT JOIN's ON clause and not in WHERE?
+- [ ] No reason
+- [x] In WHERE it would remove the rows of providers with no visits, turning the LEFT JOIN back into a plain JOIN
+- [ ] ON is faster
+why: Filters on the optional side of a LEFT JOIN belong in ON.
+quiz: What does NULLIF(total, 0) do in the rate?
+- [ ] Sets the total to 0
+- [x] Gives NULL when the total is 0, so the division gives NULL instead of failing
+- [ ] Removes NULLs
+why: A missing rate is more honest than a fake 0%.
+
+```html page
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/sql-wasm.js"></script>
+<div id="app">
+<header class="top">
+  <strong>Gotham Hospital</strong> <span class="muted">Patient Portal</span>
+</header>
+  <nav class="tabs" id="tabs">
+    <button data-tab="schedule" class="on">Schedule</button>
+    <button data-tab="patients">Patients</button>
+    <button data-tab="reports">Reports</button>
+  </nav>
+<main>
+  <section id="schedule" class="view">
+    <div class="bar">
+      <h2 id="title"></h2>
+    </div>
+    <div class="layout">
+      <div id="grid" class="grid"></div>
+    <aside id="panel" class="panel" hidden></aside>
+    </div>
+  </section>
+  <section id="patients" class="view" hidden>
+    <input id="search" type="search" placeholder="Search by name, MRN or birth date (YYYY-MM-DD)" autocomplete="off">
+    <div class="split"><ul id="results" class="results"></ul><article id="profile" class="profile"></article></div>
+  </section>
+  <section id="reports" class="view" hidden>
+    <h2>This week</h2>
+    <table id="daily" class="report"></table>
+    <h2>Provider workload</h2>
+    <table id="workload" class="report"></table>
+  </section>
+</main>
+</div>
+<p class="note">Practice app: every person, phone number and plan here is made up.</p>
+```
+
+```js db
+// SQLite compiled to WebAssembly (sql.js): a real database inside the page
+const SQLJS = 'https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/';
+let db;
+
+const SCHEMA = `
+-- Business hours by weekday (0 = Sunday … 6 = Saturday). NULL means closed.
+CREATE TABLE clinic_hours (
+  weekday INTEGER PRIMARY KEY CHECK (weekday BETWEEN 0 AND 6),
+  opens   TEXT,
+  closes  TEXT,
+  CHECK ((opens IS NULL AND closes IS NULL) OR opens < closes)
+);
+CREATE TABLE providers (
+  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+  first_name TEXT NOT NULL,
+  last_name  TEXT NOT NULL,
+  credential TEXT NOT NULL CHECK (credential IN ('MD', 'DO', 'NP', 'PA')),
+  specialty  TEXT NOT NULL,
+  room       TEXT
+);
+-- Each provider's hours on the days they work (Monday–Friday only)
+CREATE TABLE provider_hours (
+  provider_id  INTEGER NOT NULL REFERENCES providers(id) ON DELETE CASCADE,
+  weekday      INTEGER NOT NULL CHECK (weekday BETWEEN 1 AND 5),
+  starts       TEXT NOT NULL,
+  ends         TEXT NOT NULL,
+  lunch_starts TEXT,
+  lunch_ends   TEXT,
+  PRIMARY KEY (provider_id, weekday),
+  CHECK (starts < ends)
+);
+CREATE TABLE patients (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  mrn         TEXT NOT NULL UNIQUE,            -- medical record number, e.g. GH-100231
+  first_name  TEXT NOT NULL,
+  last_name   TEXT NOT NULL,
+  birth_date  TEXT NOT NULL,                   -- YYYY-MM-DD
+  sex         TEXT NOT NULL CHECK (sex IN ('F', 'M', 'X')),
+  phone       TEXT,
+  allergies   TEXT
+);
+CREATE TABLE insurance (
+  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+  patient_id INTEGER NOT NULL REFERENCES patients(id) ON DELETE CASCADE,
+  coverage   TEXT NOT NULL CHECK (coverage IN ('primary', 'secondary')),
+  payer      TEXT NOT NULL,
+  plan_name  TEXT,
+  member_id  TEXT NOT NULL,
+  copay      REAL CHECK (copay >= 0),
+  UNIQUE (patient_id, coverage)                -- one primary and one secondary plan at most
+);
+CREATE TABLE appointments (
+  id           INTEGER PRIMARY KEY AUTOINCREMENT,
+  patient_id   INTEGER NOT NULL REFERENCES patients(id) ON DELETE CASCADE,
+  provider_id  INTEGER NOT NULL REFERENCES providers(id),
+  starts_at    TEXT NOT NULL,                  -- YYYY-MM-DD HH:MM
+  duration_min INTEGER NOT NULL DEFAULT 30 CHECK (duration_min IN (15, 30, 45, 60)),
+  visit_type   TEXT NOT NULL CHECK (visit_type IN ('New patient', 'Follow-up', 'Annual physical', 'Sick visit', 'Procedure', 'Telehealth')),
+  reason       TEXT NOT NULL,
+  status       TEXT NOT NULL DEFAULT 'scheduled'
+               CHECK (status IN ('scheduled', 'checked_in', 'completed', 'no_show', 'cancelled'))
+);
+-- A provider can't have two active visits starting at the same time.
+-- Partial index: cancelled visits don't count, so a cancelled slot can be booked again.
+CREATE UNIQUE INDEX uq_provider_start ON appointments(provider_id, starts_at) WHERE status <> 'cancelled';
+`;
+
+// Run a query with ? parameters and get rows back as plain objects
+function rows(sql, params = []) {
+  const stmt = db.prepare(sql);
+  stmt.bind(params);
+  const out = [];
+  while (stmt.step()) out.push(stmt.getAsObject());
+  stmt.free();
+  return out;
+}
+const one = (sql, params = []) => rows(sql, params)[0] ?? null;
+const run = (sql, params = []) => db.run(sql, params);
+const lastId = () => one('SELECT last_insert_rowid() AS id').id;
+
+// Create the tables and load the sample data in one transaction
+function build() {
+  run('PRAGMA foreign_keys = ON');
+  db.exec(SCHEMA);
+  run('BEGIN');
+  try {
+    for (let day = 0; day <= 6; day++) {
+      const open = day >= 1 && day <= 5;
+      run('INSERT INTO clinic_hours (weekday, opens, closes) VALUES (?, ?, ?)', [day, open ? CLINIC.opens : null, open ? CLINIC.closes : null]);
+    }
+    PROVIDERS.forEach((p) => {
+      run('INSERT INTO providers (first_name, last_name, credential, specialty, room) VALUES (?, ?, ?, ?, ?)', [p.first, p.last, p.credential, p.specialty, p.room]);
+      const id = lastId();
+      for (let day = 1; day <= 5; day++) {
+        if ((p.off ?? []).includes(day)) continue;
+        run('INSERT INTO provider_hours VALUES (?, ?, ?, ?, ?, ?)', [id, day, p.hours[0], p.hours[1], p.lunch[0], p.lunch[1]]);
+      }
+    });
+    for (const p of PATIENTS) {
+      run('INSERT INTO patients (mrn, first_name, last_name, birth_date, sex, phone, allergies) VALUES (?, ?, ?, ?, ?, ?, ?)',
+          [p.mrn, p.first, p.last, p.birth, p.sex, p.phone, p.allergies || null]);
+      const id = lastId();
+      for (const plan of p.insurance) saveInsurance(id, plan);
+    }
+    for (const [patient, provider, startsAt, minutes, type, reason, status] of VISITS) {
+      run('INSERT INTO appointments (patient_id, provider_id, starts_at, duration_min, visit_type, reason, status) VALUES (?, ?, ?, ?, ?, ?, ?)',
+          [patient + 1, provider + 1, startsAt, minutes, type, reason, status]);
+    }
+    run('COMMIT');
+  } catch (err) {
+    run('ROLLBACK');
+    throw err;
+  }
+}
+
+// ---------- Schedule ----------
+
+/** The providers, with their hours on one weekday (null hours = not working that day) */
+function providersOn(date) {
+  return rows(`SELECT p.id, p.first_name || ' ' || p.last_name || ', ' || p.credential AS name, p.specialty,
+                      h.starts, h.ends, h.lunch_starts AS lunchStarts, h.lunch_ends AS lunchEnds
+               FROM providers p LEFT JOIN provider_hours h ON h.provider_id = p.id AND h.weekday = ?
+               ORDER BY p.id`, [weekdayOf(date)]);
+}
+
+/** Every visit on one day, with the patient's name */
+function visitsOn(date) {
+  return rows(`SELECT a.id, a.provider_id AS providerId, a.patient_id AS patientId, strftime('%H:%M', a.starts_at) AS starts,
+                      a.duration_min AS minutes, a.visit_type AS type, a.reason, a.status,
+                      pa.first_name || ' ' || pa.last_name AS patient
+               FROM appointments a JOIN patients pa ON pa.id = a.patient_id
+               WHERE date(a.starts_at) = ? AND a.status <> 'cancelled'
+               ORDER BY a.starts_at`, [date]);
+}
+
+const clinicHours = (date) => one('SELECT opens, closes FROM clinic_hours WHERE weekday = ?', [weekdayOf(date)]);
+
+/**
+ * Reasons a visit can't be booked, in plain words. An empty list means it can be booked.
+ * Checks clinic hours, the provider's hours and lunch, the clock, and overlaps for the provider and the patient.
+ */
+function bookingProblems({ patientId = null, providerId, startsAt, duration = 30 }, now = NOW) {
+  const [date, time] = startsAt.split(' ');
+  const start = toMinutes(time);
+  const end = start + duration;
+  const problems = [];
+
+  const clinic = clinicHours(date);
+  if (!clinic?.opens) return ['The clinic is closed on weekends. Business hours are Monday–Friday.'];
+  if (start < toMinutes(clinic.opens) || end > toMinutes(clinic.closes)) problems.push(`Outside business hours (${clinic.opens}–${clinic.closes}).`);
+
+  const hours = one('SELECT starts, ends, lunch_starts AS lunchStarts, lunch_ends AS lunchEnds FROM provider_hours WHERE provider_id = ? AND weekday = ?',
+    [providerId, weekdayOf(date)]);
+  if (!hours) return [...problems, 'This provider does not work on that day.'];
+  if (start < toMinutes(hours.starts) || end > toMinutes(hours.ends)) problems.push(`Outside this provider's hours (${hours.starts}–${hours.ends}).`);
+  if (hours.lunchStarts && start < toMinutes(hours.lunchEnds) && end > toMinutes(hours.lunchStarts)) {
+    problems.push(`Overlaps the provider's lunch break (${hours.lunchStarts}–${hours.lunchEnds}).`);
+  }
+  if (startsAt < now) problems.push('That time has already passed.');
+
+  // Two visits overlap when one starts before the other ends AND ends after the other starts
+  const endsAt = `${date} ${toTime(end)}`;
+  const clash = (column, id) => one(`
+    SELECT strftime('%H:%M', starts_at) AS starts FROM appointments
+    WHERE ${column} = ? AND status <> 'cancelled' AND date(starts_at) = ?
+      AND starts_at < ?
+      AND strftime('%Y-%m-%d %H:%M', starts_at, '+' || duration_min || ' minutes') > ?
+    LIMIT 1`, [id, date, endsAt, startsAt]);
+  const theirs = clash('provider_id', providerId);
+  if (theirs) problems.push(`The provider already has a visit at ${theirs.starts}.`);
+  if (patientId) {
+    const mine = clash('patient_id', patientId);
+    if (mine) problems.push(`The patient already has a visit at ${mine.starts}.`);
+  }
+  return problems;
+}
+
+/** Open start times for a visit of `duration` minutes, every 15 minutes */
+function openSlots(providerId, date, duration = 30, now = NOW) {
+  const hours = one('SELECT starts, ends, lunch_starts AS ls, lunch_ends AS le FROM provider_hours WHERE provider_id = ? AND weekday = ?', [providerId, weekdayOf(date)]);
+  if (!hours) return [];
+  const busy = visitsOn(date).filter((a) => a.providerId === providerId).map((a) => [toMinutes(a.starts), toMinutes(a.starts) + a.minutes]);
+  if (hours.ls) busy.push([toMinutes(hours.ls), toMinutes(hours.le)]);
+  const slots = [];
+  for (let t = toMinutes(hours.starts); t + duration <= toMinutes(hours.ends); t += 15) {
+    const free = busy.every(([s, e]) => t + duration <= s || t >= e);
+    if (free && `${date} ${toTime(t)}` >= now) slots.push(toTime(t));
+  }
+  return slots;
+}
+
+/** Turns a database error into a message a person can act on */
+function friendly(err) {
+  const msg = String(err.message || err);
+  if (msg.includes('uq_provider_start') || msg.includes('UNIQUE constraint failed: appointments')) return 'That provider already has an appointment at that time.';
+  if (msg.includes('CHECK constraint')) return 'One of the values is not allowed.';
+  if (msg.includes('FOREIGN KEY')) return 'That patient or provider does not exist.';
+  return msg;
+}
+
+/** Books a visit: { ok: true, id } or { ok: false, problems } */
+function book(visit) {
+  const problems = bookingProblems(visit);
+  if (!visit.reason?.trim()) problems.push('Enter a reason for the visit.');
+  if (problems.length) return { ok: false, problems };
+  try {
+    run('INSERT INTO appointments (patient_id, provider_id, starts_at, duration_min, visit_type, reason) VALUES (?, ?, ?, ?, ?, ?)',
+      [visit.patientId, visit.providerId, visit.startsAt, visit.duration, visit.type, visit.reason.trim()]);
+    return { ok: true, id: lastId() };
+  } catch (err) {
+    return { ok: false, problems: [friendly(err)] };
+  }
+}
+
+const STATUSES = ['scheduled', 'checked_in', 'completed', 'no_show', 'cancelled'];
+function setStatus(id, status) {
+  if (!STATUSES.includes(status)) throw new Error(`Unknown status "${status}"`);
+  run('UPDATE appointments SET status = ? WHERE id = ?', [status, id]);
+}
+const visit = (id) => one(`SELECT a.id, a.provider_id AS providerId, a.starts_at AS startsAt, a.duration_min AS minutes, a.visit_type AS type,
+                                  a.reason, a.status, pa.first_name || ' ' || pa.last_name AS patient
+                           FROM appointments a JOIN patients pa ON pa.id = a.patient_id WHERE a.id = ?`, [id]);
+
+// ---------- Patients ----------
+
+/** Adds a plan, or replaces the patient's plan of the same coverage (upsert) */
+function saveInsurance(patientId, plan) {
+  run(`INSERT INTO insurance (patient_id, coverage, payer, plan_name, member_id, copay) VALUES (?, ?, ?, ?, ?, ?)
+       ON CONFLICT (patient_id, coverage) DO UPDATE SET
+         payer = excluded.payer, plan_name = excluded.plan_name, member_id = excluded.member_id, copay = excluded.copay`,
+      [patientId, plan.coverage, plan.payer, plan.plan ?? null, plan.member, plan.copay ?? null]);
+}
+
+/** Search by name, MRN or birth date. Every value is a ? parameter, never pasted into the SQL. */
+function searchPatients(text) {
+  const q = text.trim();
+  if (!q) return rows('SELECT id, mrn, first_name || \' \' || last_name AS name, birth_date AS birth FROM patients ORDER BY last_name, first_name LIMIT 50');
+  const like = `%${q}%`;
+  return rows(`SELECT id, mrn, first_name || ' ' || last_name AS name, birth_date AS birth FROM patients
+               WHERE first_name || ' ' || last_name LIKE ? OR last_name LIKE ? OR mrn LIKE ? OR birth_date = ?
+               ORDER BY last_name, first_name LIMIT 50`, [like, like, like, q]);
+}
+
+function patientProfile(id) {
+  const p = one('SELECT * FROM patients WHERE id = ?', [id]);
+  if (!p) return null;
+  return {
+    ...p,
+    insurance: rows("SELECT coverage, payer, plan_name AS plan, member_id AS member, copay FROM insurance WHERE patient_id = ? ORDER BY coverage = 'secondary'", [id]),
+    visits: rows(`SELECT a.starts_at AS startsAt, a.visit_type AS type, a.status, pr.last_name AS provider
+                  FROM appointments a JOIN providers pr ON pr.id = a.provider_id WHERE a.patient_id = ? ORDER BY a.starts_at DESC`, [id]),
+  };
+}
+
+// ---------- Reports ----------
+
+/** Visits per day: in SQLite a true comparison is 1, so SUM(status = 'x') counts the rows with that status */
+function dailyReport(from, to) {
+  return rows(`SELECT date(starts_at) AS date, COUNT(*) AS total,
+                      SUM(status = 'checked_in') AS checkedIn, SUM(status = 'completed') AS completed, SUM(status = 'no_show') AS noShows
+               FROM appointments
+               WHERE date(starts_at) BETWEEN ? AND ? AND status <> 'cancelled'
+               GROUP BY date(starts_at) ORDER BY date`, [from, to]);
+}
+
+/** Each provider's workload. NULLIF turns a 0 divisor into NULL, so a provider with no finished visits shows no rate instead of an error. */
+function providerWorkload(from, to) {
+  return rows(`SELECT pr.first_name || ' ' || pr.last_name || ', ' || pr.credential AS provider,
+                      COUNT(a.id) AS total,
+                      COALESCE(SUM(a.status = 'no_show'), 0) AS noShows,
+                      ROUND(100.0 * SUM(a.status = 'no_show') / NULLIF(SUM(a.status IN ('completed', 'no_show')), 0), 1) AS noShowPct
+               FROM providers pr
+               LEFT JOIN appointments a ON a.provider_id = pr.id AND a.status <> 'cancelled' AND date(a.starts_at) BETWEEN ? AND ?
+               GROUP BY pr.id ORDER BY total DESC, provider`, [from, to]);
+}
+```
+
+```js ui
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+const LONG_DATE = new Intl.DateTimeFormat('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+const longDate = (date) => LONG_DATE.format(parseDate(date));
+const state = { date: TODAY, picked: null };
+
+// What one quarter-hour cell is for one provider: closed, lunch or open
+function cellKind(p, t) {
+  if (!p.starts || t < toMinutes(p.starts) || t >= toMinutes(p.ends)) return 'closed';
+  if (p.lunchStarts && t >= toMinutes(p.lunchStarts) && t < toMinutes(p.lunchEnds)) return 'lunch';
+  return 'open';
+}
+
+/** One day: a row per quarter hour, a column per provider. A visit fills as many rows as it lasts. */
+function drawDay() {
+  const providers = providersOn(state.date);
+  const visits = visitsOn(state.date);
+  const hours = clinicHours(state.date);
+  $('title').textContent = longDate(state.date);
+  if (!hours?.opens) { $('grid').innerHTML = '<p class="muted" style="padding:12px">The clinic is closed on weekends.</p>'; return; }
+  const covered = new Set();          // cells already filled by a longer visit above
+  let body = '';
+  for (let t = toMinutes(hours.opens); t < toMinutes(hours.closes); t += 15) {
+    body += `<tr><td class="time">${t % 60 === 0 ? toTime(t) : ''}</td>`;
+    for (const p of providers) {
+      const key = `${p.id}|${toTime(t)}`;
+      if (covered.has(key)) continue;
+      const a = visits.find((x) => x.providerId === p.id && x.starts === toTime(t));
+      if (a) {
+        const span = a.minutes / 15;
+        for (let k = 1; k < span; k++) covered.add(`${p.id}|${toTime(t + 15 * k)}`);
+        body += `<td class="visit ${a.status}" rowspan="${span}" data-visit="${a.id}">${esc(a.patient)}<br><small>${esc(a.type)}</small></td>`;
+      } else {
+        const kind = cellKind(p, t);
+        body += kind === 'open' ? `<td class="open" data-slot="${key}"></td>` : `<td class="${kind}"></td>`;
+      }
+    }
+    body += '</tr>';
+  }
+  $('grid').innerHTML = `<table class="day"><thead><tr><th></th>${providers.map((p) => `<th>${esc(p.name)}<small>${esc(p.specialty)}${p.starts ? ` · ${p.starts}–${p.ends}` : ' · off today'}</small></th>`).join('')}</tr></thead><tbody>${body}</tbody></table>`;
+  if (state.picked) $('grid').querySelector(`[data-slot="${state.picked}"]`)?.classList.add('picked');
+}
+
+const TYPES = ['Follow-up', 'New patient', 'Annual physical', 'Sick visit', 'Procedure', 'Telehealth'];
+const STATUS_LABEL = { scheduled: 'Scheduled', checked_in: 'Check in', completed: 'Complete', no_show: 'No-show', cancelled: 'Cancel' };
+
+function showPanel(html) {
+  $('grid').parentElement.classList.toggle('with-panel', Boolean(html));
+  $('panel').hidden = !html;
+  $('panel').innerHTML = html || '';
+}
+
+/** An open cell: a booking form whose problems update as you change it */
+function drawBooking() {
+  const [providerId, time] = state.picked.split('|').map((x, i) => (i === 0 ? Number(x) : x));
+  const patients = rows('SELECT id, first_name || \' \' || last_name AS name FROM patients ORDER BY last_name');
+  if (!true) { showPanel(`<h3>${time}</h3><p class="muted">Your sign-in can view the schedule but not book visits.</p>`); return; }
+  showPanel(`<h3>Book at ${time}</h3>
+    <label>Patient<select id="bPatient">${patients.map((p) => `<option value="${p.id}">${esc(p.name)}</option>`).join('')}</select></label>
+    <label>Length<select id="bLength">${[15, 30, 45, 60].map((m) => `<option ${m === 30 ? 'selected' : ''}>${m}</option>`).join('')}</select></label>
+    <label>Visit type<select id="bType">${TYPES.map((x) => `<option>${x}</option>`).join('')}</select></label>
+    <label>Reason<input id="bReason" placeholder="e.g. Cough for a week"></label>
+    <div id="bCheck"></div>
+    <button class="primary" id="bBook" type="button">Book visit</button>
+    <p class="muted small">Other open times: <span id="bSlots"></span></p>`);
+  const check = () => {
+    const patientId = Number($('bPatient').value), duration = Number($('bLength').value), startsAt = `${state.date} ${time}`;
+    const problems = bookingProblems({ patientId, providerId, startsAt, duration });
+    $('bCheck').innerHTML = problems.length ? `<ul class="problems">${problems.map((p) => `<li>${esc(p)}</li>`).join('')}</ul>` : '<p class="ok">Open: this visit can be booked.</p>';
+    $('bSlots').textContent = openSlots(providerId, state.date, duration).slice(0, 8).join(', ') || 'none';
+  };
+  ['bPatient', 'bLength'].forEach((id) => $(id).addEventListener('change', check));
+  check();
+  $('bBook').addEventListener('click', () => {
+    const visitArgs = { patientId: Number($('bPatient').value), providerId, startsAt: `${state.date} ${time}`,
+                        duration: Number($('bLength').value), type: $('bType').value, reason: $('bReason').value };
+    const result = book(visitArgs);
+    if (!result.ok) { $('bCheck').innerHTML = `<ul class="problems">${result.problems.map((p) => `<li>${esc(p)}</li>`).join('')}</ul>`; return; }
+    state.picked = null;
+    showPanel('');
+    drawDay();
+  });
+}
+
+/** A booked visit: its details and the status buttons */
+function drawVisit(id) {
+  const a = visit(id);
+  const buttons = true ? Object.entries(STATUS_LABEL).filter(([s]) => s !== a.status && s !== 'scheduled')
+    .map(([s, label]) => `<button class="ghost" data-status="${s}" type="button">${label}</button>`).join('') +
+    (a.status !== 'scheduled' ? '<button class="ghost" data-status="scheduled" type="button">Reinstate</button>' : '') : '';
+  showPanel(`<h3>${esc(a.patient)}</h3><p>${a.startsAt.slice(11)} · ${a.minutes} min · ${esc(a.type)}<br>${esc(a.reason)}</p>
+    <p class="muted">Status: ${a.status.replace('_', ' ')}</p><div class="statuses">${buttons}</div>`);
+  $('panel').querySelectorAll('[data-status]').forEach((b) => b.addEventListener('click', () => {
+    setStatus(id, b.dataset.status);
+    drawDay();
+    drawVisit(id);
+  }));
+}
+
+function drawResults(text = $('search').value) {
+  const list = searchPatients(text);
+  $('results').innerHTML = list.length ? list.map((p) => `<li data-patient="${p.id}">${esc(p.name)}<small>${esc(p.mrn)} · born ${esc(p.birth)}</small></li>`).join('')
+    : '<li class="muted">No patients match.</li>';
+}
+
+function drawProfile(id) {
+  const p = patientProfile(id);
+  $('profile').innerHTML = `<h3>${esc(p.first_name)} ${esc(p.last_name)}</h3>
+    <dl><dt>MRN</dt><dd>${esc(p.mrn)}</dd><dt>Born</dt><dd>${esc(p.birth_date)}</dd><dt>Sex</dt><dd>${esc(p.sex)}</dd>
+    <dt>Phone</dt><dd>${esc(p.phone)}</dd><dt>Allergies</dt><dd>${esc(p.allergies || 'None recorded')}</dd></dl>
+    <h4>Insurance</h4>${p.insurance.length ? p.insurance.map((i) => `<p><strong>${i.coverage === 'primary' ? 'Primary' : 'Secondary'}:</strong> ${esc(i.payer)} ${esc(i.plan || '')} · member ${esc(i.member)}${i.copay != null ? ` · $${i.copay} copay` : ''}</p>`).join('') : '<p class="muted">Self-pay (no plan on file)</p>'}
+    <h4>Visits</h4><ul>${p.visits.map((a) => `<li>${a.startsAt} · ${esc(a.type)} with ${esc(a.provider)} · ${a.status.replace('_', ' ')}</li>`).join('') || '<li class="muted">None</li>'}</ul>`;
+}
+
+function drawReports() {
+  const from = TODAY, to = addDays(TODAY, 4);          // Monday–Friday of the demo week
+  const days = dailyReport(from, to);
+  $('daily').innerHTML = '<tr><th>Day</th><th>Visits</th><th>Checked in</th><th>Completed</th><th>No-shows</th></tr>' +
+    days.map((d) => `<tr><td>${d.date}</td><td class="n">${d.total}</td><td class="n">${d.checkedIn}</td><td class="n">${d.completed}</td><td class="n">${d.noShows}</td></tr>`).join('');
+  $('workload').innerHTML = '<tr><th>Provider</th><th>Visits</th><th>No-shows</th><th>No-show rate</th></tr>' +
+    providerWorkload(from, to).map((w) => `<tr><td>${esc(w.provider)}</td><td class="n">${w.total}</td><td class="n">${w.noShows}</td><td class="n">${w.noShowPct == null ? '–' : `${w.noShowPct}%`}</td></tr>`).join('');
+}
+
+function showTab(tab) {
+  document.querySelectorAll('[data-tab]').forEach((b) => b.classList.toggle('on', b.dataset.tab === tab));
+  document.querySelectorAll('.view').forEach((s) => { s.hidden = s.id !== tab; });
+  if (tab === 'schedule') drawDay();
+  if (tab === 'patients') drawResults();
+  if (tab === 'reports') drawReports();
+}
+$('tabs').addEventListener('click', (e) => { const b = e.target.closest('[data-tab]'); if (b) showTab(b.dataset.tab); });
+$('search').addEventListener('input', (e) => drawResults(e.target.value));
+$('results').addEventListener('click', (e) => { const li = e.target.closest('[data-patient]'); if (li) drawProfile(Number(li.dataset.patient)); });
+
+$('grid').addEventListener('click', (e) => {
+  const slot = e.target.closest('[data-slot]');
+  const booked = e.target.closest('[data-visit]');
+  if (slot) {
+    state.picked = state.picked === slot.dataset.slot ? null : slot.dataset.slot;
+    drawDay();
+    if (state.picked) drawBooking(); else showPanel('');
+  } else if (booked) {
+    state.picked = null;
+    drawDay();
+    drawVisit(Number(booked.dataset.visit));
+  }
+});
+
+// Load SQLite, build the database, then draw the page
+initSqlJs({ locateFile: (file) => SQLJS + file })
+  .then((SQL) => {
+    db = new SQL.Database();
+    build();
+    showTab('schedule');
+  })
+  .catch((err) => {
+    document.body.insertAdjacentHTML('afterbegin', `<p class="error" style="padding:12px">Couldn't start the database: ${esc(err.message)}</p>`);
+    console.error(err);
+  });
+```
+
 ## Finish
 
 ### What you learned
