@@ -1,4 +1,5 @@
-// The guides, in the order they're meant to be taken (easiest first). Each one rebuilds one of my
+// The guides, in the order they're meant to be taken (easiest first). The Start here guides and the
+// basics guides teach what the project guides after them need; each project guide rebuilds one of my
 // portfolio projects. A guide's file is only downloaded when it's opened.
 export const GUIDES = [
   { id: 'setup', title: 'Get set up: the software you need', emoji: '🧰', level: 'Start here', time: 'about 2 hours', steps: 9, available: true,
@@ -25,12 +26,12 @@ export const GUIDES = [
     load: () => import('./electron.js') },
   { id: 'sticky', title: 'Sticky Notes', emoji: '🗒️', level: 'Intermediate', time: 'about 3 hours', steps: 11, available: true,
     summary: 'Notes in four colors with a checklist mode, up to three at a time, and the Electron app that puts each one on the desktop by itself.', load: () => import('./sticky.js') },
-  { id: 'python', title: 'Python basics', emoji: '🐍', level: 'Beginner+', time: 'about 2.5 hours', steps: 8, available: true,
+  { id: 'python', title: 'Python basics', emoji: '🐍', level: 'Beginner+', time: 'about 2 hours', steps: 8, available: true,
     summary: 'Variables, lists, dictionaries, functions, loops, try/except, JSON files and unittest. You build a command-line budget tracker and publish it.',
     load: () => import('./python.js') },
   { id: 'bonfire', title: 'Bonfire Notes (blog)', emoji: '🔥', level: 'Intermediate', time: 'about 3 hours', steps: 10, available: true,
     summary: 'Markdown posts with front matter, a safe Markdown converter, tag pages, RSS and redirects, floating embers, and the Python static site generator behind the real blog.', load: () => import('./bonfire.js') },
-  { id: 'sql', title: 'SQL basics', emoji: '🗄️', level: 'Beginner+', time: 'about 2.5 hours', steps: 8, available: true,
+  { id: 'sql', title: 'SQL basics', emoji: '🗄️', level: 'Beginner+', time: 'about 2 hours', steps: 8, available: true,
     summary: 'Tables, INSERT with safe parameters, SELECT with WHERE, ORDER BY and LIKE, GROUP BY, and a JOIN. You build a book library backed by a real database.',
     load: () => import('./sql.js') },
   { id: 'marvel', title: 'Marvel Character Database', emoji: '🦸', level: 'Intermediate', time: 'about 3 hours', steps: 11, available: true,
