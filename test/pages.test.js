@@ -28,10 +28,10 @@ test('totals, the next guide and the home page come from saved progress', () => 
   const setup = GUIDES.find((g) => g.id === 'setup');
   for (let i = 0; i < setup.steps; i++) progress.complete('setup', i);
   assert.ok(pages.guideStats(setup, progress).finished);
-  assert.strictEqual(pages.nextGuide(GUIDES, progress).id, 'htmlcss');
+  assert.strictEqual(pages.nextGuide(GUIDES, progress).id, 'github');
   const html = pages.homePage(GUIDES, progress, activity);
   assert.match(html, /Welcome to CodeForge!/);
-  assert.match(html, /data-open="htmlcss"[^>]*>Continue learning/);
+  assert.match(html, /data-open="github"[^>]*>Continue learning/);
   assert.match(html, /Get set up: the software you need <span class="state">✓/);
   assert.match(html, /data-open="snake"/, 'the featured project is the first unfinished project guide');
   assert.match(html, /<button class="track tone-purple" disabled>/, 'C# is shown as coming soon');

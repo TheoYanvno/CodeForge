@@ -26,7 +26,7 @@ export const LOGO = `<svg class="logo-mark" viewBox="0 0 100 100" aria-hidden="t
 </svg>`;
 
 /** The basics guides: each teaches what the project guides after it need. */
-export const BASICS = new Set(['setup', 'htmlcss', 'jsbasics', 'electron', 'python', 'sql', 'feedback', 'webapi']);
+export const BASICS = new Set(['setup', 'github', 'htmlcss', 'jsbasics', 'electron', 'python', 'sql', 'feedback', 'webapi']);
 
 /** The tracks on the Home page. A track without a guide is shown as coming soon. */
 export const TRACKS = [

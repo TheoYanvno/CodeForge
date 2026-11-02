@@ -19,6 +19,7 @@ Take them in order. Each **basics** guide builds a small project of its own and 
 | Guide | Steps | What you learn |
 |---|---|---|
 | 🧰 Get set up | 9 in 3 sessions · about 2 h · 9 quiz questions | What to install and why: VS Code and the best extensions, browser developer tools, Git and GitHub, Node.js and Python, then publishing a first page |
+| 🐙 GitHub from zero | 9 in 4 sessions · about 2.5 h · 12 quiz questions | Everything from making an account to pushing commits: 2FA, a profile README, repositories, the commit cycle, signing in, branches and pull requests, fixing mistakes and GitHub Pages, building a learning log |
 | 🎨 HTML & CSS basics | 9 in 3 sessions · about 2 h · 17 quiz questions | Elements, semantic structure, selectors, the box model, Flexbox and media queries, building a profile page |
 | 🧮 JavaScript basics | 8 in 3 sessions · about 2 h · 14 quiz questions | Variables, functions, events, if/else, arrays and loops, building a tip calculator |
 | 🐍 [Snake](https://github.com/TheoYanvno/snake-game) | 13 in 4 sessions · about 3 h · 26 quiz questions | Canvas drawing, a game loop, keyboard and swipe controls, keeping rules separate from drawing |
