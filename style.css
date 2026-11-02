@@ -211,7 +211,7 @@ pre.full code { white-space: pre; }
 [hidden] { display: none !important; }
 
 @media (max-width: 860px) {
-  .app { grid-template-columns: 1fr; }
+  .app { grid-template-columns: minmax(0, 1fr); }
   .sidebar { position: sticky; top: 0; z-index: 3; height: auto; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 10px; padding: 10px 14px; border-right: 0; border-bottom: 1px solid var(--line); }
   .brand-logo .logo-mark { width: 32px; height: 32px; }
   .brand-tag { display: none; }

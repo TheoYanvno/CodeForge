@@ -6,11 +6,11 @@ Step-by-step guides that take you from installing your first code editor to buil
 
 It's a learning guide, not a code playground: you build your own copy in your own editor (VS Code, for example), typing each step's changes yourself. Fell behind? Copy a whole file, or download the step as one page.
 
-**Tech:** vanilla JavaScript (ES modules) · HTML/CSS · a small safe Markdown renderer · LCS line diffs · sandboxed `<iframe srcdoc>` for the read-only results · `localStorage` · `node:test`
+**Tech:** vanilla JavaScript (ES modules) · HTML/CSS (Orbitron and Segoe UI, dark-first) · a small safe Markdown renderer · LCS line diffs · sandboxed `<iframe srcdoc>` for the read-only results · `localStorage` · `node:test`
 
-![A Gotham Hospital guide step: the explanation, the code changes and the finished step running](docs/tutor.png)
+![The CodeForge home page: the sidebar, the welcome banner, Start your journey, your progress ring and a featured project](docs/tutor.png)
 
-<img src="docs/tutor-quiz.png" alt="The quick quiz after a step, on a phone" width="300">
+<img src="docs/tutor-quiz.png" alt="A lesson step's quick quiz on a phone" width="300">
 
 ## The guides
 
@@ -38,6 +38,16 @@ Take them in order. Each **basics** guide builds a small project of its own and 
 | 🏥 [Gotham Hospital System](https://github.com/TheoYanvno/gotham-hospital-system) | 10 in 5 sessions · about 4.5 h · 17 quiz questions | A day schedule as a table, SQLite keys and CHECK constraints, booking rules and the overlap test, a partial unique index, upserts and reports, salted PBKDF2 sign-in, sessions, and 401/403 role permissions |
 
 The basics guides that run in a terminal or on the desktop (Python and Electron) are read-along: each step shows the code to type and run on your own computer.
+
+## The app
+
+- **Home:** a welcome banner with your next guide, the Start your journey tracks (Setup, HTML & CSS, JavaScript, Python, SQL, and C# coming soon), a progress ring for the basics, and a featured project.
+- **Lessons** and **Projects:** every guide in course order, and the project guides on their own.
+- **Coding Challenges:** the extra exercises from the end of every guide, in one place.
+- **Achievements:** badges for your first step, streaks, quiz answers and finished guides, with how far along you are on each.
+- **Progress:** steps and guides finished, your quiz score, your time and your streak, and a bar for every guide.
+- **Settings:** download your progress as a file, or reset it. Everything is saved in your browser only.
+- A **streak card** counts the days in a row you've studied.
 
 ## How a guide works
 
