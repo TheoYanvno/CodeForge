@@ -442,6 +442,12 @@ Your computer is ready for every guide here, and you've already published a webs
 - **Node.js** (LTS) and **Python 3**
 - The **terminal**: `cd`, `ls`, `mkdir`, `code .`
 
+### Challenges
+
+1. Change your first page's colors and words, then publish the update with `git add .`, `git commit -m "..."` and `git push`, and watch the live site change.
+2. Add a second page, `about.html`, and link the two pages to each other with `<a href="about.html">`.
+3. Open your project in VS Code's **Source Control** panel and make a commit with the buttons instead of the terminal.
+
 ### If something went wrong
 
 - **"not recognized" / "command not found"**: close every terminal and VS Code, reopen, and try again. Still failing? Restart the computer; the installer's PATH change needs it sometimes.
