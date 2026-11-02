@@ -1,4 +1,4 @@
-// Code Tutor: the parts with no DOM code, so they can be tested in Node.
+// Code Cademy: the parts with no DOM code, so they can be tested in Node.
 //  - assemble() turns a guide's steps into the full HTML/CSS/JS after each step
 //  - renderMarkdown() turns a step's explanation into safe HTML
 //  - lineDiff() shows what a step adds or changes

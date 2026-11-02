@@ -1,4 +1,4 @@
-// Code Tutor: step-by-step guides that teach how each of my projects is built.
+// Code Cademy: step-by-step guides that teach how each of my projects is built.
 // It's a learning guide, not a code playground: each guide opens with a lesson plan (goals and
 // sessions with planned minutes), and each step explains one idea with diagrams, shows exactly
 // what code the step adds (as a diff, or the full files), lets you see the finished step run,

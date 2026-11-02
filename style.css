@@ -57,7 +57,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
 button.primary { background: var(--accent); color: #0d1220; border-color: transparent; font-weight: 600; }
 .muted { color: var(--muted); }
 
-/* ---- Code Tutor: one readable column ---- */
+/* ---- Code Cademy: one readable column ---- */
 
 .tutor { display: block; max-width: 880px; margin: 0 auto; padding: 20px 20px 48px; }
 .tutor:focus { outline: none; }
