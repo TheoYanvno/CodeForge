@@ -1,4 +1,4 @@
-// Code Cademy: step-by-step guides that teach how each of my projects is built.
+// CodeForge: step-by-step guides that teach how each of my projects is built.
 // It's a learning guide, not a code playground: each guide opens with a lesson plan (goals and
 // sessions with planned minutes), and each step explains one idea with diagrams, shows exactly
 // what code the step adds (as a diff, or the full files), lets you see the finished step run,
@@ -144,7 +144,7 @@ function showPlan() {
       ${guide.goals?.length ? `<h3>By the end you'll be able to</h3><ul>${guide.goals.map((g) => `<li>${esc(g)}</li>`).join('')}</ul>` : ''}
       ${guide.prereqs?.length ? `<h3>Before you start</h3><ul>${guide.prereqs.map((g) => `<li>${esc(g)}</li>`).join('')}</ul>` : ''}
       <h3>How to follow along</h3>
-      <p>Make a folder with three empty files: <code>index.html</code>, <code>style.css</code> and <code>script.js</code>, and open it in your editor. In each step, read the explanation, then look at <strong>The code</strong>: <strong>What changes</strong> shows the lines the step adds (green) and removes (struck through), and the file tabs show each whole file. Type the changes yourself; that's how it sticks. If you fall behind, copy a whole file or download the step as one page. <strong>See it run</strong> shows the finished step working.</p>
+      ${guide.steps.every((st) => st.kind === 'read') ? `<p>This guide is read-along: each step explains an idea and shows the code, and you type and run it on your own computer. There's no See it run, because this code runs in your terminal, not in a web page.</p>` : `<p>Make a folder with three empty files: <code>index.html</code>, <code>style.css</code> and <code>script.js</code>, and open it in your editor. In each step, read the explanation, then look at <strong>The code</strong>: <strong>What changes</strong> shows the lines the step adds (green) and removes (struck through), and the file tabs show each whole file. Type the changes yourself; that's how it sticks. If you fall behind, copy a whole file or download the step as one page. <strong>See it run</strong> shows the finished step working.</p>`}
       <h3>Sessions</h3>
       <p>Take one session per sitting. Each one ends at a point where the project works, so it's a good place to stop.</p>
       <ol class="plan">${plan.sessions.map((x, n) => {
@@ -192,7 +192,8 @@ function showStep() {
       </div>
       <p class="t-count">${plan.sessions.length > 1 ? `Session ${sn + 1} of ${plan.sessions.length}: ${esc(plan.sessions[sn].title)} · ` : ''}Step ${at + 1} of ${total}${step.kind === 'read' ? ' · read-along' : ''}</p>
       <h2>${esc(step.title)}</h2>
-      ${step.minutes ? `<p id="tPace" class="pace" role="timer" aria-live="off"><span class="p-fill" aria-hidden="true"></span>⏱ <span class="p-time">0:00</span> of about ${step.minutes} min · <span class="p-note"></span></p>` : ''}
+      ${step.minutes ? `<p id="tPace" class="pace" role="timer" aria-live="off"><span class="p-fill" aria-hidden="true"></span>⏱ <span class="p-time">0:00</span> of about ${step.minutes} min · <span class="p-note"></span>
+        <button class="p-reset" data-act="retime" title="Start this step's timer again from 0:00">↺ Reset timer</button></p>` : ''}
     </header>
     <article class="t-body">${renderMarkdown(step.body)}</article>
     ${step.checks?.length ? `
@@ -348,6 +349,12 @@ function onClick(e) {
       progress.complete(guide.id, at);
       at += 1;
       return showStep();
+    case 'retime':
+      unsaved = 0;
+      progress.resetTime(guide.id, at);
+      lastTick = Date.now();
+      showPace();
+      return toast('Timer reset to 0:00');
     case 'reset':
       if (!confirm(`Reset your progress in the ${guide.title} guide? Your place, finished steps, time and quiz answers are cleared.`)) return;
       unsaved = 0;

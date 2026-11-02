@@ -1,4 +1,4 @@
-// Code Cademy starts here: the guide list, lesson plans and steps all live in tutor.js.
+// CodeForge starts here: the guide list, lesson plans and steps all live in tutor.js.
 import { initTutor } from './tutor.js';
 
 initTutor();

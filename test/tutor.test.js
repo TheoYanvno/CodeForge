@@ -123,3 +123,16 @@ test('diagrams and tables render safely', () => {
   const table = renderMarkdown('| key | moves |\n|---|---|\n| up | `y - 1` |');
   assert.strictEqual(table, '<table class="t-table"><thead><tr><th>key</th><th>moves</th></tr></thead><tbody><tr><td>up</td><td><code>y - 1</code></td></tr></tbody></table>');
 });
+
+test('a step timer can be reset to zero without touching other steps', async () => {
+  const { Progress } = await import('../src/tutor-core.js');
+  const mem = new Map();
+  const store = { getItem: (k) => mem.get(k) ?? null, setItem: (k, v) => mem.set(k, v) };
+  const p = new Progress(store);
+  p.addTime('snake', 0, 90);
+  p.addTime('snake', 1, 30);
+  p.resetTime('snake', 0);
+  const t = p.get('snake').time;
+  assert.strictEqual(t[0], undefined);
+  assert.strictEqual(t[1], 30);
+});

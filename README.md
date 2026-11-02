@@ -1,6 +1,6 @@
-# Code Cademy
+# CodeForge
 
-**▶ [Open Code Cademy](https://theoyanvno.github.io/live-code-editor/)** · **[Start the Snake guide](https://theoyanvno.github.io/live-code-editor/?guide=snake)**
+**▶ [Open CodeForge](https://theoyanvno.github.io/CodeForge/)** · **[Start the Snake guide](https://theoyanvno.github.io/CodeForge/?guide=snake)**
 
 Step-by-step guides that teach you to build my portfolio projects from a blank page. Pick a project and follow its lesson plan: each step explains one idea with diagrams and tables, shows exactly which lines of code the step adds and why, lets you see the finished step run, and ends with a short quiz. A pace timer keeps you on schedule, and your progress is saved in the browser.
 

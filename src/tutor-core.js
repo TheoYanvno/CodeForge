@@ -1,4 +1,4 @@
-// Code Cademy: the parts with no DOM code, so they can be tested in Node.
+// CodeForge: the parts with no DOM code, so they can be tested in Node.
 //  - assemble() turns a guide's steps into the full HTML/CSS/JS after each step
 //  - renderMarkdown() turns a step's explanation into safe HTML
 //  - lineDiff() shows what a step adds or changes
@@ -226,6 +226,13 @@ export class Progress {
   addTime(id, step, seconds) {
     const p = this.get(id);
     return this.set(id, { ...p, time: { ...p.time, [step]: Math.round((p.time[step] ?? 0) + seconds) } });
+  }
+  /** Sets one step's timer back to zero, so the step can be timed again from the start. */
+  resetTime(id, step) {
+    const p = this.get(id);
+    const time = { ...p.time };
+    delete time[step];
+    return this.set(id, { ...p, time });
   }
   /** Saves a quiz answer; a question keeps its first answer. */
   answer(id, key, option) {

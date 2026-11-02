@@ -57,7 +57,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
 button.primary { background: var(--accent); color: #0d1220; border-color: transparent; font-weight: 600; }
 .muted { color: var(--muted); }
 
-/* ---- Code Cademy: one readable column ---- */
+/* ---- CodeForge: one readable column ---- */
 
 .tutor { display: block; max-width: 880px; margin: 0 auto; padding: 20px 20px 48px; }
 .tutor:focus { outline: none; }
@@ -126,6 +126,8 @@ pre.diff .gap { color: var(--gutter); text-align: center; }
 .pace.long .p-fill { background: rgb(255 160 90 / .22); }
 .pace .p-time { font-family: var(--mono); font-weight: 700; }
 .pace .p-note { color: var(--muted); }
+.pace .p-reset { float: right; margin: -2px -4px 0 8px; padding: 2px 8px; font: inherit; font-size: .78rem; color: var(--text); background: transparent; border: 1px solid var(--line); border-radius: 6px; cursor: pointer; }
+.pace .p-reset:hover, .pace .p-reset:focus-visible { border-color: var(--accent, #3fb67b); }
 .t-guide .link { font-size: .8rem; margin-left: 8px; }
 .plan { list-style: none; padding: 0 !important; display: flex; flex-direction: column; gap: 10px; }
 .plan-session { padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--editor); }
