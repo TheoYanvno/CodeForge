@@ -3578,6 +3578,779 @@ initSqlJs({ locateFile: (file) => SQLJS + file })
   });
 ```
 
+## Session: The week, the month and the real project
+
+## Step: Week and month views
+time: 25
+
+The last feature: **Day, Week and Month** buttons, and ‹ › to move through time.
+
+**The week.** `weekOf(date)` finds that week's Monday: `getUTCDay()` is 0 for Sunday, so a Sunday steps back 6 days and any other day steps back `day - 1`. Then it adds 0 to 4 days for Monday–Friday. Each day shows its visit count.
+
+**The month.** A calendar shows whole weeks, so `monthGrid(date)` starts on the Sunday on or before the 1st and lists 42 days (6 weeks), then drops the last week if all of it is in the next month. November 2026 begins on a Sunday, so it fits in 5 weeks:
+
+```svg A month grid is whole weeks, starting on the Sunday before the 1st
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 176" font-family="sans-serif"><text x="24" y="18" text-anchor="middle" font-size="10" font-weight="700">S</text><text x="80" y="18" text-anchor="middle" font-size="10" font-weight="700">M</text><text x="136" y="18" text-anchor="middle" font-size="10" font-weight="700">T</text><text x="192" y="18" text-anchor="middle" font-size="10" font-weight="700">W</text><text x="248" y="18" text-anchor="middle" font-size="10" font-weight="700">T</text><text x="304" y="18" text-anchor="middle" font-size="10" font-weight="700">F</text><text x="360" y="18" text-anchor="middle" font-size="10" font-weight="700">S</text><rect x="2" y="26" width="52" height="22" rx="4" fill="#fff" stroke="#d9dee6"/><text x="8" y="41" font-size="10" fill="#172033">1</text><rect x="58" y="26" width="52" height="22" rx="4" fill="#fff" stroke="#d9dee6"/><text x="64" y="41" font-size="10" fill="#172033">2</text><rect x="114" y="26" width="52" height="22" rx="4" fill="#fff" stroke="#d9dee6"/><text x="120" y="41" font-size="10" fill="#172033">3</text><rect x="170" y="26" width="52" height="22" rx="4" fill="#fff" stroke="#d9dee6"/><text x="176" y="41" font-size="10" fill="#172033">4</text><rect x="226" y="26" width="52" height="22" rx="4" fill="#fff" stroke="#d9dee6"/><text x="232" y="41" font-size="10" fill="#172033">5</text><rect x="282" y="26" width="52" height="22" rx="4" fill="#fff" stroke="#d9dee6"/><text x="288" y="41" font-size="10" fill="#172033">6</text><rect x="338" y="26" width="52" height="22" rx="4" fill="#fff" stroke="#d9dee6"/><text x="344" y="41" font-size="10" fill="#172033">7</text><rect x="2" y="52" width="52" height="22" rx="4" fill="#fff" stroke="#d9dee6"/><text x="8" y="67" font-size="10" fill="#172033">8</text><rect x="58" y="52" width="52" height="22" rx="4" fill="#fff" stroke="#d9dee6"/><text x="64" y="67" font-size="10" fill="#172033">9</text><rect x="114" y="52" width="52" height="22" rx="4" fill="#fff" stroke="#d9dee6"/><text x="120" y="67" font-size="10" fill="#172033">10</text><rect x="170" y="52" width="52" height="22" rx="4" fill="#fff" stroke="#d9dee6"/><text x="176" y="67" font-size="10" fill="#172033">11</text><rect x="226" y="52" width="52" height="22" rx="4" fill="#fff" stroke="#d9dee6"/><text x="232" y="67" font-size="10" fill="#172033">12</text><rect x="282" y="52" width="52" height="22" rx="4" fill="#fff" stroke="#d9dee6"/><text x="288" y="67" font-size="10" fill="#172033">13</text><rect x="338" y="52" width="52" height="22" rx="4" fill="#fff" stroke="#d9dee6"/><text x="344" y="67" font-size="10" fill="#172033">14</text><rect x="2" y="78" width="52" height="22" rx="4" fill="#fff" stroke="#d9dee6"/><text x="8" y="93" font-size="10" fill="#172033">15</text><rect x="58" y="78" width="52" height="22" rx="4" fill="#fff" stroke="#d9dee6"/><text x="64" y="93" font-size="10" fill="#172033">16</text><rect x="114" y="78" width="52" height="22" rx="4" fill="#fff" stroke="#d9dee6"/><text x="120" y="93" font-size="10" fill="#172033">17</text><rect x="170" y="78" width="52" height="22" rx="4" fill="#fff" stroke="#d9dee6"/><text x="176" y="93" font-size="10" fill="#172033">18</text><rect x="226" y="78" width="52" height="22" rx="4" fill="#fff" stroke="#d9dee6"/><text x="232" y="93" font-size="10" fill="#172033">19</text><rect x="282" y="78" width="52" height="22" rx="4" fill="#fff" stroke="#d9dee6"/><text x="288" y="93" font-size="10" fill="#172033">20</text><rect x="338" y="78" width="52" height="22" rx="4" fill="#fff" stroke="#d9dee6"/><text x="344" y="93" font-size="10" fill="#172033">21</text><rect x="2" y="104" width="52" height="22" rx="4" fill="#fff" stroke="#d9dee6"/><text x="8" y="119" font-size="10" fill="#172033">22</text><rect x="58" y="104" width="52" height="22" rx="4" fill="#fff" stroke="#d9dee6"/><text x="64" y="119" font-size="10" fill="#172033">23</text><rect x="114" y="104" width="52" height="22" rx="4" fill="#fff" stroke="#d9dee6"/><text x="120" y="119" font-size="10" fill="#172033">24</text><rect x="170" y="104" width="52" height="22" rx="4" fill="#fff" stroke="#d9dee6"/><text x="176" y="119" font-size="10" fill="#172033">25</text><rect x="226" y="104" width="52" height="22" rx="4" fill="#fff" stroke="#d9dee6"/><text x="232" y="119" font-size="10" fill="#172033">26</text><rect x="282" y="104" width="52" height="22" rx="4" fill="#fff" stroke="#d9dee6"/><text x="288" y="119" font-size="10" fill="#172033">27</text><rect x="338" y="104" width="52" height="22" rx="4" fill="#fff" stroke="#d9dee6"/><text x="344" y="119" font-size="10" fill="#172033">28</text><rect x="2" y="130" width="52" height="22" rx="4" fill="#fff" stroke="#d9dee6"/><text x="8" y="145" font-size="10" fill="#172033">29</text><rect x="58" y="130" width="52" height="22" rx="4" fill="#fff" stroke="#d9dee6"/><text x="64" y="145" font-size="10" fill="#172033">30</text><rect x="114" y="130" width="52" height="22" rx="4" fill="#f1f5f9" stroke="#d9dee6"/><text x="120" y="145" font-size="10" fill="#94a3b8">1</text><rect x="170" y="130" width="52" height="22" rx="4" fill="#f1f5f9" stroke="#d9dee6"/><text x="176" y="145" font-size="10" fill="#94a3b8">2</text><rect x="226" y="130" width="52" height="22" rx="4" fill="#f1f5f9" stroke="#d9dee6"/><text x="232" y="145" font-size="10" fill="#94a3b8">3</text><rect x="282" y="130" width="52" height="22" rx="4" fill="#f1f5f9" stroke="#d9dee6"/><text x="288" y="145" font-size="10" fill="#94a3b8">4</text><rect x="338" y="130" width="52" height="22" rx="4" fill="#f1f5f9" stroke="#d9dee6"/><text x="344" y="145" font-size="10" fill="#94a3b8">5</text><text x="200" y="168" text-anchor="middle" font-size="11" fill="#475569">Nov 1, 2026 is a Sunday, so the grid starts on it; 35 cells = 5 whole weeks</text></svg>
+```
+
+**One query for all the counts.** `countsBetween(from, to)` groups by day and returns `{ '2026-11-02': 7, … }` with `Object.fromEntries`. One query for the whole month, instead of one per day, keeps it fast: with a real database over the network, 35 queries would be 35 round trips.
+
+**Moving.** ‹ and › add ±1 day in day view, ±7 in week view, and ±1 month in month view. For months, `new Date(Date.UTC(y, m - 1 + dir, 1))` lets JavaScript roll December into January of the next year for you, and starting on the 1st avoids the January 31 → "February 31" problem.
+
+The schedule views go through `api('counts', …)` like everything else, so they need `schedule:read`.
+
+### Try it
+
+Switch to Week, then Month, and step forward to December 2026. Back in Day view, step through to a Saturday.
+
+check: js | the week's weekdays | /function\s+weekOf\s*\(/
+check: js | a month of whole weeks | /function\s+monthGrid\s*\(/
+check: js | one query for every day's count | /function\s+countsBetween\s*\(/
+check: html | view buttons | /data-view="month"/
+
+quiz: Why does countsBetween() get the whole month in one query?
+- [ ] SQLite limits queries
+- [x] One grouped query replaces one query per day, which matters when every query is a round trip
+- [ ] It is required by GROUP BY
+why: Ask the database for everything you need at once.
+
+```html page
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/sql-wasm.js"></script>
+<section id="signin" class="signin">
+  <form id="signinForm" class="card">
+    <h1>Gotham Hospital</h1>
+    <p class="muted">Staff sign-in</p>
+    <label>Username <input name="username" value="Gotham Staff" autocomplete="username"></label>
+    <label>Password <input name="password" type="password" autocomplete="current-password"></label>
+    <p id="signinError" class="error" role="alert"></p>
+    <button>Sign in</button>
+    <p class="muted small">Demo passwords: <code>front-desk-demo</code> (scheduling) or <code>clinic-demo</code> (patient charts)</p>
+  </form>
+</section>
+<div id="app" hidden>
+<header class="top">
+  <strong>Gotham Hospital</strong> <span class="muted">Patient Portal</span>
+    <span id="who" class="who"></span><button id="signOut" class="ghost" type="button">Sign out</button>
+</header>
+  <nav class="tabs" id="tabs">
+    <button data-tab="schedule" class="on">Schedule</button>
+    <button data-tab="patients">Patients</button>
+    <button data-tab="reports">Reports</button>
+  </nav>
+<main>
+  <section id="schedule" class="view">
+    <div class="bar">
+      <button id="prev" class="ghost" type="button">‹</button><button id="next" class="ghost" type="button">›</button>
+      <h2 id="title"></h2>
+      <span class="views"><button data-view="day" class="on">Day</button><button data-view="week">Week</button><button data-view="month">Month</button></span>
+    </div>
+    <div class="layout">
+      <div id="grid" class="grid"></div>
+    <aside id="panel" class="panel" hidden></aside>
+    </div>
+  </section>
+  <section id="patients" class="view" hidden>
+    <input id="search" type="search" placeholder="Search by name, MRN or birth date (YYYY-MM-DD)" autocomplete="off">
+    <div class="split"><ul id="results" class="results"></ul><article id="profile" class="profile"></article></div>
+  </section>
+  <section id="reports" class="view" hidden>
+    <h2>This week</h2>
+    <table id="daily" class="report"></table>
+    <h2>Provider workload</h2>
+    <table id="workload" class="report"></table>
+  </section>
+</main>
+</div>
+<p class="note">Practice app: every person, phone number and plan here is made up.</p>
+```
+
+```js db
+// SQLite compiled to WebAssembly (sql.js): a real database inside the page
+const SQLJS = 'https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/';
+let db;
+
+const SCHEMA = `
+-- Business hours by weekday (0 = Sunday … 6 = Saturday). NULL means closed.
+CREATE TABLE clinic_hours (
+  weekday INTEGER PRIMARY KEY CHECK (weekday BETWEEN 0 AND 6),
+  opens   TEXT,
+  closes  TEXT,
+  CHECK ((opens IS NULL AND closes IS NULL) OR opens < closes)
+);
+CREATE TABLE providers (
+  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+  first_name TEXT NOT NULL,
+  last_name  TEXT NOT NULL,
+  credential TEXT NOT NULL CHECK (credential IN ('MD', 'DO', 'NP', 'PA')),
+  specialty  TEXT NOT NULL,
+  room       TEXT
+);
+-- Each provider's hours on the days they work (Monday–Friday only)
+CREATE TABLE provider_hours (
+  provider_id  INTEGER NOT NULL REFERENCES providers(id) ON DELETE CASCADE,
+  weekday      INTEGER NOT NULL CHECK (weekday BETWEEN 1 AND 5),
+  starts       TEXT NOT NULL,
+  ends         TEXT NOT NULL,
+  lunch_starts TEXT,
+  lunch_ends   TEXT,
+  PRIMARY KEY (provider_id, weekday),
+  CHECK (starts < ends)
+);
+CREATE TABLE patients (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  mrn         TEXT NOT NULL UNIQUE,            -- medical record number, e.g. GH-100231
+  first_name  TEXT NOT NULL,
+  last_name   TEXT NOT NULL,
+  birth_date  TEXT NOT NULL,                   -- YYYY-MM-DD
+  sex         TEXT NOT NULL CHECK (sex IN ('F', 'M', 'X')),
+  phone       TEXT,
+  allergies   TEXT
+);
+CREATE TABLE insurance (
+  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+  patient_id INTEGER NOT NULL REFERENCES patients(id) ON DELETE CASCADE,
+  coverage   TEXT NOT NULL CHECK (coverage IN ('primary', 'secondary')),
+  payer      TEXT NOT NULL,
+  plan_name  TEXT,
+  member_id  TEXT NOT NULL,
+  copay      REAL CHECK (copay >= 0),
+  UNIQUE (patient_id, coverage)                -- one primary and one secondary plan at most
+);
+CREATE TABLE appointments (
+  id           INTEGER PRIMARY KEY AUTOINCREMENT,
+  patient_id   INTEGER NOT NULL REFERENCES patients(id) ON DELETE CASCADE,
+  provider_id  INTEGER NOT NULL REFERENCES providers(id),
+  starts_at    TEXT NOT NULL,                  -- YYYY-MM-DD HH:MM
+  duration_min INTEGER NOT NULL DEFAULT 30 CHECK (duration_min IN (15, 30, 45, 60)),
+  visit_type   TEXT NOT NULL CHECK (visit_type IN ('New patient', 'Follow-up', 'Annual physical', 'Sick visit', 'Procedure', 'Telehealth')),
+  reason       TEXT NOT NULL,
+  status       TEXT NOT NULL DEFAULT 'scheduled'
+               CHECK (status IN ('scheduled', 'checked_in', 'completed', 'no_show', 'cancelled'))
+);
+-- A provider can't have two active visits starting at the same time.
+-- Partial index: cancelled visits don't count, so a cancelled slot can be booked again.
+CREATE UNIQUE INDEX uq_provider_start ON appointments(provider_id, starts_at) WHERE status <> 'cancelled';
+-- Everyone signs in as "Gotham Staff"; each role has its own password, stored only as a salted hash
+CREATE TABLE staff (
+  id            INTEGER PRIMARY KEY AUTOINCREMENT,
+  username      TEXT NOT NULL COLLATE NOCASE,
+  display_name  TEXT NOT NULL,
+  role          TEXT NOT NULL CHECK (role IN ('customer_service', 'medical_staff')),
+  password_salt TEXT NOT NULL,
+  password_hash TEXT NOT NULL,
+  iterations    INTEGER NOT NULL,
+  UNIQUE (username, role)
+);
+-- One row per signed-in session; signing out deletes it
+CREATE TABLE sessions (
+  token      TEXT PRIMARY KEY,
+  staff_id   INTEGER NOT NULL REFERENCES staff(id) ON DELETE CASCADE,
+  expires_at TEXT NOT NULL
+);
+`;
+
+// Run a query with ? parameters and get rows back as plain objects
+function rows(sql, params = []) {
+  const stmt = db.prepare(sql);
+  stmt.bind(params);
+  const out = [];
+  while (stmt.step()) out.push(stmt.getAsObject());
+  stmt.free();
+  return out;
+}
+const one = (sql, params = []) => rows(sql, params)[0] ?? null;
+const run = (sql, params = []) => db.run(sql, params);
+const lastId = () => one('SELECT last_insert_rowid() AS id').id;
+
+// Create the tables and load the sample data in one transaction
+function build() {
+  run('PRAGMA foreign_keys = ON');
+  db.exec(SCHEMA);
+  run('BEGIN');
+  try {
+    for (let day = 0; day <= 6; day++) {
+      const open = day >= 1 && day <= 5;
+      run('INSERT INTO clinic_hours (weekday, opens, closes) VALUES (?, ?, ?)', [day, open ? CLINIC.opens : null, open ? CLINIC.closes : null]);
+    }
+    PROVIDERS.forEach((p) => {
+      run('INSERT INTO providers (first_name, last_name, credential, specialty, room) VALUES (?, ?, ?, ?, ?)', [p.first, p.last, p.credential, p.specialty, p.room]);
+      const id = lastId();
+      for (let day = 1; day <= 5; day++) {
+        if ((p.off ?? []).includes(day)) continue;
+        run('INSERT INTO provider_hours VALUES (?, ?, ?, ?, ?, ?)', [id, day, p.hours[0], p.hours[1], p.lunch[0], p.lunch[1]]);
+      }
+    });
+    for (const p of PATIENTS) {
+      run('INSERT INTO patients (mrn, first_name, last_name, birth_date, sex, phone, allergies) VALUES (?, ?, ?, ?, ?, ?, ?)',
+          [p.mrn, p.first, p.last, p.birth, p.sex, p.phone, p.allergies || null]);
+      const id = lastId();
+      for (const plan of p.insurance) saveInsurance(id, plan);
+    }
+    for (const [patient, provider, startsAt, minutes, type, reason, status] of VISITS) {
+      run('INSERT INTO appointments (patient_id, provider_id, starts_at, duration_min, visit_type, reason, status) VALUES (?, ?, ?, ?, ?, ?, ?)',
+          [patient + 1, provider + 1, startsAt, minutes, type, reason, status]);
+    }
+    for (const s of STAFF) {
+      run('INSERT INTO staff (username, display_name, role, password_salt, password_hash, iterations) VALUES (?, ?, ?, ?, ?, ?)',
+          [USERNAME, s.name, s.role, s.salt, s.hash, s.iterations]);
+    }
+    run('COMMIT');
+  } catch (err) {
+    run('ROLLBACK');
+    throw err;
+  }
+}
+
+// ---------- Schedule ----------
+
+/** The providers, with their hours on one weekday (null hours = not working that day) */
+function providersOn(date) {
+  return rows(`SELECT p.id, p.first_name || ' ' || p.last_name || ', ' || p.credential AS name, p.specialty,
+                      h.starts, h.ends, h.lunch_starts AS lunchStarts, h.lunch_ends AS lunchEnds
+               FROM providers p LEFT JOIN provider_hours h ON h.provider_id = p.id AND h.weekday = ?
+               ORDER BY p.id`, [weekdayOf(date)]);
+}
+
+/** Every visit on one day, with the patient's name */
+function visitsOn(date) {
+  return rows(`SELECT a.id, a.provider_id AS providerId, a.patient_id AS patientId, strftime('%H:%M', a.starts_at) AS starts,
+                      a.duration_min AS minutes, a.visit_type AS type, a.reason, a.status,
+                      pa.first_name || ' ' || pa.last_name AS patient
+               FROM appointments a JOIN patients pa ON pa.id = a.patient_id
+               WHERE date(a.starts_at) = ? AND a.status <> 'cancelled'
+               ORDER BY a.starts_at`, [date]);
+}
+
+const clinicHours = (date) => one('SELECT opens, closes FROM clinic_hours WHERE weekday = ?', [weekdayOf(date)]);
+
+/**
+ * Reasons a visit can't be booked, in plain words. An empty list means it can be booked.
+ * Checks clinic hours, the provider's hours and lunch, the clock, and overlaps for the provider and the patient.
+ */
+function bookingProblems({ patientId = null, providerId, startsAt, duration = 30 }, now = NOW) {
+  const [date, time] = startsAt.split(' ');
+  const start = toMinutes(time);
+  const end = start + duration;
+  const problems = [];
+
+  const clinic = clinicHours(date);
+  if (!clinic?.opens) return ['The clinic is closed on weekends. Business hours are Monday–Friday.'];
+  if (start < toMinutes(clinic.opens) || end > toMinutes(clinic.closes)) problems.push(`Outside business hours (${clinic.opens}–${clinic.closes}).`);
+
+  const hours = one('SELECT starts, ends, lunch_starts AS lunchStarts, lunch_ends AS lunchEnds FROM provider_hours WHERE provider_id = ? AND weekday = ?',
+    [providerId, weekdayOf(date)]);
+  if (!hours) return [...problems, 'This provider does not work on that day.'];
+  if (start < toMinutes(hours.starts) || end > toMinutes(hours.ends)) problems.push(`Outside this provider's hours (${hours.starts}–${hours.ends}).`);
+  if (hours.lunchStarts && start < toMinutes(hours.lunchEnds) && end > toMinutes(hours.lunchStarts)) {
+    problems.push(`Overlaps the provider's lunch break (${hours.lunchStarts}–${hours.lunchEnds}).`);
+  }
+  if (startsAt < now) problems.push('That time has already passed.');
+
+  // Two visits overlap when one starts before the other ends AND ends after the other starts
+  const endsAt = `${date} ${toTime(end)}`;
+  const clash = (column, id) => one(`
+    SELECT strftime('%H:%M', starts_at) AS starts FROM appointments
+    WHERE ${column} = ? AND status <> 'cancelled' AND date(starts_at) = ?
+      AND starts_at < ?
+      AND strftime('%Y-%m-%d %H:%M', starts_at, '+' || duration_min || ' minutes') > ?
+    LIMIT 1`, [id, date, endsAt, startsAt]);
+  const theirs = clash('provider_id', providerId);
+  if (theirs) problems.push(`The provider already has a visit at ${theirs.starts}.`);
+  if (patientId) {
+    const mine = clash('patient_id', patientId);
+    if (mine) problems.push(`The patient already has a visit at ${mine.starts}.`);
+  }
+  return problems;
+}
+
+/** Open start times for a visit of `duration` minutes, every 15 minutes */
+function openSlots(providerId, date, duration = 30, now = NOW) {
+  const hours = one('SELECT starts, ends, lunch_starts AS ls, lunch_ends AS le FROM provider_hours WHERE provider_id = ? AND weekday = ?', [providerId, weekdayOf(date)]);
+  if (!hours) return [];
+  const busy = visitsOn(date).filter((a) => a.providerId === providerId).map((a) => [toMinutes(a.starts), toMinutes(a.starts) + a.minutes]);
+  if (hours.ls) busy.push([toMinutes(hours.ls), toMinutes(hours.le)]);
+  const slots = [];
+  for (let t = toMinutes(hours.starts); t + duration <= toMinutes(hours.ends); t += 15) {
+    const free = busy.every(([s, e]) => t + duration <= s || t >= e);
+    if (free && `${date} ${toTime(t)}` >= now) slots.push(toTime(t));
+  }
+  return slots;
+}
+
+/** Turns a database error into a message a person can act on */
+function friendly(err) {
+  const msg = String(err.message || err);
+  if (msg.includes('uq_provider_start') || msg.includes('UNIQUE constraint failed: appointments')) return 'That provider already has an appointment at that time.';
+  if (msg.includes('CHECK constraint')) return 'One of the values is not allowed.';
+  if (msg.includes('FOREIGN KEY')) return 'That patient or provider does not exist.';
+  return msg;
+}
+
+/** Books a visit: { ok: true, id } or { ok: false, problems } */
+function book(visit) {
+  const problems = bookingProblems(visit);
+  if (!visit.reason?.trim()) problems.push('Enter a reason for the visit.');
+  if (problems.length) return { ok: false, problems };
+  try {
+    run('INSERT INTO appointments (patient_id, provider_id, starts_at, duration_min, visit_type, reason) VALUES (?, ?, ?, ?, ?, ?)',
+      [visit.patientId, visit.providerId, visit.startsAt, visit.duration, visit.type, visit.reason.trim()]);
+    return { ok: true, id: lastId() };
+  } catch (err) {
+    return { ok: false, problems: [friendly(err)] };
+  }
+}
+
+const STATUSES = ['scheduled', 'checked_in', 'completed', 'no_show', 'cancelled'];
+function setStatus(id, status) {
+  if (!STATUSES.includes(status)) throw new Error(`Unknown status "${status}"`);
+  run('UPDATE appointments SET status = ? WHERE id = ?', [status, id]);
+}
+const visit = (id) => one(`SELECT a.id, a.provider_id AS providerId, a.starts_at AS startsAt, a.duration_min AS minutes, a.visit_type AS type,
+                                  a.reason, a.status, pa.first_name || ' ' || pa.last_name AS patient
+                           FROM appointments a JOIN patients pa ON pa.id = a.patient_id WHERE a.id = ?`, [id]);
+
+// ---------- Patients ----------
+
+/** Adds a plan, or replaces the patient's plan of the same coverage (upsert) */
+function saveInsurance(patientId, plan) {
+  run(`INSERT INTO insurance (patient_id, coverage, payer, plan_name, member_id, copay) VALUES (?, ?, ?, ?, ?, ?)
+       ON CONFLICT (patient_id, coverage) DO UPDATE SET
+         payer = excluded.payer, plan_name = excluded.plan_name, member_id = excluded.member_id, copay = excluded.copay`,
+      [patientId, plan.coverage, plan.payer, plan.plan ?? null, plan.member, plan.copay ?? null]);
+}
+
+/** Search by name, MRN or birth date. Every value is a ? parameter, never pasted into the SQL. */
+function searchPatients(text) {
+  const q = text.trim();
+  if (!q) return rows('SELECT id, mrn, first_name || \' \' || last_name AS name, birth_date AS birth FROM patients ORDER BY last_name, first_name LIMIT 50');
+  const like = `%${q}%`;
+  return rows(`SELECT id, mrn, first_name || ' ' || last_name AS name, birth_date AS birth FROM patients
+               WHERE first_name || ' ' || last_name LIKE ? OR last_name LIKE ? OR mrn LIKE ? OR birth_date = ?
+               ORDER BY last_name, first_name LIMIT 50`, [like, like, like, q]);
+}
+
+function patientProfile(id) {
+  const p = one('SELECT * FROM patients WHERE id = ?', [id]);
+  if (!p) return null;
+  return {
+    ...p,
+    insurance: rows("SELECT coverage, payer, plan_name AS plan, member_id AS member, copay FROM insurance WHERE patient_id = ? ORDER BY coverage = 'secondary'", [id]),
+    visits: rows(`SELECT a.starts_at AS startsAt, a.visit_type AS type, a.status, pr.last_name AS provider
+                  FROM appointments a JOIN providers pr ON pr.id = a.provider_id WHERE a.patient_id = ? ORDER BY a.starts_at DESC`, [id]),
+  };
+}
+
+// ---------- Reports ----------
+
+/** Visits per day: in SQLite a true comparison is 1, so SUM(status = 'x') counts the rows with that status */
+function dailyReport(from, to) {
+  return rows(`SELECT date(starts_at) AS date, COUNT(*) AS total,
+                      SUM(status = 'checked_in') AS checkedIn, SUM(status = 'completed') AS completed, SUM(status = 'no_show') AS noShows
+               FROM appointments
+               WHERE date(starts_at) BETWEEN ? AND ? AND status <> 'cancelled'
+               GROUP BY date(starts_at) ORDER BY date`, [from, to]);
+}
+
+/** Each provider's workload. NULLIF turns a 0 divisor into NULL, so a provider with no finished visits shows no rate instead of an error. */
+function providerWorkload(from, to) {
+  return rows(`SELECT pr.first_name || ' ' || pr.last_name || ', ' || pr.credential AS provider,
+                      COUNT(a.id) AS total,
+                      COALESCE(SUM(a.status = 'no_show'), 0) AS noShows,
+                      ROUND(100.0 * SUM(a.status = 'no_show') / NULLIF(SUM(a.status IN ('completed', 'no_show')), 0), 1) AS noShowPct
+               FROM providers pr
+               LEFT JOIN appointments a ON a.provider_id = pr.id AND a.status <> 'cancelled' AND date(a.starts_at) BETWEEN ? AND ?
+               GROUP BY pr.id ORDER BY total DESC, provider`, [from, to]);
+}
+
+/** How many visits each day has, for the week and month views */
+function countsBetween(from, to) {
+  return Object.fromEntries(rows(`SELECT date(starts_at) AS date, COUNT(*) AS n FROM appointments
+                                  WHERE date(starts_at) BETWEEN ? AND ? AND status <> 'cancelled' GROUP BY date(starts_at)`, [from, to])
+    .map((r) => [r.date, r.n]));
+}
+```
+
+```js auth
+// ---------- Staff sign-in ----------
+// Passwords are never stored. Each role keeps a random salt and a PBKDF2-SHA256 hash of its password.
+// These were made with the same settings as hashPassword() below, from this guide's demo passwords.
+const USERNAME = 'Gotham Staff';
+const ITERATIONS = 100000;
+const STAFF = [
+  { role: 'customer_service', name: 'Customer Service', iterations: ITERATIONS,
+    salt: '5f2a9c71d04e8b3a6c19e7d2b8f04a61', hash: 'e2430db7ab3181dabebb8ef999bb367bbd0ced1f78e88260e43303a354292a09' },
+  { role: 'medical_staff', name: 'Medical Staff', iterations: ITERATIONS,
+    salt: 'c83b16e0a9f2475d1e6a0b9c3d72f5e8', hash: '459b9ed04624a53e106dd08a3ff83559f074d0e31109ac5e75ef6155c06f2fcb' },
+];
+const SESSION_HOURS = 8;
+
+const toHex = (bytes) => Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
+const fromHex = (hex) => new Uint8Array(hex.match(/../g).map((h) => parseInt(h, 16)));
+const randomHex = (size) => toHex(crypto.getRandomValues(new Uint8Array(size)));
+
+/** PBKDF2-HMAC-SHA256 with the browser's built-in Web Crypto: slow on purpose, so guessing passwords is slow too */
+async function hashPassword(password, saltHex, iterations = ITERATIONS) {
+  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveBits']);
+  const bits = await crypto.subtle.deriveBits({ name: 'PBKDF2', hash: 'SHA-256', salt: fromHex(saltHex), iterations }, key, 256);
+  return toHex(new Uint8Array(bits));
+}
+
+/** Compares every character, so the time taken doesn't reveal how much of the hash matched */
+function sameHash(a, b) {
+  if (a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return diff === 0;
+}
+
+/** Everyone uses the same username, so the password decides the role: check it against each role's hash */
+async function signIn(username, password, now = NOW) {
+  const accounts = rows('SELECT id, password_salt AS salt, password_hash AS hash, iterations FROM staff WHERE username = ?', [username.trim()]);
+  for (const a of accounts) {
+    if (sameHash(await hashPassword(password, a.salt, a.iterations), a.hash)) {
+      const token = randomHex(32);                                     // 256 random bits
+      const expires = addMinutes(now, SESSION_HOURS * 60);
+      run('DELETE FROM sessions WHERE expires_at <= ?', [now]);        // tidy up old sessions
+      run('INSERT INTO sessions (token, staff_id, expires_at) VALUES (?, ?, ?)', [token, a.id, expires]);
+      return token;
+    }
+  }
+  return null;
+}
+
+/** The staff member a token belongs to, or null if it's unknown or expired */
+const sessionStaff = (token, now = NOW) => (token ? one(`
+  SELECT st.id, st.display_name AS name, st.role FROM sessions se JOIN staff st ON st.id = se.staff_id
+  WHERE se.token = ? AND se.expires_at > ?`, [token, now]) : null);
+
+const signOut = (token) => run('DELETE FROM sessions WHERE token = ?', [token]);
+
+/** 'YYYY-MM-DD HH:MM' plus some minutes */
+function addMinutes(stamp, minutes) {
+  const [date, time] = stamp.split(' ');
+  const total = toMinutes(time) + minutes;
+  return `${addDays(date, Math.floor(total / 1440))} ${toTime(total % 1440)}`;
+}
+
+// ---------- Roles ----------
+// What each role may do. Customer service books visits and sees names, but only medical staff open a patient's chart.
+const PERMISSIONS = {
+  customer_service: ['schedule:read', 'schedule:write', 'patients:search', 'reports'],
+  medical_staff: ['schedule:read', 'patients:search', 'patients'],
+};
+const can = (staff, permission) => Boolean(staff && PERMISSIONS[staff.role]?.includes(permission));
+
+// Every action the page can ask for, with the permission it needs
+const ACTIONS = {
+  day: { needs: 'schedule:read', run: ({ date }) => ({ providers: providersOn(date), visits: visitsOn(date) }) },
+  problems: { needs: 'schedule:read', run: (args) => bookingProblems(args) },
+  slots: { needs: 'schedule:read', run: ({ providerId, date, duration }) => openSlots(providerId, date, duration) },
+  book: { needs: 'schedule:write', run: (args) => book(args) },
+  status: { needs: 'schedule:write', run: ({ id, status }) => setStatus(id, status) },
+  search: { needs: 'patients:search', run: ({ text }) => searchPatients(text) },
+  profile: { needs: 'patients', run: ({ id }) => patientProfile(id) },
+  daily: { needs: 'reports', run: ({ from, to }) => dailyReport(from, to) },
+  workload: { needs: 'reports', run: ({ from, to }) => providerWorkload(from, to) },
+  counts: { needs: 'schedule:read', run: ({ from, to }) => countsBetween(from, to) },
+};
+
+/** One door for every request: no session is 401, a role without the permission is 403 */
+function api(token, action, args = {}) {
+  const staff = sessionStaff(token);
+  if (!staff) return { status: 401, body: { error: 'Please sign in' } };
+  const a = ACTIONS[action];
+  if (!a) return { status: 404, body: { error: `No action "${action}"` } };
+  if (!can(staff, a.needs)) return { status: 403, body: { error: 'Your sign-in does not have access to this' } };
+  return { status: 200, body: a.run(args) ?? null };
+}
+```
+
+```js ui
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+const LONG_DATE = new Intl.DateTimeFormat('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+const longDate = (date) => LONG_DATE.format(parseDate(date));
+const state = { date: TODAY, picked: null, token: null, view: 'day' };
+
+/** Calls api() with this session; a 401 sends you back to sign-in */
+function call(action, args) {
+  const res = api(state.token, action, args);
+  if (res.status === 401) { showSignIn('Your session ended. Please sign in again.'); throw new Error('signed out'); }
+  return res;
+}
+
+// What one quarter-hour cell is for one provider: closed, lunch or open
+function cellKind(p, t) {
+  if (!p.starts || t < toMinutes(p.starts) || t >= toMinutes(p.ends)) return 'closed';
+  if (p.lunchStarts && t >= toMinutes(p.lunchStarts) && t < toMinutes(p.lunchEnds)) return 'lunch';
+  return 'open';
+}
+
+/** One day: a row per quarter hour, a column per provider. A visit fills as many rows as it lasts. */
+function drawDay() {
+  const { providers, visits } = call('day', { date: state.date }).body;
+  const hours = clinicHours(state.date);
+  $('title').textContent = longDate(state.date);
+  if (!hours?.opens) { $('grid').innerHTML = '<p class="muted" style="padding:12px">The clinic is closed on weekends.</p>'; return; }
+  const covered = new Set();          // cells already filled by a longer visit above
+  let body = '';
+  for (let t = toMinutes(hours.opens); t < toMinutes(hours.closes); t += 15) {
+    body += `<tr><td class="time">${t % 60 === 0 ? toTime(t) : ''}</td>`;
+    for (const p of providers) {
+      const key = `${p.id}|${toTime(t)}`;
+      if (covered.has(key)) continue;
+      const a = visits.find((x) => x.providerId === p.id && x.starts === toTime(t));
+      if (a) {
+        const span = a.minutes / 15;
+        for (let k = 1; k < span; k++) covered.add(`${p.id}|${toTime(t + 15 * k)}`);
+        body += `<td class="visit ${a.status}" rowspan="${span}" data-visit="${a.id}">${esc(a.patient)}<br><small>${esc(a.type)}</small></td>`;
+      } else {
+        const kind = cellKind(p, t);
+        body += kind === 'open' ? `<td class="open" data-slot="${key}"></td>` : `<td class="${kind}"></td>`;
+      }
+    }
+    body += '</tr>';
+  }
+  $('grid').innerHTML = `<table class="day"><thead><tr><th></th>${providers.map((p) => `<th>${esc(p.name)}<small>${esc(p.specialty)}${p.starts ? ` · ${p.starts}–${p.ends}` : ' · off today'}</small></th>`).join('')}</tr></thead><tbody>${body}</tbody></table>`;
+  if (state.picked) $('grid').querySelector(`[data-slot="${state.picked}"]`)?.classList.add('picked');
+}
+
+const TYPES = ['Follow-up', 'New patient', 'Annual physical', 'Sick visit', 'Procedure', 'Telehealth'];
+const STATUS_LABEL = { scheduled: 'Scheduled', checked_in: 'Check in', completed: 'Complete', no_show: 'No-show', cancelled: 'Cancel' };
+
+function showPanel(html) {
+  $('grid').parentElement.classList.toggle('with-panel', Boolean(html));
+  $('panel').hidden = !html;
+  $('panel').innerHTML = html || '';
+}
+
+/** An open cell: a booking form whose problems update as you change it */
+function drawBooking() {
+  const [providerId, time] = state.picked.split('|').map((x, i) => (i === 0 ? Number(x) : x));
+  const patients = call('search', { text: '' }).body;
+  if (!can(sessionStaff(state.token), 'schedule:write')) { showPanel(`<h3>${time}</h3><p class="muted">Your sign-in can view the schedule but not book visits.</p>`); return; }
+  showPanel(`<h3>Book at ${time}</h3>
+    <label>Patient<select id="bPatient">${patients.map((p) => `<option value="${p.id}">${esc(p.name)}</option>`).join('')}</select></label>
+    <label>Length<select id="bLength">${[15, 30, 45, 60].map((m) => `<option ${m === 30 ? 'selected' : ''}>${m}</option>`).join('')}</select></label>
+    <label>Visit type<select id="bType">${TYPES.map((x) => `<option>${x}</option>`).join('')}</select></label>
+    <label>Reason<input id="bReason" placeholder="e.g. Cough for a week"></label>
+    <div id="bCheck"></div>
+    <button class="primary" id="bBook" type="button">Book visit</button>
+    <p class="muted small">Other open times: <span id="bSlots"></span></p>`);
+  const check = () => {
+    const patientId = Number($('bPatient').value), duration = Number($('bLength').value), startsAt = `${state.date} ${time}`;
+    const problems = call('problems', { patientId, providerId, startsAt, duration }).body;
+    $('bCheck').innerHTML = problems.length ? `<ul class="problems">${problems.map((p) => `<li>${esc(p)}</li>`).join('')}</ul>` : '<p class="ok">Open: this visit can be booked.</p>';
+    $('bSlots').textContent = call('slots', { providerId, date: state.date, duration }).body.slice(0, 8).join(', ') || 'none';
+  };
+  ['bPatient', 'bLength'].forEach((id) => $(id).addEventListener('change', check));
+  check();
+  $('bBook').addEventListener('click', () => {
+    const visitArgs = { patientId: Number($('bPatient').value), providerId, startsAt: `${state.date} ${time}`,
+                        duration: Number($('bLength').value), type: $('bType').value, reason: $('bReason').value };
+    const result = call('book', visitArgs).body;
+    if (!result.ok) { $('bCheck').innerHTML = `<ul class="problems">${result.problems.map((p) => `<li>${esc(p)}</li>`).join('')}</ul>`; return; }
+    state.picked = null;
+    showPanel('');
+    drawDay();
+  });
+}
+
+/** A booked visit: its details and the status buttons */
+function drawVisit(id) {
+  const a = visit(id);
+  const buttons = can(sessionStaff(state.token), 'schedule:write') ? Object.entries(STATUS_LABEL).filter(([s]) => s !== a.status && s !== 'scheduled')
+    .map(([s, label]) => `<button class="ghost" data-status="${s}" type="button">${label}</button>`).join('') +
+    (a.status !== 'scheduled' ? '<button class="ghost" data-status="scheduled" type="button">Reinstate</button>' : '') : '';
+  showPanel(`<h3>${esc(a.patient)}</h3><p>${a.startsAt.slice(11)} · ${a.minutes} min · ${esc(a.type)}<br>${esc(a.reason)}</p>
+    <p class="muted">Status: ${a.status.replace('_', ' ')}</p><div class="statuses">${buttons}</div>`);
+  $('panel').querySelectorAll('[data-status]').forEach((b) => b.addEventListener('click', () => {
+    call('status', { id, status: b.dataset.status });
+    drawDay();
+    drawVisit(id);
+  }));
+}
+
+function drawResults(text = $('search').value) {
+  const list = call('search', { text }).body;
+  $('results').innerHTML = list.length ? list.map((p) => `<li data-patient="${p.id}">${esc(p.name)}<small>${esc(p.mrn)} · born ${esc(p.birth)}</small></li>`).join('')
+    : '<li class="muted">No patients match.</li>';
+}
+
+function drawProfile(id) {
+  const res = call('profile', { id });
+  if (res.status === 403) { $('profile').innerHTML = `<p class="muted">${esc(res.body.error)}: only medical staff open a patient's chart.</p>`; return; }
+  const p = res.body;
+  $('profile').innerHTML = `<h3>${esc(p.first_name)} ${esc(p.last_name)}</h3>
+    <dl><dt>MRN</dt><dd>${esc(p.mrn)}</dd><dt>Born</dt><dd>${esc(p.birth_date)}</dd><dt>Sex</dt><dd>${esc(p.sex)}</dd>
+    <dt>Phone</dt><dd>${esc(p.phone)}</dd><dt>Allergies</dt><dd>${esc(p.allergies || 'None recorded')}</dd></dl>
+    <h4>Insurance</h4>${p.insurance.length ? p.insurance.map((i) => `<p><strong>${i.coverage === 'primary' ? 'Primary' : 'Secondary'}:</strong> ${esc(i.payer)} ${esc(i.plan || '')} · member ${esc(i.member)}${i.copay != null ? ` · $${i.copay} copay` : ''}</p>`).join('') : '<p class="muted">Self-pay (no plan on file)</p>'}
+    <h4>Visits</h4><ul>${p.visits.map((a) => `<li>${a.startsAt} · ${esc(a.type)} with ${esc(a.provider)} · ${a.status.replace('_', ' ')}</li>`).join('') || '<li class="muted">None</li>'}</ul>`;
+}
+
+function drawReports() {
+  const from = TODAY, to = addDays(TODAY, 4);          // Monday–Friday of the demo week
+  const days = call('daily', { from, to }).body;
+  $('daily').innerHTML = '<tr><th>Day</th><th>Visits</th><th>Checked in</th><th>Completed</th><th>No-shows</th></tr>' +
+    days.map((d) => `<tr><td>${d.date}</td><td class="n">${d.total}</td><td class="n">${d.checkedIn}</td><td class="n">${d.completed}</td><td class="n">${d.noShows}</td></tr>`).join('');
+  $('workload').innerHTML = '<tr><th>Provider</th><th>Visits</th><th>No-shows</th><th>No-show rate</th></tr>' +
+    call('workload', { from, to }).body.map((w) => `<tr><td>${esc(w.provider)}</td><td class="n">${w.total}</td><td class="n">${w.noShows}</td><td class="n">${w.noShowPct == null ? '–' : `${w.noShowPct}%`}</td></tr>`).join('');
+}
+
+/** Monday–Friday of the week containing a date */
+function weekOf(date) {
+  const day = weekdayOf(date);
+  const monday = addDays(date, day === 0 ? -6 : 1 - day);
+  return [0, 1, 2, 3, 4].map((i) => addDays(monday, i));
+}
+
+/** Whole weeks (Sunday first) covering the month that contains a date */
+function monthGrid(date) {
+  const first = `${date.slice(0, 7)}-01`;
+  const start = addDays(first, -weekdayOf(first));
+  const days = [];
+  for (let d = start; days.length < 42; d = addDays(d, 1)) days.push(d);
+  return days.slice(35).every((d) => d.slice(0, 7) !== date.slice(0, 7)) ? days.slice(0, 35) : days;   // drop an all-next-month week
+}
+
+function drawWeek() {
+  const days = weekOf(state.date);
+  const from = days[0], to = days[4];
+  const n = call('counts', { from, to }).body;
+  $('title').textContent = `Week of ${longDate(from)}`;
+  $('grid').innerHTML = `<div class="week">${days.map((d) => `<div><strong>${LONG_DATE.format(parseDate(d)).split(',')[0]}</strong>${d.slice(5)}<br>${n[d] ?? 0} visit${n[d] === 1 ? '' : 's'}</div>`).join('')}</div>`;
+}
+
+function drawMonth() {
+  const days = monthGrid(state.date);
+  const from = days[0], to = days[days.length - 1];
+  const n = call('counts', { from, to }).body;
+  $('title').textContent = new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(parseDate(state.date));
+  $('grid').innerHTML = `<div class="month">${days.map((d) => `<div class="${d.slice(0, 7) !== state.date.slice(0, 7) ? 'other' : ''}${d === TODAY ? ' today' : ''}"><strong>${Number(d.slice(8))}</strong>${n[d] ? `${n[d]} visit${n[d] === 1 ? '' : 's'}` : ''}</div>`).join('')}</div>`;
+}
+
+const STEP = { day: 1, week: 7 };
+function drawSchedule() {
+  if (state.view === 'week') drawWeek();
+  else if (state.view === 'month') drawMonth();
+  else drawDay();
+  document.querySelectorAll('[data-view]').forEach((b) => b.classList.toggle('on', b.dataset.view === state.view));
+}
+
+function showSignIn(message = '') {
+  state.token = null;
+  $('app').hidden = true;
+  $('signin').hidden = false;
+  $('signinError').textContent = message;
+}
+
+function enterApp() {
+  const staff = sessionStaff(state.token);
+  $('who').textContent = `Gotham Staff · ${staff.name}`;
+  // Show only the tabs this role can use (the API checks again on every request)
+  const allowed = { schedule: can(staff, 'schedule:read'), patients: can(staff, 'patients:search'), reports: can(staff, 'reports') };
+  document.querySelectorAll('[data-tab]').forEach((b) => { b.hidden = !allowed[b.dataset.tab]; });
+  $('signin').hidden = true;
+  $('app').hidden = false;
+  showTab('schedule');
+}
+
+$('signinForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const form = new FormData(e.target);
+  const button = e.target.querySelector('button');
+  button.disabled = true;
+  $('signinError').textContent = '';
+  const token = await signIn(String(form.get('username')), String(form.get('password')));
+  button.disabled = false;
+  if (!token) { $('signinError').textContent = 'Wrong username or password'; return; }
+  state.token = token;          // kept in memory only: this page's storage may be blocked
+  e.target.password.value = '';
+  enterApp();
+});
+
+$('signOut').addEventListener('click', () => {
+  signOut(state.token);
+  showSignIn();
+});
+
+function showTab(tab) {
+  document.querySelectorAll('[data-tab]').forEach((b) => b.classList.toggle('on', b.dataset.tab === tab));
+  document.querySelectorAll('.view').forEach((s) => { s.hidden = s.id !== tab; });
+  if (tab === 'schedule') drawSchedule();
+  if (tab === 'patients') drawResults();
+  if (tab === 'reports') drawReports();
+}
+$('tabs').addEventListener('click', (e) => { const b = e.target.closest('[data-tab]'); if (b) showTab(b.dataset.tab); });
+$('search').addEventListener('input', (e) => drawResults(e.target.value));
+$('results').addEventListener('click', (e) => { const li = e.target.closest('[data-patient]'); if (li) drawProfile(Number(li.dataset.patient)); });
+
+$('grid').addEventListener('click', (e) => {
+  const slot = e.target.closest('[data-slot]');
+  const booked = e.target.closest('[data-visit]');
+  if (slot) {
+    state.picked = state.picked === slot.dataset.slot ? null : slot.dataset.slot;
+    drawDay();
+    if (state.picked) drawBooking(); else showPanel('');
+  } else if (booked) {
+    state.picked = null;
+    drawDay();
+    drawVisit(Number(booked.dataset.visit));
+  }
+});
+
+document.querySelectorAll('[data-view]').forEach((b) => b.addEventListener('click', () => { state.view = b.dataset.view; showPanel(''); drawSchedule(); }));
+function move(dir) {
+  if (state.view === 'month') { const [y, m] = state.date.split('-').map(Number); const d = new Date(Date.UTC(y, m - 1 + dir, 1)); state.date = formatDate(d); }
+  else state.date = addDays(state.date, dir * STEP[state.view]);
+  state.picked = null;
+  showPanel('');
+  drawSchedule();
+}
+$('prev').addEventListener('click', () => move(-1));
+$('next').addEventListener('click', () => move(1));
+
+// Load SQLite, build the database, then draw the page
+initSqlJs({ locateFile: (file) => SQLJS + file })
+  .then((SQL) => {
+    db = new SQL.Database();
+    build();
+    showSignIn();
+  })
+  .catch((err) => {
+    document.body.insertAdjacentHTML('afterbegin', `<p class="error" style="padding:12px">Couldn't start the database: ${esc(err.message)}</p>`);
+    console.error(err);
+  });
+```
+
+## Step: How the real project is built
+time: 15
+kind: read
+
+You've built the core of [Gotham Hospital System](https://github.com/TheoYanvno/gotham-hospital-system). The real one has the same rules and the same SQL, organized so it can run in two places: on a Node server, and fully inside the browser on GitHub Pages.
+
+| File | What it does |
+|---|---|
+| `sql/schema.sql` | the tables you wrote, plus `documents` (uploaded files as BLOBs) and the staff and session tables |
+| `src/ClinicRepository.js` | every query: `bookingProblems()`, `openSlots()`, the insurance upsert, the reports, `signIn()` and `sessionStaff()` |
+| `src/routes.js` | `handle(repo, { method, path, query, body, token })` → `{ status, body }`: one router with the 401/403 checks and friendly errors |
+| `src/auth.js` | SHA-256, HMAC and PBKDF2 written in plain JavaScript, a constant-time compare and random tokens |
+| `src/schedule.js` | `toMinutes`, `toTime`, `addDays`, `weekdayOf`, `weekOf`, `monthGrid` |
+| `src/seed/` | 36 providers, the patients and visits, and the role permissions |
+| `public/` | the page: calendar views, booking, patient records |
+| `test/` | 29 tests run with `node --test`, most of them once for each database driver |
+
+**One router, two places.** The server passes each HTTP request to `handle()`. On GitHub Pages there is no server, so the page passes the same request objects to the same `handle()` running in the browser, over a sql.js database. The repository doesn't care which: it receives a small driver with `run`, `get` and `all`, backed by Node's built-in `node:sqlite` on the server and by sql.js in the browser.
+
+```js
+const res = handle(repo, { method: 'POST', path: '/api/appointments', body, token, today, now });
+// → { status: 201, body: { id: 812 } }  or  { status: 409, body: { error: 'That provider already has an appointment at that time.' } }
+```
+
+**Why PBKDF2 in plain JavaScript?** Web Crypto, which you used, is only available on secure (https) pages and is always `async`. The real repository has to run in Node tests and in the browser with the same synchronous code, so `auth.js` implements SHA-256 and PBKDF2 itself, and the first test checks its results against Node's built-in `crypto` module. In your own projects, use the built-in Web Crypto or Node's `crypto.pbkdf2`: never invent your own cryptography, and only reimplement a standard one when you can test it against a trusted implementation.
+
+**The same rules, tested.** The tests run on both drivers and check that booking problems are explained in plain words; that a provider can't be double-booked; that open slots respect hours, lunch and visits; that a patient keeps one primary and one secondary plan; that the API answers 201, 409 or 400; that sessions expire after 8 hours and end at sign-out; that only hashes are stored; and that each role sees only its part of the portal.
+
 ## Finish
 
 ### What you learned
