@@ -181,6 +181,9 @@ export default {
    ],
    "session": 0,
    "minutes": 12,
+   "uses": [
+    "canvas"
+   ],
    "js": {
     "setup": "const canvas = document.getElementById('board');\nconst ctx = canvas.getContext('2d');\nconst SIZE = 20;                    // the board is 20 cells across and 20 down\nconst CELL = canvas.width / SIZE;   // so each cell is 400 / 20 = 20 pixels",
     "draw": "function draw() {\n  // 1. Clear the board\n  ctx.fillStyle = '#182030';\n  ctx.fillRect(0, 0, canvas.width, canvas.height);\n\n  // 2. Faint grid lines so you can see the cells\n  ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';\n  for (let i = 1; i < SIZE; i++) {\n    ctx.beginPath();\n    ctx.moveTo(i * CELL, 0);\n    ctx.lineTo(i * CELL, canvas.height);\n    ctx.moveTo(0, i * CELL);\n    ctx.lineTo(canvas.width, i * CELL);\n    ctx.stroke();\n  }\n}",

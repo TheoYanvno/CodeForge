@@ -122,6 +122,7 @@ why: The canvas is just pixels. The snake is an array in JavaScript, and `draw()
 
 ## Step: Drawing the board
 time: 12
+uses: canvas
 
 Now let's paint on the canvas. In JavaScript you don't draw on the `<canvas>` element directly. You ask it for a **drawing context**, an object full of drawing commands:
 

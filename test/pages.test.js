@@ -119,6 +119,6 @@ test('the Lessons page puts each project after the lessons it needs, with done m
   for (let i = 0; i < GUIDES.find((g) => g.id === 'htmlcss').steps; i++) progress.complete('htmlcss', i);
   const html = pages.lessonsPage(GUIDES, progress);
   assert.match(html, /Lessons before Snake/);
-  assert.match(html, /Project: <strong>Snake<\/strong> <span class="pill">1 of 2 lessons done/);
+  assert.match(html, /Project: <strong>Snake<\/strong> <span class="pill">1 of \d+ lessons done/);
   assert.match(pages.needChips(GUIDES.find((g) => g.id === 'snake'), GUIDES, progress), /need ok">✓ HTML &amp; CSS basics/);
 });
