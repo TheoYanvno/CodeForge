@@ -92,9 +92,14 @@ npm run guides # rebuild src/lessons/ after editing a guide in guides/
 | `src/app.js` | Starts the tutor |
 | `src/tutor.js` | The pages: guide list, lesson plan, steps with their code, See it run, download, quizzes, pace timer and progress |
 | `src/tutor-core.js` | Building each step's code, Markdown with diagrams and tables, line diff, the step checks the tests use, lesson plan, pace, quiz grading and progress (no DOM, tested in Node) |
+| `src/accounts.js` | Accounts on this device: salted PBKDF2-SHA256 password hashes, sign in and out, and moving guest progress into a new account |
 | `src/preview.js` | Puts a step's HTML, CSS and JavaScript together into one page |
 | `src/lessons/` | The built guides, plus the guide list in `index.js` |
 | `guides/` | The guides in Markdown |
 | `scripts/build-guides.js` | Turns the Markdown guides into `src/lessons/` modules |
 
 Built with help from AI coding tools for planning, code review and tests.
+
+## License
+
+MIT, see [LICENSE](LICENSE).
