@@ -375,6 +375,7 @@ why: On a canvas `y` grows down, so going up subtracts 1 from `y`.
 
 ## Step: The game loop
 time: 15
+uses: gameloop
 
 Real games don't wait for clicks: they run a **game loop**. Ours is simple: move, draw, then wait a moment and do it again.
 
@@ -968,6 +969,7 @@ why: `getItem` returns `null`, `Number(null)` is `0`, and `|| 0` also covers any
 
 ## Step: Speed levels that get faster as you score
 time: 12
+uses: gameloop
 
 A constant 150 ms gets boring once you're good. Two improvements:
 

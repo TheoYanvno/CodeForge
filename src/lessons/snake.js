@@ -350,6 +350,9 @@ export default {
    ],
    "session": 1,
    "minutes": 15,
+   "uses": [
+    "gameloop"
+   ],
    "js": {
     "state": "let snake, direction, timer;\n\n// Everything a new game needs, so Start always begins from the same place\nfunction newGame() {\n  const mid = Math.floor(SIZE / 2);\n  snake = [{ x: mid, y: mid }, { x: mid - 1, y: mid }, { x: mid - 2, y: mid }];\n  direction = 'right';\n}",
     "loop": "// The game loop: move, draw, and wait a moment before the next move.\nfunction tick() {\n  step();\n  draw();\n  timer = setTimeout(tick, 150);\n}\n\nfunction start() {\n  clearTimeout(timer);    // never run two loops at once\n  newGame();\n  draw();\n  tick();\n}",
@@ -668,6 +671,9 @@ export default {
    ],
    "session": 2,
    "minutes": 12,
+   "uses": [
+    "gameloop"
+   ],
    "html": {
     "page": "<header class=\"bar\">\n  <h1>Snake</h1>\n  <p>Score <strong id=\"score\">0</strong> · Best <strong id=\"best\">0</strong></p>\n</header>\n\n<main>\n  <canvas id=\"board\" width=\"400\" height=\"400\"></canvas>\n  <p id=\"message\" class=\"message\">Press Start or the space bar</p>\n  <div class=\"controls\">\n    <button id=\"start\">Start</button>\n    <label>Speed\n      <select id=\"speed\">\n        <option value=\"slow\">Slow</option>\n        <option value=\"normal\" selected>Normal</option>\n        <option value=\"fast\">Fast</option>\n      </select>\n    </label>\n  </div>\n</main>"
    },
