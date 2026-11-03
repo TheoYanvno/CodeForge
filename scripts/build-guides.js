@@ -7,6 +7,7 @@
 //   remove: js blockName    removes a block
 //   ## Session: Title       starts a session: a group of steps meant for one sitting
 //   time: 15                minutes the step should take (the pace timer and the lesson plan use it)
+//   uses: canvas, gameloop  the lessons (guide ids) whose skills this step uses: shown as "You learned this in ..."
 //   quiz: Question?         a multiple-choice question, followed by "- [ ] wrong" / "- [x] right"
 //                           options and an optional "why: explanation" line
 // Any other ``` block is an example shown in the explanation (```svg Caption``` is a diagram).
@@ -83,6 +84,8 @@ export function parseGuide(text, file = 'guide') {
     if (quiz && line.trim()) quiz = null;           // anything else ends the question
     const time = line.match(/^time:\s*(\d+)\s*$/);
     if (time) { current.minutes = Number(time[1]); continue; }
+    const uses = line.match(/^uses:\s*([\w-]+(?:\s*,\s*[\w-]+)*)\s*$/);
+    if (uses) { current.uses = uses[1].split(',').map((x) => x.trim()); continue; }
     const kind = line.match(/^kind:\s*(\w+)\s*$/);
     if (kind) { current.kind = kind[1]; continue; }
     const remove = line.match(/^remove:\s*(html|css|js)\s+([\w-]+)\s*$/);

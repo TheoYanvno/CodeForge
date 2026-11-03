@@ -29,6 +29,38 @@ export const LOGO = `<svg class="logo-mark" viewBox="0 0 100 100" aria-hidden="t
 /** The basics guides: each teaches what the project guides after it need. */
 export const BASICS = new Set(['setup', 'github', 'htmlcss', 'jsbasics', 'electron', 'python', 'sql', 'feedback', 'webapi']);
 
+/** A lesson teaches one skill (a basics guide or a short skill lesson); everything else is a project. */
+export const isLesson = (g) => BASICS.has(g.id) || g.kind === 'skill';
+export const isProject = (g) => !isLesson(g);
+
+/** The lessons a project needs, each with whether you've finished it. */
+export function needsOf(guide, guides, progress) {
+  return (guide.needs ?? []).map((id) => guides.find((g) => g.id === id)).filter(Boolean)
+    .map((g) => ({ guide: g, finished: guideStats(g, progress).finished }));
+}
+
+/** Small ✓/○ chips for a project's lessons. */
+export function needChips(guide, guides, progress) {
+  const list = needsOf(guide, guides, progress);
+  if (!list.length) return '';
+  const done = list.filter((n) => n.finished).length;
+  return `<span class="needs" aria-label="Lessons this project uses: ${done} of ${list.length} done">${list.map((n) =>
+    `<span class="need${n.finished ? ' ok' : ''}">${n.finished ? '✓' : '○'} ${esc(n.guide.title)}</span>`).join('')}</span>`;
+}
+
+/** The guide list split into "the lessons before each project, then the project". */
+export function courseSections(guides) {
+  const sections = [];
+  let lessons = [];
+  for (const g of guides) {
+    if (isLesson(g)) { lessons.push(g); continue; }
+    sections.push({ project: g, lessons });
+    lessons = [];
+  }
+  if (lessons.length) sections.push({ project: null, lessons });
+  return sections;
+}
+
 /** The tracks on the Home page. A track without a guide is shown as coming soon. */
 export const TRACKS = [
   { id: 'setup', label: 'Setup', sub: 'Get your tools', glyph: '⚙', tone: 'slate' },
@@ -67,7 +99,7 @@ export function achievements(guides, progress, activity) {
   const t = totals(guides, progress);
   const finished = (id) => { const g = guides.find((x) => x.id === id); return g ? guideStats(g, progress).finished : false; };
   const basics = guides.filter((g) => BASICS.has(g.id) && g.available);
-  const projects = guides.filter((g) => !BASICS.has(g.id) && g.available);
+  const projects = guides.filter((g) => isProject(g) && g.available);
   const list = [
     { id: 'first-step', icon: '🚀', title: 'First step', description: 'Finish your first step.', value: t.done, target: 1 },
     { id: 'setup', icon: '🧰', title: 'Ready to code', description: 'Finish Get set up.', value: finished('setup') ? 1 : 0, target: 1 },
@@ -126,7 +158,7 @@ export function accountCard(user) {
 
 // ---- guide cards (Lessons and Projects) ----
 
-export function guideCards(guides, progress) {
+export function guideCards(guides, progress, all = guides) {
   return guides.map((g) => {
     const s = guideStats(g, progress);
     const status = !g.available ? '<span class="soon">Coming soon</span>'
@@ -135,7 +167,7 @@ export function guideCards(guides, progress) {
       <button ${g.available ? `data-open="${g.id}"` : 'disabled'}>
         <span class="g-emoji" aria-hidden="true">${g.emoji}</span>
         <span class="g-body"><strong>${esc(g.title)}</strong><span class="g-meta">${esc(g.level)} · ${esc(g.time)}</span>
-        <span class="g-sum">${esc(g.summary)}</span></span>
+        <span class="g-sum">${esc(g.summary)}</span>${g.needs ? needChips(g, all, progress) : ''}</span>
         ${status}
       </button>${g.available && s.done ? `<span class="bar"><span data-fill="${s.percent}"></span></span>` : ''}
     </li>`;
@@ -172,7 +204,7 @@ export function homePage(guides, progress, activity) {
   const basics = guides.filter((g) => BASICS.has(g.id) && g.available);
   const b = totals(basics, progress);
   const C = 2 * Math.PI * 48;
-  const project = nextGuide(guides, progress, (g) => !BASICS.has(g.id));
+  const project = nextGuide(guides, progress, isProject);
   const tracks = TRACKS.map((t) => {
     const g = t.id && guides.find((x) => x.id === t.id);
     const s = g ? guideStats(g, progress) : null;
@@ -240,19 +272,32 @@ export function comingSoon(list) {
 }
 
 export function lessonsPage(guides, progress, coming = []) {
-  const basics = guides.filter((g) => BASICS.has(g.id));
+  const lessons = guides.filter(isLesson);
+  const sections = courseSections(guides).map(({ project, lessons: list }) => {
+    if (!project) return list.length ? `<section class="course-part"><h3 class="section-title">More lessons</h3><ol class="guides">${guideCards(list, progress, guides)}</ol></section>` : '';
+    const need = needsOf(project, guides, progress);
+    const ready = need.every((n) => n.finished);
+    return `<section class="course-part">
+      ${list.length ? `<h3 class="section-title">Lessons before ${esc(project.title)}</h3><ol class="guides">${guideCards(list, progress, guides)}</ol>` : ''}
+      <div class="project-gate${ready ? ' ready' : ''}">
+        <p class="gate-title">🛠️ Project: <strong>${esc(project.title)}</strong> ${ready ? '<span class="pill ok">Ready to build</span>' : `<span class="pill">${need.filter((n) => n.finished).length} of ${need.length} lessons done</span>`}</p>
+        <p class="muted small">This project combines ${need.length ? need.map((n) => esc(n.guide.title)).join(', ') : 'the lessons above'}.</p>
+        <button class="small${ready ? ' primary' : ''}" data-open="${project.id}">Open the project →</button>
+      </div>
+    </section>`;
+  }).join('');
   return `<header class="page-head"><h2>Lessons</h2>
-      <p class="muted">Every guide, in the order they're meant to be taken. Each basics guide builds a small project of its own and teaches what the project guides right after it need. Follow along in your own editor: copy each step's code or download it as a page.</p></header>
-    <ol class="guides">${guideCards(guides, progress)}</ol>
-    <p class="muted small">${basics.length} basics guides and ${guides.length - basics.length} project guides.</p>
+      <p class="muted">Each lesson teaches one skill with its own small, working example: what it is, how it works and why it's done that way. Each project then combines the lessons before it, so by the time you build it, every part is something you've already learned.</p></header>
+    ${sections}
+    <p class="muted small">${lessons.length} lessons and ${guides.length - lessons.length} projects.</p>
     ${comingSoon(coming)}`;
 }
 
 export function projectsPage(guides, progress, coming = []) {
-  const projects = guides.filter((g) => !BASICS.has(g.id));
+  const projects = guides.filter(isProject);
   return `<header class="page-head"><h2>Projects</h2>
       <p class="muted">Rebuild my portfolio projects from a blank page, one step at a time: games, tools, a blog, databases and a hospital system.</p></header>
-    <ol class="guides">${guideCards(projects, progress)}</ol>
+    <ol class="guides">${guideCards(projects, progress, guides)}</ol>
     ${comingSoon(coming)}`;
 }
 

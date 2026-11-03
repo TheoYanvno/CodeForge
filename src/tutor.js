@@ -113,7 +113,7 @@ const fillBars = () => { for (const el of document.querySelectorAll('[data-fill]
 async function openGuide(id) {
   const entry = GUIDES.find((g) => g.id === id);
   $('tutor').innerHTML = '<p class="muted t-loading">Loading the guide…</p>';
-  showNav(pages.BASICS.has(id) ? 'lessons' : 'projects');
+  showNav(pages.isLesson(entry) ? 'lessons' : 'projects');
   const data = (await entry.load()).default;
   guide = { ...entry, ...data, ...assemble(data.start, data.steps) };
   history.replaceState(null, '', `?guide=${id}`);
@@ -182,7 +182,8 @@ function showPlan() {
       <p class="muted">${guide.steps.length} steps in ${plan.sessions.length} session${plan.sessions.length > 1 ? 's' : ''} · about ${mins(plan.minutes)} · ${quizCount} quiz questions</p></header>
     <article class="t-body">
       ${guide.goals?.length ? `<h3>By the end you'll be able to</h3><ul>${guide.goals.map((g) => `<li>${esc(g)}</li>`).join('')}</ul>` : ''}
-      ${guide.prereqs?.length ? `<h3>Before you start</h3><ul>${guide.prereqs.map((g) => `<li>${esc(g)}</li>`).join('')}</ul>` : ''}
+      ${needsBox()}
+      ${guide.prereqs?.length ? `<h3>${guide.needs ? 'You should be comfortable with' : 'Before you start'}</h3><ul>${guide.prereqs.map((g) => `<li>${esc(g)}</li>`).join('')}</ul>` : ''}
       <h3>How to follow along</h3>
       ${guide.steps.every((st) => st.kind === 'read') ? `<p>This guide is read-along: each step explains an idea and shows the code, and you type and run it on your own computer. There's no See it run, because this code runs in your terminal, not in a web page.</p>` : `<p>Make a folder with three empty files: <code>index.html</code>, <code>style.css</code> and <code>script.js</code>, and open it in your editor. In each step, read the explanation, then look at <strong>The code</strong>: <strong>What changes</strong> shows the lines the step adds (green) and removes (struck through), and the file tabs show each whole file. Type the changes yourself; that's how it sticks. If you fall behind, copy a whole file or download the step as one page. <strong>See it run</strong> shows the finished step working.</p>`}
       <h3>Sessions</h3>
@@ -204,6 +205,23 @@ function showPlan() {
       <button data-act="start" class="primary">${started ? 'Continue' : 'Start step 1'} →</button></nav>`;
   fillBars();
   window.scrollTo(0, 0);
+}
+
+/** A project's lessons on its plan page: each with ✓ or a button to open it. */
+function needsBox() {
+  const list = pages.needsOf(guide, GUIDES, progress);
+  if (!list.length) return '';
+  const left = list.filter((n) => !n.finished).length;
+  return `<h3>Lessons this project combines</h3>
+    <p>${left ? `This project puts together ${list.length} lessons. Finish the ${left} still open first, so every step is something you've already practiced; you can also start now and open a lesson when a step points to it.` : 'You finished every lesson this project uses, so each step builds on something you already know.'}</p>
+    <ul class="need-list">${list.map((n) => `<li>${n.finished ? '✓' : '○'} <button class="link" data-open="${n.guide.id}">${esc(n.guide.emoji)} ${esc(n.guide.title)}</button>${n.finished ? '' : ' <span class="muted small">not finished</span>'}</li>`).join('')}</ul>`;
+}
+
+/** "You learned this in ..." for the lessons a step uses. */
+function usesNote(step) {
+  const list = (step.uses ?? []).map((id) => GUIDES.find((g) => g.id === id)).filter(Boolean);
+  if (!list.length) return '';
+  return `<aside class="uses">📘 You learned this in ${list.map((g) => `<button class="link" data-open="${g.id}">${esc(g.title)}</button>`).join(' and ')}. Open it again if this step feels new.</aside>`;
 }
 
 // ---- one step ----
@@ -235,6 +253,7 @@ function showStep() {
       ${step.minutes ? `<p id="tPace" class="pace" role="timer" aria-live="off"><span class="p-fill" aria-hidden="true"></span>⏱ <span class="p-time">0:00</span> of about ${step.minutes} min · <span class="p-note"></span>
         <button class="p-reset" data-act="retime" title="Start this step's timer again from 0:00">↺ Reset timer</button></p>` : ''}
     </header>
+    ${usesNote(step)}
     <article class="t-body">${renderMarkdown(step.body)}</article>
     ${step.checks?.length ? `
     <section class="t-task">

@@ -50,6 +50,7 @@ What you learned, and some challenges.
 - Any other code block is an example shown in the explanation.
 - `## Session:` groups steps into sittings. The lesson plan lists sessions with their planned minutes, and each session ends with a working project, so it's also how a guide is published: one session per push.
 - `time:` is how many minutes a step should take. The ⏱ pace timer compares the learner's time with it.
+- `uses: canvas, gameloop` (project guides) names the lessons whose skill the step uses. The step shows "You learned this in ..." with a link back, and the tests make sure each one is in the project's `needs` in `src/lessons/index.js`.
 - `quiz:` asks a multiple-choice question after the step. Mark the right option `- [x]`, give at least three options and a `why:` line. Every step you write code in needs at least one question.
 - ```` ```svg Caption ```` is a diagram. It's shown as an image (so nothing in it can run) with the caption underneath. Every guide needs at least three.
 - `check:` lines list what the step has you write (`pane | label | /regex/flags | hint`). The labels are shown as **In this step you write**, and the regex keeps the guide honest: the tests make sure each one fails on the step's starting code and passes on its finished code, so the list always matches the code. Comments are ignored.

@@ -1,6 +1,10 @@
-// The guides, in the order they're meant to be taken (easiest first). The Start here guides and the
-// basics guides teach what the project guides after them need; each project guide rebuilds one of my
-// portfolio projects. A guide's file is only downloaded when it's opened.
+// The guides, in the order they're meant to be taken (easiest first). There are two kinds:
+//   lessons  teach one skill each: the Start here and basics guides, and the short skill lessons
+//            (kind: 'skill') that come right before the first project that uses them
+//   projects rebuild one of my portfolio projects by combining lessons taken before it; `needs` lists
+//            those lessons (each must come earlier in this list), and a project step that uses one
+//            says "You learned this in ..." (the `uses:` line in the guide)
+// A guide's file is only downloaded when it's opened.
 export const GUIDES = [
   { id: 'setup', title: 'Get set up: the software you need', emoji: '🧰', level: 'Start here', time: 'about 2 hours', steps: 9, available: true,
     summary: 'What to download and why: VS Code and the best extensions, browser developer tools, Git and GitHub, Node.js and Python. You finish by publishing your first page.',
@@ -14,42 +18,42 @@ export const GUIDES = [
   { id: 'jsbasics', title: 'JavaScript basics', emoji: '🧮', level: 'Start here', time: 'about 2 hours', steps: 8, available: true,
     summary: 'Variables, functions, events, if/else, arrays and loops. You build a tip calculator that updates as you type, and publish it.',
     load: () => import('./jsbasics.js') },
-  { id: 'snake', title: 'Snake', emoji: '🐍', level: 'Beginner', time: 'about 3 hours', steps: 13, available: true,
+  { id: 'snake', title: 'Snake', emoji: '🐍', level: 'Beginner', time: 'about 3 hours', steps: 13, available: true, needs: ['htmlcss', 'jsbasics'],
     summary: 'Canvas drawing, a game loop, keyboard and swipe controls, and keeping game rules separate from drawing.',
     load: () => import('./snake.js') },
-  { id: 'quote', title: 'Quote & Joke Generator', emoji: '💬', level: 'Beginner', time: 'about 3 hours', steps: 10, available: true,
+  { id: 'quote', title: 'Quote & Joke Generator', emoji: '💬', level: 'Beginner', time: 'about 3 hours', steps: 10, available: true, needs: ['htmlcss', 'jsbasics'],
     summary: 'Arrays of data, random picks, category filters, favorites, sharing, and accounts so favorites follow you to any device.',
     load: () => import('./quote.js') },
-  { id: 'calendar', title: 'Task Calendar', emoji: '📅', level: 'Beginner+', time: 'about 3 hours', steps: 11, available: true,
+  { id: 'calendar', title: 'Task Calendar', emoji: '📅', level: 'Beginner+', time: 'about 3 hours', steps: 11, available: true, needs: ['htmlcss', 'jsbasics'],
     summary: 'Dates and a month grid, repeating tasks, drag to reschedule, US holidays with monthly themes, a This month panel, locations, email reminders and .ics export, plus how the weather works.', load: () => import('./calendar.js') },
-  { id: 'sudoku', title: 'Sudoku Solver', emoji: '🔢', level: 'Intermediate', time: 'about 3 hours', steps: 12, available: true,
+  { id: 'sudoku', title: 'Sudoku Solver', emoji: '🔢', level: 'Intermediate', time: 'about 3 hours', steps: 12, available: true, needs: ['htmlcss', 'jsbasics'],
     summary: 'A 9 x 9 grid, rule checks, a solver that explains every step and backtrack, and making puzzles at three levels.', load: () => import('./sudoku.js') },
   { id: 'electron', title: 'Electron basics', emoji: '🖥️', level: 'Intermediate', time: 'about 2 hours', steps: 7, available: true,
     summary: 'What Electron is, the main and renderer processes, a safe preload bridge, IPC and system notifications. You build a desktop reminders app.',
     load: () => import('./electron.js') },
-  { id: 'sticky', title: 'Sticky Notes', emoji: '🗒️', level: 'Intermediate', time: 'about 3 hours', steps: 11, available: true,
+  { id: 'sticky', title: 'Sticky Notes', emoji: '🗒️', level: 'Intermediate', time: 'about 3 hours', steps: 11, available: true, needs: ['htmlcss', 'jsbasics', 'electron'],
     summary: 'Notes in four colors with a checklist mode, up to three at a time, and the Electron app that puts each one on the desktop by itself.', load: () => import('./sticky.js') },
   { id: 'python', title: 'Python basics', emoji: '🐍', level: 'Beginner+', time: 'about 2 hours', steps: 8, available: true,
     summary: 'Variables, lists, dictionaries, functions, loops, try/except, JSON files and unittest. You build a command-line budget tracker and publish it.',
     load: () => import('./python.js') },
-  { id: 'bonfire', title: 'Bonfire Notes (blog)', emoji: '🔥', level: 'Intermediate', time: 'about 3 hours', steps: 10, available: true,
+  { id: 'bonfire', title: 'Bonfire Notes (blog)', emoji: '🔥', level: 'Intermediate', time: 'about 3 hours', steps: 10, available: true, needs: ['htmlcss', 'jsbasics', 'python'],
     summary: 'Markdown posts with front matter, a safe Markdown converter, tag pages, RSS and redirects, floating embers, and the Python static site generator behind the real blog.', load: () => import('./bonfire.js') },
   { id: 'sql', title: 'SQL basics', emoji: '🗄️', level: 'Beginner+', time: 'about 2 hours', steps: 8, available: true,
     summary: 'Tables, INSERT with safe parameters, SELECT with WHERE, ORDER BY and LIKE, GROUP BY, and a JOIN. You build a book library backed by a real database.',
     load: () => import('./sql.js') },
-  { id: 'marvel', title: 'Marvel Character Database', emoji: '🦸', level: 'Intermediate', time: 'about 3 hours', steps: 11, available: true,
+  { id: 'marvel', title: 'Marvel Character Database', emoji: '🦸', level: 'Intermediate', time: 'about 3 hours', steps: 11, available: true, needs: ['jsbasics', 'sql'],
     summary: 'SQL tables, joins and search over 214 characters, MCU appearances, relationships, and cards with a photo slot.', load: () => import('./marvel.js') },
   { id: 'feedback', title: 'Reacting to the player', emoji: '🎯', level: 'Intermediate', time: 'about 2 hours', steps: 7, available: true,
     summary: 'The input, evaluate, respond loop, game state in one place, finding the best move and grading each move against it. You build a guessing game with a coach, a simple Chess Coach.',
     load: () => import('./feedback.js') },
-  { id: 'chess', title: 'Chess Coach', emoji: '♟️', level: 'Advanced', time: 'about 3.5 hours', steps: 13, available: true,
+  { id: 'chess', title: 'Chess Coach', emoji: '♟️', level: 'Advanced', time: 'about 3.5 hours', steps: 13, available: true, needs: ['htmlcss', 'jsbasics', 'feedback'],
     summary: 'Board state, every legal move, a computer opponent with alpha-beta search, and the coach that grades and explains every move.', load: () => import('./chess.js') },
   { id: 'webapi', title: 'Web APIs', emoji: '🌤️', level: 'Intermediate', time: 'about 2 hours', steps: 7, available: true,
     summary: 'Request URLs and parameters, fetch with async and await, res.ok checks, reading JSON, and loading and error states. You build a weather app with live data.',
     load: () => import('./webapi.js') },
-  { id: 'superbook', title: 'SuperBook', emoji: '📖', level: 'Advanced', time: 'about 3 hours', steps: 10, available: true,
+  { id: 'superbook', title: 'SuperBook', emoji: '📖', level: 'Advanced', time: 'about 3 hours', steps: 10, available: true, needs: ['htmlcss', 'jsbasics', 'webapi'],
     summary: 'Reading from web APIs, matching questions to answers, translations, and writing in sand on a canvas.', load: () => import('./superbook.js') },
-  { id: 'gotham', title: 'Gotham Hospital System', emoji: '🏥', level: 'Advanced', time: 'about 4.5 hours', steps: 10, available: true,
+  { id: 'gotham', title: 'Gotham Hospital System', emoji: '🏥', level: 'Advanced', time: 'about 4.5 hours', steps: 10, available: true, needs: ['htmlcss', 'jsbasics', 'sql'],
     summary: 'Provider schedules, booking rules, patient charts, sign-in where the password picks your role, and the SQL behind them.', load: () => import('./gotham.js') },
 ];
 

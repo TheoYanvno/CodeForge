@@ -91,3 +91,34 @@ test('the account box and page show the guest forms or the signed-in name', () =
   assert.doesNotMatch(pages.settingsPage(null), /data-form="delete"/);
   assert.match(pages.accountCard('<b>'), /&lt;b&gt;/, 'names are escaped');
 });
+
+test('projects only need lessons that come before them, and steps only point to lessons the project needs', async () => {
+  const { readFileSync } = await import('node:fs');
+  const { parseGuide } = await import('../scripts/build-guides.js');
+  GUIDES.forEach((g, i) => {
+    for (const id of g.needs ?? []) {
+      const at = GUIDES.findIndex((x) => x.id === id);
+      assert.ok(at >= 0, `${g.id} needs ${id}, which isn't a guide`);
+      assert.ok(at < i, `${g.id} needs ${id}, which comes after it`);
+      assert.ok(pages.isLesson(GUIDES[at]), `${g.id} needs ${id}, which is a project, not a lesson`);
+    }
+    if (pages.isProject(g)) assert.ok(g.needs?.length, `project ${g.id} should list the lessons it combines`);
+    if (!g.available) return;
+    const guide = parseGuide(readFileSync(new URL(`../guides/${g.id}.md`, import.meta.url), 'utf8'), g.id);
+    for (const st of guide.steps) for (const id of st.uses ?? []) {
+      assert.ok((g.needs ?? []).includes(id), `${g.id} step "${st.title}" uses ${id}, which isn't in its needs`);
+    }
+  });
+});
+
+test('the Lessons page puts each project after the lessons it needs, with done marks', () => {
+  const { progress } = fresh();
+  const sections = pages.courseSections(GUIDES);
+  assert.strictEqual(sections[0].project.id, 'snake');
+  assert.ok(sections[0].lessons.some((g) => g.id === 'jsbasics'));
+  for (let i = 0; i < GUIDES.find((g) => g.id === 'htmlcss').steps; i++) progress.complete('htmlcss', i);
+  const html = pages.lessonsPage(GUIDES, progress);
+  assert.match(html, /Lessons before Snake/);
+  assert.match(html, /Project: <strong>Snake<\/strong> <span class="pill">1 of 2 lessons done/);
+  assert.match(pages.needChips(GUIDES.find((g) => g.id === 'snake'), GUIDES, progress), /need ok">✓ HTML &amp; CSS basics/);
+});
