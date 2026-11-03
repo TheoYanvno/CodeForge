@@ -812,6 +812,7 @@ why: One function decides and another reacts, which keeps both simple and easy t
 
 ## Step: Best score, and the space bar
 time: 15
+uses: storage, gameloop
 
 Players love beating their own record, so let's remember the best score. The browser's `localStorage` keeps small bits of text for a website, even after the page is closed:
 

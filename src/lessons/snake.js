@@ -610,6 +610,10 @@ export default {
    ],
    "session": 2,
    "minutes": 15,
+   "uses": [
+    "storage",
+    "gameloop"
+   ],
    "html": {
     "page": "<header class=\"bar\">\n  <h1>Snake</h1>\n  <p>Score <strong id=\"score\">0</strong> · Best <strong id=\"best\">0</strong></p>\n</header>\n\n<main>\n  <canvas id=\"board\" width=\"400\" height=\"400\"></canvas>\n  <p id=\"message\" class=\"message\">Press Start or the space bar</p>\n  <div class=\"controls\">\n    <button id=\"start\">Start</button>\n  </div>\n</main>"
    },
