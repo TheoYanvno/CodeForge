@@ -12,6 +12,7 @@ prereqs: HTML, CSS and JavaScript basics (functions, arrays, objects); Arrow fun
 
 ## Step: Content as data, and a random pick
 time: 15
+uses: randompick
 
 Welcome! In this guide you'll rebuild my [Quote & Joke Generator](https://theoyanvno.github.io/quote-and-joke-generator/): inspiring quotes and clean jokes, a punchline you reveal with a click, today's pick, categories, favorites, and accounts so your favorites follow you.
 
