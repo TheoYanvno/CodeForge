@@ -418,6 +418,9 @@ export default {
    ],
    "session": 1,
    "minutes": 20,
+   "uses": [
+    "input"
+   ],
    "js": {
     "directions": "const DIRECTIONS = {\n  up: { x: 0, y: -1 },\n  down: { x: 0, y: 1 },\n  left: { x: -1, y: 0 },\n  right: { x: 1, y: 0 },\n};\nconst OPPOSITE = { up: 'down', down: 'up', left: 'right', right: 'left' };",
     "state": "let snake, direction, queue, timer;\n\n// Everything a new game needs, so Start always begins from the same place\nfunction newGame() {\n  const mid = Math.floor(SIZE / 2);\n  snake = [{ x: mid, y: mid }, { x: mid - 1, y: mid }, { x: mid - 2, y: mid }];\n  direction = 'right';\n  queue = [];             // turns pressed since the last move\n}",
@@ -730,6 +733,9 @@ export default {
    ],
    "session": 2,
    "minutes": 15,
+   "uses": [
+    "input"
+   ],
    "js": {
     "controls": "// Arrow keys and WASD. A turn is queued, so two quick presses between moves both count.\nconst KEYS = {\n  ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right',\n  w: 'up', s: 'down', a: 'left', d: 'right',\n};\n\nfunction turn(name) {\n  const last = queue.at(-1) ?? direction;    // where we'll be facing after the turns already queued\n  if (name === last || name === OPPOSITE[last] || queue.length >= 2) return;   // no reversing into yourself\n  queue.push(name);\n}\n\ndocument.addEventListener('keydown', (e) => {\n  if (e.key === ' ' && (over || !timer)) {   // space starts a game when none is running\n    e.preventDefault();\n    return start();\n  }\n  const name = KEYS[e.key] ?? KEYS[e.key.toLowerCase()];\n  if (!name) return;\n  e.preventDefault();     // stop the arrow keys from scrolling the page\n  turn(name);\n});\n\n// Swipes on a phone: compare where the finger went down with where it came up.\nlet touchStart = null;\n\ncanvas.addEventListener('touchstart', (e) => {\n  const t = e.touches[0];\n  touchStart = { x: t.clientX, y: t.clientY };\n}, { passive: true });\n\ncanvas.addEventListener('touchend', (e) => {\n  if (!touchStart) return;\n  const t = e.changedTouches[0];\n  const dx = t.clientX - touchStart.x;\n  const dy = t.clientY - touchStart.y;\n  touchStart = null;\n  if (Math.max(Math.abs(dx), Math.abs(dy)) < 20) return;   // a tap, not a swipe\n  if (Math.abs(dx) > Math.abs(dy)) turn(dx > 0 ? 'right' : 'left');\n  else turn(dy > 0 ? 'down' : 'up');\n});"
    }

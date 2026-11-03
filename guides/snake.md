@@ -460,6 +460,7 @@ why: With `setTimeout`, every tick decides when the next one runs, so the delay 
 
 ## Step: Steering with the keyboard
 time: 20
+uses: input
 
 Time to take control. When a key is pressed, the browser fires a `keydown` event, and `event.key` tells you which key: `'ArrowUp'`, `'a'`, `' '` (space) and so on. A lookup object turns keys into directions:
 
@@ -1075,6 +1076,7 @@ why: Tuning the game means changing one object instead of hunting through the co
 
 ## Step: Swipe controls for phones
 time: 15
+uses: input
 
 Phones don't have arrow keys, so let's read swipes. A swipe is just two touch events: `touchstart` (finger down) and `touchend` (finger up). Compare where the finger started and where it ended:
 
