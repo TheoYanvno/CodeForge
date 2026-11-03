@@ -8,6 +8,7 @@ import { assemble, startOf, renderMarkdown, lineDiff, changedLines, Progress, le
 import { buildDocument } from './preview.js';
 import { GUIDES, COMING } from './lessons/index.js';
 import { Activity } from './activity.js';
+import { Accounts, keyFor, PROGRESS_KEY, ACTIVITY_KEY } from './accounts.js';
 import * as pages from './pages.js';
 
 const $ = (id) => document.getElementById(id);
@@ -16,8 +17,21 @@ const PANES = ['html', 'css', 'js'];
 const PANE_NAMES = { html: 'HTML', css: 'CSS', js: 'JavaScript' };
 const FILE_NAMES = { html: 'index.html', css: 'style.css', js: 'script.js' };
 
-const progress = new Progress();
-const activity = new Activity();
+// localStorage itself can throw in locked-down browsers; everything below copes with null.
+const store = (() => { try { return globalThis.localStorage; } catch { return null; } })();
+const accounts = new Accounts(store);
+let user = null;            // the signed-in name, or null for a guest
+let progress;               // guide progress for whoever is signed in
+let activity;               // study days for the streak, for whoever is signed in
+
+/** Loads the signed-in person's progress and streak (or the guest's). */
+function loadUser() {
+  user = accounts.current();
+  progress = new Progress(store, keyFor(PROGRESS_KEY, user));
+  activity = new Activity(store, keyFor(ACTIVITY_KEY, user));
+  $('account').innerHTML = pages.accountCard(user);
+  showStreak();
+}
 let page = 'home';          // the dashboard page on screen when no guide is open
 let guide = null;           // the open guide (assembled)
 let at = 0;                 // the step on screen
@@ -30,6 +44,9 @@ export function initTutor() {
   $('brandLogo').innerHTML = pages.LOGO;
   $('nav').addEventListener('click', (e) => { const b = e.target.closest('[data-page]'); if (b) showPage(b.dataset.page); });
   $('tutor').addEventListener('click', onClick);
+  $('account').addEventListener('click', onClick);
+  $('tutor').addEventListener('submit', onSubmit);
+  loadUser();
   $('home').addEventListener('click', (e) => { e.preventDefault(); showPage('home'); });
   const params = new URLSearchParams(location.search);
   const id = params.get('guide');
@@ -74,7 +91,8 @@ async function showPage(name = 'home') {
   else if (name === 'lessons') box.innerHTML = pages.lessonsPage(GUIDES, progress, COMING);
   else if (name === 'projects') box.innerHTML = pages.projectsPage(GUIDES, progress, COMING);
   else if (name === 'achievements') box.innerHTML = pages.achievementsPage(GUIDES, progress, activity);
-  else if (name === 'settings') box.innerHTML = pages.settingsPage();
+  else if (name === 'settings') box.innerHTML = pages.settingsPage(user);
+  else if (name === 'account') box.innerHTML = pages.accountPage(user, guestSteps());
   else {
     box.innerHTML = '<p class="muted t-loading">Loading…</p>';
     const loaded = await loadAll();
@@ -353,7 +371,7 @@ function showFinish() {
 }
 
 function exportProgress() {
-  const data = { app: 'CodeForge', exported: new Date().toISOString(), progress: progress.data, days: activity.days };
+  const data = { app: 'CodeForge', exported: new Date().toISOString(), account: user ?? 'guest', progress: progress.data, days: activity.days };
   const url = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
   const a = Object.assign(document.createElement('a'), { href: url, download: 'codeforge-progress.json' });
   document.body.append(a);
@@ -361,6 +379,38 @@ function exportProgress() {
   a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
   toast('Downloaded codeforge-progress.json');
+}
+
+/** Steps the guest has finished: offered to move into a new account. */
+function guestSteps() {
+  if (user) return 0;
+  return Object.values(progress.data).reduce((t, p) => t + (p.done?.length ?? 0), 0);
+}
+
+/** The Sign in, Create account and Delete account forms. Hashing takes a moment, so the button says so. */
+async function onSubmit(e) {
+  const form = e.target.closest('form[data-form]');
+  if (!form) return;
+  e.preventDefault();
+  const data = Object.fromEntries(new FormData(form));
+  const error = form.querySelector('.form-error');
+  const button = form.querySelector('button[type="submit"]');
+  error.textContent = '';
+  if (form.dataset.form === 'create' && data.password !== data.confirm) { error.textContent = 'The two passwords don\'t match.'; return; }
+  const label = button.textContent;
+  button.disabled = true;
+  button.textContent = 'Checking…';
+  saveTime();
+  let result;
+  if (form.dataset.form === 'signin') result = await accounts.signIn(data.name, data.password);
+  else if (form.dataset.form === 'create') result = await accounts.create(data.name, data.password, { bringGuest: Boolean(data.bring) });
+  else result = await accounts.remove(user, data.password);
+  button.disabled = false;
+  button.textContent = label;
+  if (!result.ok) { error.textContent = result.error; return; }
+  loadUser();
+  toast(form.dataset.form === 'delete' ? 'Account deleted' : `Signed in as ${user}`);
+  showPage('home');
 }
 
 function onClick(e) {
@@ -392,6 +442,12 @@ function onClick(e) {
       showPace();
       return toast('Timer reset to 0:00');
     case 'export': return exportProgress();
+    case 'signout':
+      saveTime();
+      accounts.signOut();
+      loadUser();
+      toast('Signed out. You\'re a guest now.');
+      return showPage('home');
     case 'reset-all':
       if (!confirm('Reset all your CodeForge progress? Every guide\'s place, finished steps, time, quiz answers and your streak are cleared.')) return;
       for (const g of GUIDES) progress.reset(g.id);

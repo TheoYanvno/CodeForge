@@ -13,6 +13,7 @@ export const PAGES = [
   { id: 'projects', label: 'Projects', icon: 'M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z' },
   { id: 'achievements', label: 'Achievements', icon: 'M7 4h10v4a5 5 0 0 1-10 0zM7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4M10 14h4l1 4H9zM8 20h8' },
   { id: 'progress', label: 'Progress', icon: 'M5 20V12M10 20V6M15 20v-9M20 20V4', stroke: true },
+  { id: 'account', label: 'Account', icon: 'M12 12a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9zM3.5 21a8.5 8.5 0 0 1 17 0z' },
   { id: 'settings', label: 'Settings', icon: 'M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7zM12 2l2 3 3.5-.5.5 3.5 3 2-2 3 2 3-3 2-.5 3.5L14 21l-2 3-2-3-3.5.5L6 18l-3-2 2-3-2-3 3-2 .5-3.5L10 5z' },
 ];
 
@@ -110,6 +111,17 @@ export function streakCard(activity) {
   return `<span class="streak-rocket" aria-hidden="true">🚀</span>
     <strong>${n ? 'Keep going!' : 'Start a streak'}</strong>
     <span>${n ? `You're on a ${n} day streak!` : 'Study today to start one.'}</span>`;
+}
+
+/** The small account box in the sidebar: who is signed in, or a Sign in button for guests. */
+export function accountCard(user) {
+  return user
+    ? `<span class="acct-avatar" aria-hidden="true">${esc(user[0].toUpperCase())}</span>
+      <span class="acct-name"><strong>${esc(user)}</strong><span class="muted small">Signed in</span></span>
+      <button class="link small" data-act="signout">Sign out</button>`
+    : `<span class="acct-avatar guest" aria-hidden="true">?</span>
+      <span class="acct-name"><strong>Guest</strong><span class="muted small">Progress saved on this device</span></span>
+      <button class="link small" data-page="account">Sign in</button>`;
 }
 
 // ---- guide cards (Lessons and Projects) ----
@@ -307,13 +319,67 @@ export function progressPage(loaded, progress, activity) {
     <ul class="progress-rows">${rows}</ul>`;
 }
 
+// ---- Account ----
+
+const HOW_ACCOUNTS_WORK = `<details class="how"><summary>How accounts work here</summary>
+  <p class="muted small">CodeForge has no server, so accounts live in this browser. Your password is never saved: CodeForge
+  saves a random salt and a PBKDF2-SHA256 hash of your password (210,000 rounds), and checks a sign-in by hashing what you type
+  the same way. Each account keeps its own progress and streak, so people sharing a computer don't mix them up. Clearing this
+  browser's site data removes the accounts too, so use <em>Download my progress</em> in Settings to keep a copy.</p></details>`;
+
+/**
+ * The account page: the signed-in name with Sign out, or the Sign in and Create account forms.
+ * `guestSteps` is how many steps the guest has finished, offered to move into a new account.
+ */
+export function accountPage(user, guestSteps = 0) {
+  if (user) {
+    return `<header class="page-head"><h2>Account</h2></header>
+      <section class="card settings">
+        <h3 class="card-title">Signed in as ${esc(user)}</h3>
+        <p class="muted">Your progress, quiz answers, timers and streak are saved to this account on this device.</p>
+        <div class="t-actions"><button data-act="signout">Sign out</button> <button data-page="settings">Settings</button></div>
+      </section>${HOW_ACCOUNTS_WORK}`;
+  }
+  const field = (label, name, type, auto, extra = '') => `<label>${label}<input name="${name}" type="${type}" autocomplete="${auto}" required ${extra}></label>`;
+  return `<header class="page-head"><h2>Account</h2>
+      <p class="muted">You're learning as a guest. Sign in or create an account to keep your progress under your own name.</p></header>
+    <div class="acct-forms">
+      <form class="card acct-form" data-form="signin" novalidate>
+        <h3 class="card-title">Sign in</h3>
+        ${field('Name', 'name', 'text', 'username')}
+        ${field('Password', 'password', 'password', 'current-password')}
+        <p class="form-error" role="alert"></p>
+        <button class="primary" type="submit">Sign in</button>
+      </form>
+      <form class="card acct-form" data-form="create" novalidate>
+        <h3 class="card-title">Create an account</h3>
+        ${field('Name', 'name', 'text', 'username', 'minlength="3" maxlength="24" pattern="[A-Za-z0-9_-]{3,24}"')}
+        ${field('Password (8 or more characters)', 'password', 'password', 'new-password', 'minlength="8"')}
+        ${field('Type it again', 'confirm', 'password', 'new-password', 'minlength="8"')}
+        ${guestSteps ? `<label class="check"><input type="checkbox" name="bring" checked> Bring my guest progress (${guestSteps} ${guestSteps === 1 ? 'step' : 'steps'} done)</label>` : ''}
+        <p class="form-error" role="alert"></p>
+        <button class="primary" type="submit">Create account</button>
+      </form>
+    </div>${HOW_ACCOUNTS_WORK}`;
+}
+
 // ---- Settings ----
 
-export function settingsPage() {
+export function settingsPage(user = null) {
   return `<header class="page-head"><h2>Settings</h2></header>
     <section class="card settings">
+      <h3 class="card-title">Account</h3>
+      ${user ? `<p class="muted">Signed in as <strong>${esc(user)}</strong> on this device.</p>
+      <div class="t-actions"><button data-act="signout">Sign out</button></div>
+      <form class="acct-delete" data-form="delete" novalidate>
+        <label>To delete this account and all its progress, type its password<input name="password" type="password" autocomplete="current-password" required></label>
+        <p class="form-error" role="alert"></p>
+        <button class="danger" type="submit">Delete my account</button>
+      </form>` : `<p class="muted">You're a guest. <button class="link" data-page="account">Sign in or create an account</button> to keep progress under your own name.</p>`}
+    </section>
+    <section class="card settings">
       <h3 class="card-title">Your progress</h3>
-      <p class="muted">Your place in each guide, finished steps, time, quiz answers and streak are saved in this browser only. Nothing is sent anywhere.</p>
+      <p class="muted">Your place in each guide, finished steps, time, quiz answers and streak are saved in this browser only${user ? `, under ${esc(user)}` : ''}. Nothing is sent anywhere.</p>
       <div class="t-actions">
         <button data-act="export">⬇ Download my progress</button>
         <button data-act="reset-all" class="danger">Reset all progress</button>

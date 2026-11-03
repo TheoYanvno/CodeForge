@@ -210,8 +210,31 @@ pre.full code { white-space: pre; }
 .pane-tag.html { color: var(--html); } .pane-tag.css { color: var(--css); } .pane-tag.js { color: var(--js); }
 [hidden] { display: none !important; }
 
+/* ---- accounts ---- */
+.account-card { margin-top: auto; display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--line); background: rgb(13 19 48 / .7); }
+.account-card + .streak-card { margin-top: 0; }
+.acct-avatar { flex: none; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; color: #fff; background: var(--grad); }
+.acct-avatar.guest { background: var(--editor); color: var(--muted); border: 1px solid var(--line); }
+.acct-name { display: flex; flex-direction: column; min-width: 0; line-height: 1.2; }
+.acct-name strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.account-card .link { margin-left: auto; }
+.acct-forms { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin-bottom: 14px; }
+.acct-form, .acct-delete { display: flex; flex-direction: column; gap: 10px; }
+.acct-delete { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
+.acct-form label, .acct-delete label { display: flex; flex-direction: column; gap: 4px; font-size: .88rem; color: var(--muted); }
+.acct-form label.check { flex-direction: row; align-items: center; gap: 8px; color: var(--text); }
+.acct-form input:not([type="checkbox"]), .acct-delete input { font: inherit; color: var(--text); background: var(--editor); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; }
+.acct-form input:focus-visible, .acct-delete input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.form-error { margin: 0; min-height: 1.2em; color: var(--error); font-size: .85rem; }
+.how { margin-top: 6px; }
+.how summary { cursor: pointer; color: var(--accent); }
+
 @media (max-width: 860px) {
   .app { grid-template-columns: minmax(0, 1fr); }
+  .account-card { margin: 0 0 0 auto; padding: 4px 8px; gap: 6px; border-radius: 999px; }
+  .account-card .acct-name .small { display: none; }
+  .acct-avatar { width: 24px; height: 24px; font-size: .75rem; }
+  .account-card + .streak-card { margin-left: 0; }
   .sidebar { position: sticky; top: 0; z-index: 3; height: auto; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 10px; padding: 10px 14px; border-right: 0; border-bottom: 1px solid var(--line); }
   .brand-logo .logo-mark { width: 32px; height: 32px; }
   .brand-tag { display: none; }

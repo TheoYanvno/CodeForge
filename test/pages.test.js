@@ -77,3 +77,17 @@ test('the security projects are listed as coming soon and do not count toward pr
   assert.match(pages.lessonsPage(GUIDES, progress, COMING), /SentinelEDR/);
   assert.strictEqual(pages.totals(GUIDES, progress).guides, GUIDES.filter((g) => g.available).length);
 });
+
+test('the account box and page show the guest forms or the signed-in name', () => {
+  assert.match(pages.accountCard(null), /Guest[\s\S]*data-page="account"/);
+  assert.match(pages.accountCard('Anthony'), /Anthony[\s\S]*data-act="signout"/);
+  const guest = pages.accountPage(null, 3);
+  assert.match(guest, /data-form="signin"/);
+  assert.match(guest, /data-form="create"/);
+  assert.match(guest, /Bring my guest progress \(3 steps done\)/);
+  assert.doesNotMatch(pages.accountPage(null, 0), /Bring my guest progress/, 'nothing to bring, no box');
+  assert.match(pages.accountPage('Anthony'), /Signed in as Anthony/);
+  assert.match(pages.settingsPage('Anthony'), /data-form="delete"/);
+  assert.doesNotMatch(pages.settingsPage(null), /data-form="delete"/);
+  assert.match(pages.accountCard('<b>'), /&lt;b&gt;/, 'names are escaped');
+});
