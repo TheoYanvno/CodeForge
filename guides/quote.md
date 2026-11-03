@@ -353,6 +353,7 @@ setMode('quote');
 
 ## Step: Categories and today's pick
 time: 15
+uses: filtering
 
 **Categories.** Every item has `tags`, like `['courage', 'motivation']`. `allTags(items)` collects them for the menu: `flatMap` makes one list of every tag, a `Set` removes duplicates, and `sort` puts them in order. Add a joke tagged `'space'` and a Space category appears by itself. `filterByTag(items, tag)` keeps the items that have the tag, or all of them for "Everything".
 
