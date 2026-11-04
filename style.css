@@ -339,6 +339,19 @@ pre.full code { white-space: pre; }
 .badge-icon { font-size: 1.8rem; filter: grayscale(1); }
 .badge.earned .badge-icon { filter: none; }
 .badge .pill { align-self: flex-start; }
+.section-title { margin: 18px 0 4px; font-size: 1rem; }
+.badges.skills { margin-bottom: 8px; }
+.skill-glyph { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; font: 700 1rem/1 Orbitron, 'Segoe UI', sans-serif; color: #fff; background: #334155; border: 2px solid rgb(255 255 255 / .15); filter: grayscale(1); }
+.skill-badge.earned .skill-glyph { filter: none; box-shadow: 0 0 16px rgb(255 255 255 / .18); }
+.skill-badge[data-tone="orange"] .skill-glyph { background: linear-gradient(135deg, #f97316, #c2410c); }
+.skill-badge[data-tone="blue"] .skill-glyph { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+.skill-badge[data-tone="yellow"] .skill-glyph { background: linear-gradient(135deg, #facc15, #ca8a04); color: #1f1300; }
+.skill-badge[data-tone="cyan"] .skill-glyph { background: linear-gradient(135deg, #22d3ee, #0e7490); font-size: 1.5rem; }
+.skill-badge[data-tone="teal"] .skill-glyph { background: linear-gradient(135deg, #14b8a6, #0f766e); }
+.skill-badge[data-tone="purple"] .skill-glyph { background: linear-gradient(135deg, #a855f7, #6d28d9); }
+.skill-badge[data-tone="slate"] .skill-glyph { background: linear-gradient(135deg, #64748b, #1e293b); font-size: 1.4rem; }
+.skill-badge.soon { opacity: .5; }
+.skill-badge strong { font-size: 1rem; color: var(--text, #fff); text-transform: none; letter-spacing: normal; }
 .meter { display: block; height: 6px; margin-top: 4px; border-radius: 3px; background: var(--editor); overflow: hidden; }
 .meter span { display: block; height: 100%; background: var(--grad); }
 

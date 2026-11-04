@@ -122,3 +122,34 @@ test('the Lessons page puts each project after the lessons it needs, with done m
   assert.match(html, /Project: <strong>Snake<\/strong> <span class="pill">1 of \d+ lessons done/);
   assert.match(pages.needChips(GUIDES.find((g) => g.id === 'snake'), GUIDES, progress), /need ok">✓ HTML &amp; CSS basics/);
 });
+
+test('skill badges: one per language and tool, earned by finishing every guide that teaches it', () => {
+  const { progress, activity } = fresh();
+  const ids = pages.SKILLS.map((s) => s.id);
+  assert.deepStrictEqual(pages.SKILLS.map((s) => s.title), ['HTML', 'CSS', 'JavaScript', 'React', 'Python', 'SQL', 'C#', 'Electron']);
+  assert.strictEqual(new Set(ids).size, ids.length);
+  const badge = (id) => pages.skillBadges(GUIDES, progress).find((b) => b.id === id);
+  // React and C# have no guides yet, so they show as coming soon and can't be earned
+  for (const id of ['skill-react', 'skill-csharp']) {
+    const b = badge(id);
+    if (!b.target) { assert.ok(b.soon); assert.ok(!b.earned); }
+  }
+  const finish = (id) => { const g = GUIDES.find((x) => x.id === id); for (let i = 0; i < g.steps; i++) progress.complete(id, i); };
+  const py = badge('skill-python');
+  assert.ok(!py.earned && py.target === 1);
+  finish('python');
+  assert.ok(badge('skill-python').earned);
+  const html = badge('skill-html');
+  assert.ok(html.target >= 1 && html.value === 0);
+  finish('htmlcss');
+  assert.strictEqual(badge('skill-html').value, 1);
+  assert.strictEqual(badge('skill-css').value, 1, 'HTML & CSS basics counts toward both');
+  // a guide a badge lists that doesn't exist yet is skipped, not counted
+  const sql = badge('skill-sql');
+  assert.strictEqual(sql.target, pages.SKILLS.find((s) => s.id === 'skill-sql').guides.filter((id) => GUIDES.some((g) => g.id === id)).length);
+  const page = pages.achievementsPage(GUIDES, progress, activity);
+  assert.match(page, /Skill badges/);
+  assert.match(page, /class="skill-glyph" aria-hidden="true">Py</);
+  assert.match(page, /Coming soon/);
+  assert.match(page, /Electron/);
+});

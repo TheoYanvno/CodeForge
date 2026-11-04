@@ -94,6 +94,31 @@ export function totals(guides, progress) {
 export const nextGuide = (guides, progress, filter = () => true) =>
   guides.find((g) => g.available && filter(g) && !guideStats(g, progress).finished) ?? null;
 
+/**
+ * Skill badges: one per language or tool, earned by finishing the guides that teach it. Only guides
+ * that exist count, so a badge grows as lessons are added; one with no guides yet shows as coming soon.
+ */
+export const SKILLS = [
+  { id: 'skill-html', glyph: '</>', tone: 'orange', title: 'HTML', guides: ['htmlcss', 'canvas', 'snake'] },
+  { id: 'skill-css', glyph: '{ }', tone: 'blue', title: 'CSS', guides: ['htmlcss', 'monthgrid', 'calendar'] },
+  { id: 'skill-js', glyph: 'JS', tone: 'yellow', title: 'JavaScript', guides: ['jsbasics', 'gameloop', 'input', 'filtering', 'fetchjson', 'quote'] },
+  { id: 'skill-react', glyph: '⚛', tone: 'cyan', title: 'React', guides: ['reactbasics'] },
+  { id: 'skill-python', glyph: 'Py', tone: 'blue', title: 'Python', guides: ['python'] },
+  { id: 'skill-sql', glyph: 'SQL', tone: 'teal', title: 'SQL', guides: ['sql', 'linktables', 'marvel'] },
+  { id: 'skill-csharp', glyph: 'C#', tone: 'purple', title: 'C#', guides: ['csharpbasics'] },
+  { id: 'skill-electron', glyph: '⚡', tone: 'slate', title: 'Electron', guides: ['electron', 'appstate', 'safesave', 'sticky'] },
+];
+
+/** Every skill badge with the guides it needs (by title), how many are done, and whether it's earned. */
+export function skillBadges(guides, progress) {
+  return SKILLS.map((s) => {
+    const needed = s.guides.map((id) => guides.find((g) => g.id === id && g.available)).filter(Boolean);
+    const done = needed.filter((g) => guideStats(g, progress).finished).length;
+    const soon = needed.length === 0;
+    return { ...s, needed: needed.map((g) => g.title), value: done, target: needed.length, soon, earned: !soon && done === needed.length };
+  });
+}
+
 /** Every achievement with how far along you are. */
 export function achievements(guides, progress, activity) {
   const t = totals(guides, progress);
@@ -324,8 +349,18 @@ export function challengesPage(loaded, progress) {
 export function achievementsPage(guides, progress, activity) {
   const list = achievements(guides, progress, activity);
   const earned = list.filter((a) => a.earned).length;
+  const skills = skillBadges(guides, progress);
   return `<header class="page-head"><h2>Achievements</h2>
       <p class="muted">${earned} of ${list.length} earned. Locked ones show how far along you are.</p></header>
+    <h3 class="section-title">Skill badges</h3>
+    <p class="muted small">One for each language and tool. Earn it by finishing every guide that teaches it.</p>
+    <ul class="badges skills">${skills.map((b) => `<li class="badge skill-badge${b.earned ? ' earned' : ''}${b.soon ? ' soon' : ''}" data-tone="${b.tone}">
+      <span class="skill-glyph" aria-hidden="true">${esc(b.glyph)}</span>
+      <strong>${esc(b.title)}</strong>
+      <span class="muted small">${b.soon ? 'Lessons coming soon.' : `Finish ${esc(b.needed.join(', '))}.`}</span>
+      ${b.soon ? '<span class="pill">Coming soon</span>' : b.earned ? '<span class="pill ok">Earned</span>' : `<span class="meter" role="img" aria-label="${b.value} of ${b.target}"><span data-fill="${Math.round((100 * b.value) / b.target)}"></span></span><span class="small muted">${b.value} / ${b.target} ${b.target === 1 ? 'guide' : 'guides'}</span>`}
+    </li>`).join('')}</ul>
+    <h3 class="section-title">Milestones</h3>
     <ul class="badges">${list.map((a) => `<li class="badge${a.earned ? ' earned' : ''}">
       <span class="badge-icon" aria-hidden="true">${a.icon}</span>
       <strong>${esc(a.title)}</strong>
