@@ -364,6 +364,7 @@ document.getElementById('clear').onclick = () => { showGrid(new Array(81).fill(0
 
 ## Step: Possible digits as bitmasks
 time: 15
+uses: bitmasks
 
 When you solve a Sudoku on paper, you pencil in the digits that could still go in each cell. The solver does the same thing, but instead of a list of digits it keeps **one number per cell** whose bits say which digits are possible. Bit 1 stands for digit 1, bit 2 for digit 2, up to bit 9 (bit 0 is never used, which keeps the math simple).
 
@@ -492,6 +493,7 @@ document.getElementById('clear').onclick = () => { showGrid(new Array(81).fill(0
 
 ## Step: Rule one: only one digit fits
 time: 15
+uses: bitmasks
 
 The first trick everyone learns: if a cell has only **one** possible digit left, that's its answer. In bitmask terms, `bitCount(b.cands[i]) === 1`. Placing it rules that digit out of its peers, which can leave *another* cell with one option, so `propagate()` keeps looping until a whole pass changes nothing. This is called **constraint propagation**: each answer spreads new information to its neighbors.
 
