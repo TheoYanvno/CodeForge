@@ -704,6 +704,7 @@ function propagate(b, log) {
 
 ## Step: Spotting a dead end
 time: 12
+uses: backtracking
 
 Hard puzzles get stuck: no cell has one option and no digit has one spot. Then the solver has to **guess**, and a wrong guess eventually produces an impossible board. Before writing the guessing code, we need a reliable way to notice "this board can't be finished".
 
@@ -789,6 +790,7 @@ function propagate(b, log) {
 
 ## Step: Guess, check, and undo
 time: 20
+uses: backtracking
 
 Now the heart of the solver: a **recursive** `search(b)`.
 
@@ -950,6 +952,7 @@ document.getElementById('solve').onclick = () => {
 
 ## Step: Watch it solve
 time: 20
+uses: backtracking
 
 The solver already writes down every step when you pass `{ record: true }`: each "only one fits", "only one spot", guess and backtrack, with a reason. Guesses and backtracks also carry a **snapshot** of the board as it was before the guess, so the replay can show the board going back.
 
