@@ -124,6 +124,9 @@ export default {
    ],
    "session": 0,
    "minutes": 15,
+   "uses": [
+    "grids"
+   ],
    "html": {
     "page": "<header class=\"bar\">\n  <h1>Sudoku Solver</h1>\n  <p id=\"status\" class=\"status\" role=\"status\">Type a puzzle or press Sample</p>\n</header>\n\n<main>\n  <div id=\"grid\" class=\"grid\" aria-label=\"Sudoku grid\"></div>\n  <div class=\"controls\">\n    <button id=\"sample\">Sample</button>\n    <button id=\"solve\">Solve</button>\n    <button id=\"watch\">Watch it solve</button>\n    <select id=\"level\" aria-label=\"Difficulty\">\n      <option value=\"easy\">Easy</option>\n      <option value=\"medium\" selected>Medium</option>\n      <option value=\"hard\">Hard</option>\n    </select>\n    <button id=\"new\">New puzzle</button>\n    <button id=\"clear\">Clear</button>\n  </div>\n  <ol id=\"log\" class=\"log\"></ol>\n</main>"
    },
@@ -185,6 +188,9 @@ export default {
    ],
    "session": 0,
    "minutes": 15,
+   "uses": [
+    "grids"
+   ],
    "js": {
     "data": "// Cells are numbered 0-80, row by row: row = Math.floor(i / 9), column = i % 9.\n\n// The 20 cells that share a row, column or 3 x 3 box with each cell. Worked out once.\nconst PEERS = Array.from({ length: 81 }, (_, i) => {\n  const r = Math.floor(i / 9);\n  const c = i % 9;\n  const br = r - (r % 3);   // top row of this cell's box\n  const bc = c - (c % 3);   // left column of this cell's box\n  const set = new Set();\n  for (let k = 0; k < 9; k++) {\n    set.add(r * 9 + k);                                       // same row\n    set.add(k * 9 + c);                                       // same column\n    set.add((br + Math.floor(k / 3)) * 9 + bc + (k % 3));     // same box\n  }\n  set.delete(i);              // a cell isn't its own peer\n  return [...set];\n});\n\n// The 27 units: 9 rows, 9 columns and 9 boxes, each a list of 9 cell numbers.\nconst UNITS = [\n  ...Array.from({ length: 9 }, (_, r) => Array.from({ length: 9 }, (_, c) => r * 9 + c)),\n  ...Array.from({ length: 9 }, (_, c) => Array.from({ length: 9 }, (_, r) => r * 9 + c)),\n  ...Array.from({ length: 9 }, (_, b) =>\n    Array.from({ length: 9 }, (_, k) => (Math.floor(b / 3) * 3 + Math.floor(k / 3)) * 9 + (b % 3) * 3 + (k % 3))),\n];\nconst UNIT_NAMES = [\n  ...Array.from({ length: 9 }, (_, i) => `row ${i + 1}`),\n  ...Array.from({ length: 9 }, (_, i) => `column ${i + 1}`),\n  ...Array.from({ length: 9 }, (_, i) => `box ${i + 1}`),\n];\n\nconst cellName = (i) => `r${Math.floor(i / 9) + 1}c${(i % 9) + 1}`;",
     "go": "buildGrid();\nconsole.log('Cell r1c1 has', PEERS[0].length, 'peers, and there are', UNITS.length, 'units');"

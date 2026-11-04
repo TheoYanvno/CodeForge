@@ -12,6 +12,7 @@ prereqs: HTML, CSS and JavaScript basics (functions, loops, arrays); Arrays of a
 
 ## Step: The page and a 9 x 9 grid
 time: 15
+uses: grids
 
 Welcome! In this guide you'll rebuild my [Sudoku Solver](https://theoyanvno.github.io/sudoku-solver/) from a blank page. By the end it will check a puzzle as you type, solve any puzzle in a few milliseconds, replay its thinking step by step ("8 can only go in r6c2 in box 4"), and make brand-new puzzles at three levels that always have exactly one answer.
 
@@ -174,6 +175,7 @@ buildGrid();
 
 ## Step: Rows, columns, boxes and peers
 time: 15
+uses: grids
 
 Every Sudoku rule talks about the same three groups: a digit can appear once in each **row**, each **column** and each **3 x 3 box**. The solver will ask "which cells share a group with this one?" thousands of times, so we work it out once, before anything else runs, and keep the answers in two lists.
 
