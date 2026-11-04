@@ -252,6 +252,7 @@ next();
 
 ## Step: Jokes, and a punchline that waits
 time: 15
+uses: fetchjson
 
 A joke is funnier when you get a moment to guess. Jokes have a `setup` and a `punchline`, so the card shows the setup first with a **Reveal the punchline** button.
 
@@ -1458,6 +1459,7 @@ setMode('quote');
 
 ## Step: Log in, and favorites that follow you
 time: 20
+uses: fetchjson
 
 Now the page gets its account features: a **Log in** button, a dialog with *Log in* and *Create account* tabs, and favorites saved to the account.
 
