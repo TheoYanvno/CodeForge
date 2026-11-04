@@ -12,6 +12,7 @@ prereqs: HTML, CSS and JavaScript basics (functions, arrays, objects); Template 
 
 ## Step: Dates you can trust
 time: 15
+uses: dates
 
 Welcome! In this guide you'll rebuild my [Task Calendar](https://theoyanvno.github.io/task-calendar/): a to-do list and a calendar in one, with repeating tasks, drag-and-drop rescheduling, US holidays, a theme for every month, and buttons that send tasks to your phone's calendar or to Google for email reminders.
 
@@ -601,6 +602,7 @@ $('addForm').addEventListener('submit', (e) => {
 
 ## Step: Done, one day at a time
 time: 15
+uses: dates
 
 Checking off a one-time task is easy: flip `done`. But checking off today's workout shouldn't check off tomorrow's. So repeating tasks keep a list of **done days** instead:
 
