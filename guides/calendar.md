@@ -790,6 +790,7 @@ document.addEventListener('click', (e) => {
 
 ## Step: Drag a task to another day
 time: 15
+uses: dragdrop
 
 Rescheduling should be as easy as moving a sticky note. The browser's **Drag and Drop API** does most of the work:
 
