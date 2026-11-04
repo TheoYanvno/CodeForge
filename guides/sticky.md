@@ -1772,6 +1772,7 @@ document.getElementById('firstNote').addEventListener('click', () => addNote());
 
 ## Step: Saving in localStorage
 time: 15
+uses: safesave
 
 Notes should still be there tomorrow. The browser version keeps them in **`localStorage`**: a small store of text, per website, that survives closing the tab.
 
@@ -1924,6 +1925,7 @@ document.getElementById('firstNote').addEventListener('click', () => addNote());
 
 ## Step: Never trust saved data
 time: 15
+uses: safesave
 
 Whatever comes out of storage might be old, edited by hand, or damaged. Instead of trusting it, **`normalize()`** rebuilds clean data from anything:
 
