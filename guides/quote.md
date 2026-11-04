@@ -751,6 +751,7 @@ setMode('quote');
 
 ## Step: Signing up and storing passwords safely
 time: 20
+uses: signup
 
 Accounts let favorites follow you to any device. They also bring the most important rule in web development: **never store a password.** Store something you can check a password against, that can't be turned back into it.
 
@@ -903,6 +904,7 @@ demo.signup({ username: 'Demo_User', password: 'not-a-real-pass' })
 
 ## Step: Logging in, sessions and lockouts
 time: 20
+uses: signup
 
 After signing up or logging in, the user gets a **session token**: 256 random bits, written in a URL-safe form. Every later request carries the token, and `userForToken()` finds whose it is.
 
