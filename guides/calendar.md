@@ -213,6 +213,7 @@ console.log('2026-10-09' < '2026-10-10');               // true: keys sort as pl
 
 ## Step: A month on the screen
 time: 15
+uses: monthgrid
 
 A month view always shows **6 rows of 7 days**, starting on a Sunday. Most months need only 5 rows, but always using 42 squares means the calendar never changes height when you go to the next month.
 
