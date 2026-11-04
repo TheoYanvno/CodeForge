@@ -1263,6 +1263,7 @@ document.getElementById('firstNote').addEventListener('click', () => addNote());
 
 ## Step: Dragging a note by its top bar
 time: 20
+uses: pointerdrag
 
 Notes are dragged by their colored top bar, using **pointer events**, which work the same for a mouse, a pen and a finger.
 
@@ -1481,6 +1482,7 @@ document.getElementById('firstNote').addEventListener('click', () => addNote());
 
 ## Step: Resizing, and where new notes go
 time: 15
+uses: pointerdrag
 
 **Resizing** needs almost no code: CSS `resize: both` makes the browser draw a grip in the note's bottom corner, and `min-width` / `min-height` stop a note getting too small to use. The app only has to *notice* the new size, and that's what a **`ResizeObserver`** is for: it calls back whenever the element's size changes, whatever caused it.
 
