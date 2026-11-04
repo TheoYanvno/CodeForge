@@ -577,6 +577,7 @@ addEventListener('keydown', (e) => {
 
 ## Step: Copy, share and save
 time: 20
+uses: favorites
 
 **Copy** uses `navigator.clipboard.writeText()`. It can be refused (some browsers and sandboxed pages don't allow it), so it's inside `try`/`catch` and a little toast message says which happened.
 
@@ -1459,7 +1460,7 @@ setMode('quote');
 
 ## Step: Log in, and favorites that follow you
 time: 20
-uses: fetchjson
+uses: fetchjson, favorites
 
 Now the page gets its account features: a **Log in** button, a dialog with *Log in* and *Create account* tabs, and favorites saved to the account.
 
