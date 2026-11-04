@@ -12,6 +12,7 @@ prereqs: HTML, CSS and JavaScript basics (functions, arrays, objects); Array map
 
 ## Step: A note as data, drawn on the page
 time: 15
+uses: appstate
 
 Welcome! In this guide you'll rebuild the browser version of my [Sticky Notes](https://theoyanvno.github.io/sticky-notes/app/) app: up to three notes in four colors, each one plain text or a checklist, dragged and resized wherever you like, and remembered when you come back. The real project is also a Windows app; the last step shows how the same code powers that.
 
@@ -230,6 +231,7 @@ render();
 
 ## Step: Four colors, a + button and a limit of three
 time: 15
+uses: appstate
 
 The app keeps the desktop tidy with one rule: **at most three notes**. The rules live with the data, as small functions any part of the app can ask:
 
