@@ -577,7 +577,7 @@ addEventListener('keydown', (e) => {
 
 ## Step: Copy, share and save
 time: 20
-uses: favorites
+uses: favorites, sharing
 
 **Copy** uses `navigator.clipboard.writeText()`. It can be refused (some browsers and sandboxed pages don't allow it), so it's inside `try`/`catch` and a little toast message says which happened.
 
