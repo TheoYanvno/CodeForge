@@ -452,6 +452,7 @@ $('addForm').addEventListener('submit', (e) => {
 
 ## Step: Repeating tasks
 time: 20
+uses: repeating
 
 A repeating task is stored **once**, with its first date and a rule. `occursOn(task, key)` answers "is it on this day?" for any day, so nothing has to be copied for every week of the year:
 
