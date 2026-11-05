@@ -1021,6 +1021,7 @@ $('new').onclick = () => {
 
 ## Step: Scoring a position
 time: 15
+uses: minimax
 
 A chess program needs a way to say "how good is this position?" as a number. This is the **evaluation**, and it's measured in **centipawns**: 100 is one pawn.
 
@@ -1101,6 +1102,7 @@ console.log('The start position scores', evaluate(state), '(0 = equal)');
 
 ## Step: Looking ahead with negamax and alpha-beta
 time: 20
+uses: minimax
 
 To choose a move, the computer imagines each move, then the opponent's best reply, then its own best answer, and so on, `depth` moves deep. This is a recursive `search()`.
 
