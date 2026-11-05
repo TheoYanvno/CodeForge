@@ -12,6 +12,7 @@ prereqs: HTML, CSS and JavaScript basics (functions, arrays, objects, template l
 
 ## Step: Quarter hours and providers
 time: 25
+uses: timeslots
 
 Welcome! In this guide you'll rebuild the core of my [Gotham Hospital System](https://github.com/TheoYanvno/gotham-hospital-system): the scheduling and records portal of a made-up clinic. Front-desk staff book visits on a provider's calendar, and the app refuses anything that breaks the clinic's rules: outside business hours, during a provider's lunch, in the past, or on top of another visit. Medical staff open patient charts. Everyone signs in with the same username, and **the password decides the role**.
 
@@ -517,6 +518,7 @@ initSqlJs({ locateFile: (file) => SQLJS + file })
 
 ## Step: Can this visit be booked?
 time: 30
+uses: timeslots
 
 The heart of the app is one function: `bookingProblems({ patientId, providerId, startsAt, duration })`. It returns a list of reasons, in plain words, why a visit can't be booked. An **empty list** means yes. Returning reasons instead of `true`/`false` means the front desk sees *why*: "Overlaps the provider's lunch break (12:00–13:00)" is something a person can act on.
 
@@ -830,6 +832,7 @@ initSqlJs({ locateFile: (file) => SQLJS + file })
 
 ## Step: Booking, open times and double booking
 time: 35
+uses: timeslots
 
 Now the panel books. Pick a patient, a length, a visit type and a reason; the problems update as you change the patient or length, and **Book visit** saves it.
 
@@ -2236,6 +2239,7 @@ initSqlJs({ locateFile: (file) => SQLJS + file })
 
 ## Step: Passwords, hashes and sessions
 time: 35
+uses: signup
 
 A patient portal must know who's using it. The real Gotham app has one username, **Gotham Staff**, and a separate password for each role; whichever password you type decides what you can do. This step adds the sign-in. The two demo passwords are on the sign-in card: `front-desk-demo` (customer service) and `clinic-demo` (medical staff). They are only for this guide.
 

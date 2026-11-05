@@ -107,6 +107,9 @@ export default {
    ],
    "session": 0,
    "minutes": 25,
+   "uses": [
+    "timeslots"
+   ],
    "html": {
     "page": "<div id=\"app\">\n<header class=\"top\">\n  <strong>Gotham Hospital</strong> <span class=\"muted\">Patient Portal</span>\n</header>\n<main>\n  <section id=\"schedule\" class=\"view\">\n    <div class=\"bar\">\n      <h2 id=\"title\"></h2>\n    </div>\n    <div class=\"layout\">\n      <div id=\"grid\" class=\"grid\"></div>\n    </div>\n  </section>\n</main>\n</div>\n<p class=\"note\">Practice app: every person, phone number and plan here is made up.</p>"
    },
@@ -234,6 +237,9 @@ export default {
    ],
    "session": 1,
    "minutes": 30,
+   "uses": [
+    "timeslots"
+   ],
    "html": {
     "page": "<script src=\"https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/sql-wasm.js\"></script>\n<div id=\"app\">\n<header class=\"top\">\n  <strong>Gotham Hospital</strong> <span class=\"muted\">Patient Portal</span>\n</header>\n<main>\n  <section id=\"schedule\" class=\"view\">\n    <div class=\"bar\">\n      <h2 id=\"title\"></h2>\n    </div>\n    <div class=\"layout\">\n      <div id=\"grid\" class=\"grid\"></div>\n    <aside id=\"panel\" class=\"panel\" hidden></aside>\n    </div>\n  </section>\n</main>\n</div>\n<p class=\"note\">Practice app: every person, phone number and plan here is made up.</p>"
    },
@@ -296,6 +302,9 @@ export default {
    ],
    "session": 1,
    "minutes": 35,
+   "uses": [
+    "timeslots"
+   ],
    "html": {
     "page": "<script src=\"https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/sql-wasm.js\"></script>\n<div id=\"app\">\n<header class=\"top\">\n  <strong>Gotham Hospital</strong> <span class=\"muted\">Patient Portal</span>\n</header>\n<main>\n  <section id=\"schedule\" class=\"view\">\n    <div class=\"bar\">\n      <h2 id=\"title\"></h2>\n    </div>\n    <div class=\"layout\">\n      <div id=\"grid\" class=\"grid\"></div>\n    <aside id=\"panel\" class=\"panel\" hidden></aside>\n    </div>\n  </section>\n</main>\n</div>\n<p class=\"note\">Practice app: every person, phone number and plan here is made up.</p>"
    },
@@ -482,6 +491,9 @@ export default {
    ],
    "session": 3,
    "minutes": 35,
+   "uses": [
+    "signup"
+   ],
    "html": {
     "page": "<script src=\"https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/sql-wasm.js\"></script>\n<section id=\"signin\" class=\"signin\">\n  <form id=\"signinForm\" class=\"card\">\n    <h1>Gotham Hospital</h1>\n    <p class=\"muted\">Staff sign-in</p>\n    <label>Username <input name=\"username\" value=\"Gotham Staff\" autocomplete=\"username\"></label>\n    <label>Password <input name=\"password\" type=\"password\" autocomplete=\"current-password\"></label>\n    <p id=\"signinError\" class=\"error\" role=\"alert\"></p>\n    <button>Sign in</button>\n    <p class=\"muted small\">Demo passwords: <code>front-desk-demo</code> (scheduling) or <code>clinic-demo</code> (patient charts)</p>\n  </form>\n</section>\n<div id=\"app\" hidden>\n<header class=\"top\">\n  <strong>Gotham Hospital</strong> <span class=\"muted\">Patient Portal</span>\n    <span id=\"who\" class=\"who\"></span><button id=\"signOut\" class=\"ghost\" type=\"button\">Sign out</button>\n</header>\n  <nav class=\"tabs\" id=\"tabs\">\n    <button data-tab=\"schedule\" class=\"on\">Schedule</button>\n    <button data-tab=\"patients\">Patients</button>\n    <button data-tab=\"reports\">Reports</button>\n  </nav>\n<main>\n  <section id=\"schedule\" class=\"view\">\n    <div class=\"bar\">\n      <h2 id=\"title\"></h2>\n    </div>\n    <div class=\"layout\">\n      <div id=\"grid\" class=\"grid\"></div>\n    <aside id=\"panel\" class=\"panel\" hidden></aside>\n    </div>\n  </section>\n  <section id=\"patients\" class=\"view\" hidden>\n    <input id=\"search\" type=\"search\" placeholder=\"Search by name, MRN or birth date (YYYY-MM-DD)\" autocomplete=\"off\">\n    <div class=\"split\"><ul id=\"results\" class=\"results\"></ul><article id=\"profile\" class=\"profile\"></article></div>\n  </section>\n  <section id=\"reports\" class=\"view\" hidden>\n    <h2>This week</h2>\n    <table id=\"daily\" class=\"report\"></table>\n    <h2>Provider workload</h2>\n    <table id=\"workload\" class=\"report\"></table>\n  </section>\n</main>\n</div>\n<p class=\"note\">Practice app: every person, phone number and plan here is made up.</p>"
    },

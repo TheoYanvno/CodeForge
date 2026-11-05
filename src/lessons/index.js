@@ -146,7 +146,10 @@ export const GUIDES = [
     load: () => import('./canvastext.js') },
   { id: 'superbook', title: 'SuperBook', emoji: '📖', level: 'Advanced', time: 'about 3 hours', steps: 10, available: true, needs: ['htmlcss', 'jsbasics', 'webapi', 'caching', 'matching', 'canvastext'],
     summary: 'Reading from web APIs, matching questions to answers, translations, and writing in sand on a canvas.', load: () => import('./superbook.js') },
-  { id: 'gotham', title: 'Gotham Hospital System', emoji: '🏥', level: 'Advanced', time: 'about 4.5 hours', steps: 10, available: true, needs: ['htmlcss', 'jsbasics', 'sql'],
+  { id: 'timeslots', kind: 'skill', title: 'Time slots and overlap checks', emoji: '🕒', level: 'Lesson', time: 'about 50 min', steps: 4, available: true,
+    summary: 'Times as minutes since midnight, quarter-hour slots, the one-line overlap rule, refusing double bookings with a clear reason, and listing every free start time.',
+    load: () => import('./timeslots.js') },
+  { id: 'gotham', title: 'Gotham Hospital System', emoji: '🏥', level: 'Advanced', time: 'about 4.5 hours', steps: 10, available: true, needs: ['htmlcss', 'jsbasics', 'sql', 'timeslots', 'signup'],
     summary: 'Provider schedules, booking rules, patient charts, sign-in where the password picks your role, and the SQL behind them.', load: () => import('./gotham.js') },
 ];
 
