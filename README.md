@@ -62,8 +62,8 @@ The tests check that every idea a project step uses is taught in a lesson the pr
 
 Guides are added as each project is built and published:
 
-- ⚛️ **React projects:** **Weatherboard** (a weather dashboard with hourly and 7-day forecasts), **Shipboard** (a task board for developers) and **Cashflow** (a personal finance tracker). React basics is ready now, so you can start there.
-- 🎮 **C# games:** **Dungeon Protocol** (a roguelike with seeded rooms), **Last Stand** (tower defense), **The Last Detective** (a mystery with branching dialogue), **ColonyZero** (survival and colony management) and **CyberStrikeArena** (a small multiplayer arena).
+- ⚛️ **React projects**, each with three lessons first: **Weatherboard** (a weather dashboard with hourly and 7-day forecasts), **Shipboard** (a task board for developers), **Cashflow** (a personal finance tracker), **Pantry** (a recipe box and meal planner), **Streakline** (a habit tracker) and **Recall** (flashcards with spaced repetition). React basics is ready now, so you can start there.
+- 🎮 **C# games**, original games built on stories from the Bible with a dark, gothic exorcist feel: **Gates of Sheol** (a roguelike through seeded catacombs), **Nehemiah's Watch** (tower defense on Jerusalem's wall), **Testimony** (a mystery where you test every spirit), **Wilderness** (survival and camp building on the Exodus) and **Legion** (a multiplayer arena against a demon horde).
 - 🛡️ **Security projects:** **SentinelEDR** (Windows endpoint detection), **NetSentinel** (network intrusion detection), **LogWatch** (a mini SIEM), **VulnScope** (asset and vulnerability management), **FileShield** (file integrity and ransomware-behavior detection), **AuthGuard** (identity and access management), **CloudSentinel** (cloud security posture), **SecureCode** (static application security testing), **IncidentIQ** (incident response and SOAR) and **ThreatIntel** (threat intelligence and IOCs).
 
 The basics guides that run in a terminal or on the desktop (Python, Electron and React) are read-along: each step shows the code to type and run on your own computer.

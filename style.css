@@ -115,6 +115,7 @@ button.link:hover { text-decoration: underline; }
 .g-body { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
 .g-meta { font-size: .75rem; color: var(--muted); }
 .g-sum { font-size: .82rem; color: var(--muted); }
+.g-lessons { display: block; margin-top: 6px; font-size: .75rem; }
 .soon, .pct { font-size: .72rem; white-space: nowrap; color: var(--muted); }
 .pct { color: var(--js); }
 .bar { display: block; height: 4px; margin: 4px 4px 0; background: var(--editor); border-radius: 2px; overflow: hidden; }

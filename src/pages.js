@@ -285,8 +285,8 @@ export function homePage(guides, progress, activity) {
 
 /** The sections projects on the roadmap are shown in, in order. */
 export const COMING_GROUPS = [
-  { id: 'react', title: '⚛️ React projects', blurb: 'React apps built on the earlier projects. Each gets a guide here once it is published.' },
-  { id: 'csharp', title: '🎮 C# games', blurb: 'Games written in C#. Each gets a guide here once the game is built.' },
+  { id: 'react', title: '⚛️ React projects', blurb: 'React apps, each with the lessons that come before it. Start with React basics; each guide and its lessons are added here once the project is published.' },
+  { id: 'csharp', title: '🎮 C# games', blurb: 'Original games in C# built on stories from the Bible, with a dark, gothic exorcist feel. Each gets a guide here once the game is built.' },
   { id: 'security', title: '🛡️ Security projects', blurb: 'Cybersecurity tools on my roadmap. Each gets a guide here once the project is built.' },
 ];
 
@@ -302,7 +302,8 @@ export function comingSoon(list) {
     <ul class="coming-grid">${items.map((c) => `<li class="coming-card">
       <span class="g-emoji" aria-hidden="true">${c.emoji}</span>
       <span class="g-body"><strong>${esc(c.title)}</strong><span class="g-meta">${esc(c.level)} · ${esc(c.status ?? 'Coming soon')}</span>
-      <span class="g-sum">${esc(c.summary)}</span></span>
+      <span class="g-sum">${esc(c.summary)}</span>
+      ${c.lessons?.length ? `<span class="g-lessons small muted">Lessons first: ${c.lessons.map(esc).join(' · ')}</span>` : ''}</span>
     </li>`).join('')}</ul>
   </section>`;
   }).join('');
