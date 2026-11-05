@@ -379,6 +379,7 @@ initSqlJs({ locateFile: (file) => SQLJS + file })
 
 ## Step: Powers, teams and a profile
 time: 20
+uses: linktables
 
 Spider-Man has five powers, and "Genius-level intellect" belongs to seven of the sixteen characters. Putting a list in one column (`"Wall-crawling, Spider-sense, …"`) makes it hard to ask "who has flight?" and lets the same power be spelled three ways. The relational answer is **three tables**:
 
@@ -1679,6 +1680,7 @@ function start() {
 
 ## Step: Linking people to records
 time: 20
+uses: linktables
 
 Every character has relationships: family, romantic, friends and enemies. Some of those people have their own record in the database (Spider-Man → Iron Man); some don't (Spider-Man → Ben Parker).
 
