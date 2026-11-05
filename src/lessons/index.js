@@ -152,7 +152,10 @@ export const GUIDES = [
   { id: 'roles', kind: 'skill', title: 'Roles and permissions', emoji: '🛂', level: 'Lesson', time: 'about 50 min', steps: 4, available: true,
     summary: 'Authentication vs authorization, one permissions table and can(), hiding buttons but checking again in every action, rules for your own records, and an audit log.',
     load: () => import('./roles.js') },
-  { id: 'gotham', title: 'Gotham Hospital System', emoji: '🏥', level: 'Advanced', time: 'about 4.5 hours', steps: 10, available: true, needs: ['htmlcss', 'jsbasics', 'sql', 'timeslots', 'signup', 'roles'],
+  { id: 'nodeserver', kind: 'skill', title: 'A small Node server', emoji: '🖥️', level: 'Lesson', time: 'about 60 min', steps: 4, available: true,
+    summary: 'What a server is for, node:http routing by method and path, status codes, a JSON API that validates everything, hashed passwords and HttpOnly session cookies, and node --test.',
+    load: () => import('./nodeserver.js') },
+  { id: 'gotham', title: 'Gotham Hospital System', emoji: '🏥', level: 'Advanced', time: 'about 4.5 hours', steps: 10, available: true, needs: ['htmlcss', 'jsbasics', 'sql', 'timeslots', 'signup', 'roles', 'nodeserver'],
     summary: 'Provider schedules, booking rules, patient charts, sign-in where the password picks your role, and the SQL behind them.', load: () => import('./gotham.js') },
 ];
 

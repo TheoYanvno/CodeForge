@@ -4330,6 +4330,7 @@ initSqlJs({ locateFile: (file) => SQLJS + file })
 
 ## Step: How the real project is built
 time: 15
+uses: nodeserver
 kind: read
 
 You've built the core of [Gotham Hospital System](https://github.com/TheoYanvno/gotham-hospital-system). The real one has the same rules and the same SQL, organized so it can run in two places: on a Node server, and fully inside the browser on GitHub Pages.
