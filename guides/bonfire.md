@@ -1649,6 +1649,7 @@ addEventListener('hashchange', route);
 
 ## Step: Floating embers and a reading progress bar
 time: 20
+uses: particles
 
 A Dark Souls blog should feel like resting at a bonfire. Behind the page, embers drift upward on a `<canvas>`.
 
