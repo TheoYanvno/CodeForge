@@ -84,7 +84,7 @@ test('the React projects and C# games get their own coming-soon sections, in ord
   const html = pages.projectsPage(GUIDES, progress, COMING);
   const at = (t) => html.indexOf(t);
   assert.ok(at('React projects') > 0 && at('React projects') < at('C# games') && at('C# games') < at('Security projects'));
-  for (const t of ['Weatherboard', 'Shipboard', 'Cashflow', 'Pantry', 'Streakline', 'Recall']) assert.ok(at(t) > at('React projects') && at(t) < at('C# games'), t);
+  for (const t of ['Weatherboard', 'Shipboard', 'Cashflow', 'Pantry', 'AbramsTree', 'TotalRecall']) assert.ok(at(t) > at('React projects') && at(t) < at('C# games'), t);
   for (const t of ['Gates of Sheol', 'Nehemiah&#39;s Watch', 'Testimony', 'Wilderness', 'Legion']) assert.ok(at(t) > at('C# games') && at(t) < at('Security projects'), t);
   assert.strictEqual(pages.comingSoon(COMING.filter((c) => c.group === 'react')).includes('Security projects'), false, 'empty sections are left out');
   for (const c of COMING.filter((x) => x.group === 'react')) {
