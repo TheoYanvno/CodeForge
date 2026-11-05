@@ -2891,6 +2891,7 @@ initSqlJs({ locateFile: (file) => SQLJS + file })
 
 ## Step: Roles and permissions
 time: 30
+uses: roles
 
 Signed in isn't the same as allowed. Customer service books visits and runs reports but must not read medical charts; medical staff read charts but don't book. This step puts **one door** in front of every action.
 

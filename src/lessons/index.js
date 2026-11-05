@@ -149,7 +149,10 @@ export const GUIDES = [
   { id: 'timeslots', kind: 'skill', title: 'Time slots and overlap checks', emoji: '🕒', level: 'Lesson', time: 'about 50 min', steps: 4, available: true,
     summary: 'Times as minutes since midnight, quarter-hour slots, the one-line overlap rule, refusing double bookings with a clear reason, and listing every free start time.',
     load: () => import('./timeslots.js') },
-  { id: 'gotham', title: 'Gotham Hospital System', emoji: '🏥', level: 'Advanced', time: 'about 4.5 hours', steps: 10, available: true, needs: ['htmlcss', 'jsbasics', 'sql', 'timeslots', 'signup'],
+  { id: 'roles', kind: 'skill', title: 'Roles and permissions', emoji: '🛂', level: 'Lesson', time: 'about 50 min', steps: 4, available: true,
+    summary: 'Authentication vs authorization, one permissions table and can(), hiding buttons but checking again in every action, rules for your own records, and an audit log.',
+    load: () => import('./roles.js') },
+  { id: 'gotham', title: 'Gotham Hospital System', emoji: '🏥', level: 'Advanced', time: 'about 4.5 hours', steps: 10, available: true, needs: ['htmlcss', 'jsbasics', 'sql', 'timeslots', 'signup', 'roles'],
     summary: 'Provider schedules, booking rules, patient charts, sign-in where the password picks your role, and the SQL behind them.', load: () => import('./gotham.js') },
 ];
 
