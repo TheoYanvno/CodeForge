@@ -38,6 +38,25 @@ Take them in order. Each **basics** guide builds a small project of its own and 
 | 📖 [SuperBook](https://github.com/TheoYanvno/SuperBook) | 10 in 5 sessions · about 3 h · 18 quiz questions | Fetching from three public APIs, caching and late responses, question matching with stemming and weighted keywords, writing on a canvas, right-to-left languages |
 | 🏥 [Gotham Hospital System](https://github.com/TheoYanvno/gotham-hospital-system) | 10 in 5 sessions · about 4.5 h · 17 quiz questions | A day schedule as a table, SQLite keys and CHECK constraints, booking rules and the overlap test, a partial unique index, upserts and reports, salted PBKDF2 sign-in, sessions, and 401/403 role permissions |
 
+### Lessons: one idea each, before every project
+
+Every project is now a combination of the lessons right before it. Each lesson teaches one idea with its own small example, diagrams, a quiz on every step and challenges at the end. The project then puts them together, and each project step says which lesson it uses ("You learned this in…"), so you know what you're building, how, and why. A project's plan page lists the lessons it needs, with a tick for each one you've finished.
+
+| Before | Lessons (34) |
+|---|---|
+| 🐍 Snake | Canvas drawing · Game loops and timers · Keyboard and swipe input · Saving a best score |
+| 💬 Quote & Joke Generator | Arrays of objects and random picks · Filtering lists · Fetching quotes and jokes · Saving favorites · Accounts: sign up, hashed passwords and sessions · Sharing: copy, share sheet and links |
+| 📅 Task Calendar | Dates and time zones · A month grid with CSS Grid · Repeating events · Drag and drop · .ics calendar files |
+| 🔢 Sudoku Solver | Grids as 2D arrays · Bitmasks · Recursion and backtracking |
+| 🗒️ Sticky Notes | App state as plain objects · Dragging with pointer events · Saving data safely |
+| 🔥 Bonfire Notes | Parsing Markdown with regular expressions · Hash routing · Canvas particles |
+| 🦸 Marvel Character Database | Link tables (many-to-many) · Ranked search |
+| ♟️ Chess Coach | Boards and move generation · Minimax and alpha-beta search |
+| 📖 SuperBook | Caching and late responses · Matching questions to answers · Drawing text on a canvas |
+| 🏥 Gotham Hospital System | Time slots and overlap checks · Roles and permissions · A small Node server |
+
+The tests check that every idea a project step uses is taught in a lesson the project lists, and that the lesson comes first.
+
 ### 🛡️ Security projects: coming soon
 
 Guides for my cybersecurity projects are added as each one is built: **SentinelEDR** (Windows endpoint detection), **NetSentinel** (network intrusion detection), **LogWatch** (a mini SIEM), **VulnScope** (asset and vulnerability management), **FileShield** (file integrity and ransomware-behavior detection), **AuthGuard** (identity and access management), **CloudSentinel** (cloud security posture), **SecureCode** (static application security testing), **IncidentIQ** (incident response and SOAR) and **ThreatIntel** (threat intelligence and IOCs).
@@ -47,10 +66,11 @@ The basics guides that run in a terminal or on the desktop (Python and Electron)
 ## The app
 
 - **Home:** a welcome banner with your next guide, the Start your journey tracks (Setup, HTML & CSS, JavaScript, Python, SQL, and C# coming soon), a progress ring for the basics, and a featured project.
-- **Lessons** and **Projects:** every guide in course order, and the project guides on their own.
+- **Lessons** and **Projects:** every guide in course order, grouped by the project each set of lessons leads into, and the project guides on their own.
 - **Coding Challenges:** the extra exercises from the end of every guide, in one place.
 - **Achievements:** badges for your first step, streaks, quiz answers and finished guides, with how far along you are on each.
 - **Progress:** steps and guides finished, your quiz score, your time and your streak, and a bar for every guide.
+- **Account:** make an account on this device to keep your progress apart from anyone else using the same browser. Passwords are never stored: only a salted PBKDF2-SHA256 hash (210,000 rounds) made with the browser's Web Crypto. Progress you made as a guest can move into your new account. Accounts don't sync between devices, since there's no server.
 - **Settings:** download your progress as a file, or reset it. Everything is saved in your browser only.
 - A **streak card** counts the days in a row you've studied.
 
