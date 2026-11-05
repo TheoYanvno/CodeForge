@@ -393,6 +393,7 @@ $('next').onclick = () => step(1);
 
 ## Step: Fetching a chapter
 time: 20
+uses: caching
 
 SuperBook doesn't store any scripture. Each chapter is **loaded when you open it**, from free public APIs, using public-domain translations. The Bible comes from [bible-api.com](https://bible-api.com), in the World English Bible:
 
@@ -578,6 +579,7 @@ function step(dir) {
 
 ## Step: Three APIs, one shape
 time: 20
+uses: caching
 
 The other two books come from other services, and every API answers in its own format:
 
