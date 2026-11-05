@@ -309,6 +309,7 @@ pre.full code { white-space: pre; }
 .tone-yellow .track-glyph { background: linear-gradient(135deg, #fde047, #eab308); color: #1f2937; }
 .tone-blue .track-glyph { background: linear-gradient(135deg, #60a5fa, #2563eb); }
 .tone-teal .track-glyph { background: linear-gradient(135deg, #2dd4bf, #0d9488); font-size: .85rem; }
+.tone-cyan .track-glyph { background: linear-gradient(135deg, #22d3ee, #0e7490); font-size: 1.4rem; }
 .tone-purple .track-glyph { background: linear-gradient(135deg, #a78bfa, #7c3aed); }
 
 .home-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; margin-top: 14px; }

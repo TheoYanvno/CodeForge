@@ -78,6 +78,17 @@ test('the security projects are listed as coming soon and do not count toward pr
   assert.strictEqual(pages.totals(GUIDES, progress).guides, GUIDES.filter((g) => g.available).length);
 });
 
+test('the React projects and C# games get their own coming-soon sections, in order', async () => {
+  const { COMING } = await import('../src/lessons/index.js');
+  const { progress } = fresh();
+  const html = pages.projectsPage(GUIDES, progress, COMING);
+  const at = (t) => html.indexOf(t);
+  assert.ok(at('React projects') > 0 && at('React projects') < at('C# games') && at('C# games') < at('Security projects'));
+  for (const t of ['Weatherboard', 'Shipboard', 'Cashflow']) assert.ok(at(t) > at('React projects') && at(t) < at('C# games'), t);
+  for (const t of ['Dungeon Protocol', 'Last Stand', 'The Last Detective', 'ColonyZero', 'CyberStrikeArena']) assert.ok(at(t) > at('C# games') && at(t) < at('Security projects'), t);
+  assert.strictEqual(pages.comingSoon(COMING.filter((c) => c.group === 'react')).includes('Security projects'), false, 'empty sections are left out');
+});
+
 test('the account box and page show the guest forms or the signed-in name', () => {
   assert.match(pages.accountCard(null), /Guest[\s\S]*data-page="account"/);
   assert.match(pages.accountCard('Anthony'), /Anthony[\s\S]*data-act="signout"/);

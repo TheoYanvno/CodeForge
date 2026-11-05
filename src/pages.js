@@ -27,7 +27,7 @@ export const LOGO = `<svg class="logo-mark" viewBox="0 0 100 100" aria-hidden="t
 </svg>`;
 
 /** The basics guides: each teaches what the project guides after it need. */
-export const BASICS = new Set(['setup', 'github', 'htmlcss', 'jsbasics', 'electron', 'python', 'sql', 'feedback', 'webapi']);
+export const BASICS = new Set(['setup', 'github', 'htmlcss', 'jsbasics', 'electron', 'python', 'sql', 'feedback', 'webapi', 'reactbasics']);
 
 /** A lesson teaches one skill (a basics guide or a short skill lesson); everything else is a project. */
 export const isLesson = (g) => BASICS.has(g.id) || g.kind === 'skill';
@@ -68,6 +68,7 @@ export const TRACKS = [
   { id: 'jsbasics', label: 'JavaScript', sub: 'Bring pages to life', glyph: 'JS', tone: 'yellow' },
   { id: 'python', label: 'Python', sub: 'Automate & analyze', glyph: 'Py', tone: 'blue' },
   { id: 'sql', label: 'SQL', sub: 'Ask your data', glyph: 'SQL', tone: 'teal' },
+  { id: 'reactbasics', label: 'React', sub: 'Build app screens', glyph: '⚛', tone: 'cyan' },
   { id: null, label: 'C#', sub: 'Coming soon', glyph: 'C#', tone: 'purple' },
 ];
 
@@ -282,18 +283,29 @@ export function homePage(guides, progress, activity) {
 
 // ---- Lessons and Projects ----
 
-/** The security projects on the roadmap, shown as coming soon. */
+/** The sections projects on the roadmap are shown in, in order. */
+export const COMING_GROUPS = [
+  { id: 'react', title: '⚛️ React projects', blurb: 'React apps built on the earlier projects. Each gets a guide here once it is published.' },
+  { id: 'csharp', title: '🎮 C# games', blurb: 'Games written in C#. Each gets a guide here once the game is built.' },
+  { id: 'security', title: '🛡️ Security projects', blurb: 'Cybersecurity tools on my roadmap. Each gets a guide here once the project is built.' },
+];
+
+/** The projects on the roadmap, shown as coming soon and grouped into sections. */
 export function comingSoon(list) {
   if (!list?.length) return '';
-  return `<section class="coming">
-    <h3 class="section-title">🛡️ Security projects <span class="pill">Coming soon</span></h3>
-    <p class="muted small">Cybersecurity tools on my roadmap. Each gets a guide here once the project is built.</p>
-    <ul class="coming-grid">${list.map((c) => `<li class="coming-card">
+  return COMING_GROUPS.map((group) => {
+    const items = list.filter((c) => (c.group ?? 'security') === group.id);
+    if (!items.length) return '';
+    return `<section class="coming">
+    <h3 class="section-title">${esc(group.title)} <span class="pill">Coming soon</span></h3>
+    <p class="muted small">${esc(group.blurb)}</p>
+    <ul class="coming-grid">${items.map((c) => `<li class="coming-card">
       <span class="g-emoji" aria-hidden="true">${c.emoji}</span>
       <span class="g-body"><strong>${esc(c.title)}</strong><span class="g-meta">${esc(c.level)} · ${esc(c.status ?? 'Coming soon')}</span>
       <span class="g-sum">${esc(c.summary)}</span></span>
     </li>`).join('')}</ul>
   </section>`;
+  }).join('');
 }
 
 export function lessonsPage(guides, progress, coming = []) {

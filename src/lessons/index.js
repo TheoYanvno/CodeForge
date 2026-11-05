@@ -157,11 +157,30 @@ export const GUIDES = [
     load: () => import('./nodeserver.js') },
   { id: 'gotham', title: 'Gotham Hospital System', emoji: '🏥', level: 'Advanced', time: 'about 4.5 hours', steps: 10, available: true, needs: ['htmlcss', 'jsbasics', 'sql', 'timeslots', 'signup', 'roles', 'nodeserver'],
     summary: 'Provider schedules, booking rules, patient charts, sign-in where the password picks your role, and the SQL behind them.', load: () => import('./gotham.js') },
+  { id: 'reactbasics', title: 'React basics', emoji: '⚛️', level: 'Beginner+', time: 'about 1.5 hours', steps: 6, available: true,
+    summary: 'Components and JSX, props, state and events, lists with keys, controlled forms, useEffect for saving and fetching, and building with esbuild for GitHub Pages.',
+    load: () => import('./reactbasics.js') },
 ];
 
-// Security tools on my roadmap. Their guides are written once each project is built, so they're
-// listed as coming soon and don't count toward progress.
+// Projects on my roadmap. Their guides are written once each project is built, so they're
+// listed as coming soon and don't count toward progress. `group` picks the section they show in.
 export const COMING = [
+  { id: 'weatherboard', group: 'react', title: 'Weatherboard', emoji: '🌤️', level: 'Intermediate',
+    summary: 'A React weather dashboard: today, hourly and 7-day forecasts from Open-Meteo, a rain chart, city search and saved places.' },
+  { id: 'shipboard', group: 'react', title: 'Shipboard', emoji: '🚢', level: 'Intermediate',
+    summary: 'A React task board for developers: columns you drag cards between, priorities, labels, due dates and a calendar view.' },
+  { id: 'cashflow', group: 'react', title: 'Cashflow', emoji: '💵', level: 'Intermediate',
+    summary: 'A React personal finance tracker: income and spending, categories, budgets, charts and a safe CSV export.' },
+  { id: 'dungeonprotocol', group: 'csharp', title: 'Dungeon Protocol', emoji: '🗝️', level: 'Advanced',
+    summary: 'A 2D roguelike in C#: rooms generated from a seed, enemies, loot, a boss fight and save/load.' },
+  { id: 'laststand', group: 'csharp', title: 'Last Stand', emoji: '🏰', level: 'Advanced',
+    summary: 'Tower defense in C#: grid pathfinding, towers with upgrades, enemy waves and data-driven balancing.' },
+  { id: 'lastdetective', group: 'csharp', title: 'The Last Detective', emoji: '🕵️', level: 'Advanced',
+    summary: 'A mystery game in C#: evidence to collect, branching dialogue, a case board for clues and more than one ending.' },
+  { id: 'colonyzero', group: 'csharp', title: 'ColonyZero', emoji: '🏕️', level: 'Advanced',
+    summary: 'Survival and colony management in C#: gathering and building, a worker job scheduler, needs, day and night.' },
+  { id: 'cyberstrikearena', group: 'csharp', title: 'CyberStrikeArena', emoji: '🎯', level: 'Advanced',
+    summary: 'A small multiplayer arena in C#: server-authoritative rules, teams, a scoreboard and handling lag.' },
   { id: 'sentineledr', title: 'SentinelEDR', emoji: '🛡️', level: 'Advanced',
     summary: 'Windows endpoint monitoring and detection: collecting endpoint telemetry and writing detections.' },
   { id: 'netsentinel', title: 'NetSentinel', emoji: '🌐', level: 'Advanced',

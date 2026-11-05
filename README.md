@@ -37,6 +37,7 @@ Take them in order. Each **basics** guide builds a small project of its own and 
 | 🌤️ Web APIs | 7 in 3 sessions · about 2 h · 13 quiz questions | Request URLs, fetch with async and await, res.ok, JSON, and loading and error states, building a weather app |
 | 📖 [SuperBook](https://github.com/TheoYanvno/SuperBook) | 10 in 5 sessions · about 3 h · 18 quiz questions | Fetching from three public APIs, caching and late responses, question matching with stemming and weighted keywords, writing on a canvas, right-to-left languages |
 | 🏥 [Gotham Hospital System](https://github.com/TheoYanvno/gotham-hospital-system) | 10 in 5 sessions · about 4.5 h · 17 quiz questions | A day schedule as a table, SQLite keys and CHECK constraints, booking rules and the overlap test, a partial unique index, upserts and reports, salted PBKDF2 sign-in, sessions, and 401/403 role permissions |
+| ⚛️ React basics | 6 in 2 sessions · about 1.5 h · 12 quiz questions | Components and JSX, props, state and events, lists with keys, controlled forms, useEffect for saving and fetching, building with esbuild for GitHub Pages |
 
 ### Lessons: one idea each, before every project
 
@@ -57,15 +58,19 @@ Every project is now a combination of the lessons right before it. Each lesson t
 
 The tests check that every idea a project step uses is taught in a lesson the project lists, and that the lesson comes first.
 
-### 🛡️ Security projects: coming soon
+### Coming soon
 
-Guides for my cybersecurity projects are added as each one is built: **SentinelEDR** (Windows endpoint detection), **NetSentinel** (network intrusion detection), **LogWatch** (a mini SIEM), **VulnScope** (asset and vulnerability management), **FileShield** (file integrity and ransomware-behavior detection), **AuthGuard** (identity and access management), **CloudSentinel** (cloud security posture), **SecureCode** (static application security testing), **IncidentIQ** (incident response and SOAR) and **ThreatIntel** (threat intelligence and IOCs).
+Guides are added as each project is built and published:
 
-The basics guides that run in a terminal or on the desktop (Python and Electron) are read-along: each step shows the code to type and run on your own computer.
+- ⚛️ **React projects:** **Weatherboard** (a weather dashboard with hourly and 7-day forecasts), **Shipboard** (a task board for developers) and **Cashflow** (a personal finance tracker). React basics is ready now, so you can start there.
+- 🎮 **C# games:** **Dungeon Protocol** (a roguelike with seeded rooms), **Last Stand** (tower defense), **The Last Detective** (a mystery with branching dialogue), **ColonyZero** (survival and colony management) and **CyberStrikeArena** (a small multiplayer arena).
+- 🛡️ **Security projects:** **SentinelEDR** (Windows endpoint detection), **NetSentinel** (network intrusion detection), **LogWatch** (a mini SIEM), **VulnScope** (asset and vulnerability management), **FileShield** (file integrity and ransomware-behavior detection), **AuthGuard** (identity and access management), **CloudSentinel** (cloud security posture), **SecureCode** (static application security testing), **IncidentIQ** (incident response and SOAR) and **ThreatIntel** (threat intelligence and IOCs).
+
+The basics guides that run in a terminal or on the desktop (Python, Electron and React) are read-along: each step shows the code to type and run on your own computer.
 
 ## The app
 
-- **Home:** a welcome banner with your next guide, the Start your journey tracks (Setup, HTML & CSS, JavaScript, Python, SQL, and C# coming soon), a progress ring for the basics, and a featured project.
+- **Home:** a welcome banner with your next guide, the Start your journey tracks (Setup, HTML & CSS, JavaScript, Python, SQL, React, and C# coming soon), a progress ring for the basics, and a featured project.
 - **Lessons** and **Projects:** every guide in course order, grouped by the project each set of lessons leads into, and the project guides on their own.
 - **Coding Challenges:** the extra exercises from the end of every guide, in one place.
 - **Achievements:** badges for your first step, streaks, quiz answers and finished guides, with how far along you are on each.
