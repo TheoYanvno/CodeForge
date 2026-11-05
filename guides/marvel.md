@@ -595,6 +595,7 @@ function start() {
 
 ## Step: Search across tables
 time: 20
+uses: rankedsearch
 
 One box should find characters by **name, real name or power**: "flight" should find Iron Man, Storm and Thor even though none of them has "flight" in their name.
 

@@ -306,6 +306,9 @@ export default {
    ],
    "session": 1,
    "minutes": 20,
+   "uses": [
+    "rankedsearch"
+   ],
    "html": {
     "page": "<script src=\"https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/sql-wasm.js\"></script>\n<header class=\"top\">\n  <h1>Marvel Character Database</h1>\n  <p class=\"muted\" id=\"count\"></p>\n  <input id=\"q\" type=\"search\" placeholder=\"Search a name, power or actor (try flight)\" autocomplete=\"off\" aria-label=\"Search characters\">\n</header>\n<main class=\"layout\" id=\"layout\">\n  <div id=\"grid\" class=\"grid\"></div>\n  <aside id=\"profile\" class=\"profile\" hidden></aside>\n</main>\n<p class=\"note\">Unofficial fan project for learning SQL. Not affiliated with or endorsed by Marvel. Stories are written in my own words.</p>"
    },
