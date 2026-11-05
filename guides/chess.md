@@ -12,6 +12,7 @@ prereqs: JavaScript functions, arrays, objects and arrow functions; Recursion (a
 
 ## Step: A position as data, drawn as a board
 time: 15
+uses: movegen
 
 Welcome! In this guide you'll rebuild my [Chess Coach](https://theoyanvno.github.io/chess-coach/) from a blank page: a chess game with every rule, a computer opponent that looks ahead, and a coach that grades each of your moves ("Blunder: your queen on h5 can be taken by the knight on f6") and writes a report at the end.
 
@@ -188,6 +189,7 @@ render();
 
 ## Step: Moving around the board with step()
 time: 10
+uses: movegen
 
 Every piece's movement is "go this many columns and rows". With squares numbered 0-63, it's tempting to just add numbers (one square right is `+1`, one row down is `+8`). But that breaks at the edges: `+1` from h8 (square 7) lands on a7 (square 8), on the other side of the board.
 
@@ -384,6 +386,7 @@ render();
 
 ## Step: How the pieces move
 time: 20
+uses: movegen
 
 Time for real rules. `pseudoMoves(s)` lists every move each piece of the side to move **could** make: "pseudo" because it doesn't yet check whether the move leaves your own king in check (that's step 6).
 
