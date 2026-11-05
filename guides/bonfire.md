@@ -512,6 +512,7 @@ route();
 
 ## Step: Headings, paragraphs and inline styles
 time: 20
+uses: markdownre
 
 Markdown is plain text with a few conventions, and turning it into HTML is the heart of any blog engine. This one works in **blocks**: the body is split at blank lines, and each block becomes one HTML element.
 
@@ -753,6 +754,7 @@ addEventListener('hashchange', route);
 
 ## Step: Lists and tables
 time: 20
+uses: markdownre
 
 Guides need lists and tables: steps to follow, attacks to dodge. Each is recognized by what **every line** of a block looks like:
 
