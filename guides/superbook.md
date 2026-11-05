@@ -870,6 +870,7 @@ $('original').onchange = () => goTo(current.section, current.chapter);
 
 ## Step: Matching a question to a topic
 time: 20
+uses: matching
 
 The sand answers questions like *"How do the Bible and the Qur'an see Jesus?"* There's no AI here: the `topics` block holds 8 of the real app's 76 topics, each with a short, neutral answer for each book and a list of **keywords** that point to it. Matching a free-typed question to a topic takes three steps.
 
@@ -1072,6 +1073,7 @@ $('askForm').addEventListener('submit', (e) => {
 
 ## Step: Which books, and the answer
 time: 20
+uses: matching
 
 *"What does Judaism teach about the afterlife?"* should answer for Judaism only. `findBooks()` looks for words that name a book or its faith:
 
