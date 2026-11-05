@@ -1318,6 +1318,7 @@ $('askForm').addEventListener('submit', (e) => {
 
 ## Step: Letters pressed into sand
 time: 20
+uses: canvastext
 
 Now the answer is **written into the sand** on a `<canvas>`, line by line, as if by a finger.
 
@@ -1551,6 +1552,7 @@ addEventListener('resize', () => {
 
 ## Step: Grains, wind and reduced motion
 time: 15
+uses: canvastext
 
 Three finishing touches.
 
