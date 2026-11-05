@@ -423,6 +423,7 @@ $('page').innerHTML = '<ol>' + POSTS_LIST.map((p) =>
 
 ## Step: A home page and a page for each post
 time: 15
+uses: hashrouting
 
 Now the blog gets real pages, all drawn from `POSTS_LIST`:
 
@@ -1231,6 +1232,7 @@ addEventListener('hashchange', route);
 
 ## Step: Tags, newer and older, and not-found pages
 time: 20
+uses: hashrouting
 
 **Tag pages.** Every tag on a card is now a link to `#/tag/<tag>`. The home page gets a **tag cloud**: "all" plus every tag used, with the current one highlighted. `homePage(tag)` filters the posts and changes the heading to `Tagged "guide"`. A tag nobody uses gets the not-found page.
 
