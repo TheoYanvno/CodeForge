@@ -178,6 +178,9 @@ function voiceButton() {
   return `<button class="voice-btn" data-act="voice" aria-pressed="${voice.on}" title="Have each step read to you by your device's voice">${voice.on ? '🔊 Read aloud: on' : '🔈 Read aloud: off'}</button>`;
 }
 
+/** ↺ Reset at the top of every lesson: starts just this guide over (after asking). */
+const resetButton = () => `<button class="reset-btn" data-act="reset" title="Clear your place, finished steps, time and quiz answers in this guide only">↺ Reset this guide</button>`;
+
 /** What read aloud says on the screen that's showing: the step, or the lesson plan's goals. */
 function readAloud() {
   if (!voice.on || !guide) return;
@@ -198,7 +201,7 @@ function showPlan() {
   const started = p.done.length || Object.keys(p.time).length;
   $('tutor').innerHTML = `
     <header class="t-head"><button class="link" data-act="list">← All guides</button>
-      <p class="t-guide">${guide.emoji} ${esc(guide.title)} ${voiceButton()}</p><h2>Lesson plan</h2>
+      <p class="t-guide">${guide.emoji} ${esc(guide.title)} ${voiceButton()} ${resetButton()}</p><h2>Lesson plan</h2>
       <p class="muted">${guide.steps.length} steps in ${plan.sessions.length} session${plan.sessions.length > 1 ? 's' : ''} · about ${mins(plan.minutes)} · ${quizCount} quiz questions</p></header>
     <article class="t-body">
       ${guide.goals?.length ? `<h3>By the end you'll be able to</h3><ul>${guide.goals.map((g) => `<li>${esc(g)}</li>`).join('')}</ul>` : ''}
@@ -219,7 +222,7 @@ function showPlan() {
         </li>`;
       }).join('')}</ol>
       <h3>Pace and progress</h3>
-      <p>Each step has a planned time. The ⏱ pace timer at the top of a step counts while the page is open and turns amber when you go over. That's a nudge, not a test. Your place, the steps you've finished, your time and your quiz answers are saved in this browser; <strong>Reset this guide</strong> on the last page starts it over.</p>
+      <p>Each step has a planned time. The ⏱ pace timer at the top of a step counts while the page is open and turns amber when you go over. That's a nudge, not a test. Your place, the steps you've finished, your time and your quiz answers are saved in this browser; <strong>↺ Reset this guide</strong> at the top of any step starts just this guide over, and <strong>Reset all progress</strong> on the Progress and Settings pages clears everything.</p>
     </article>
     <nav class="t-nav"><span></span>
       <button data-act="start" class="primary">${started ? 'Continue' : 'Start step 1'} →</button></nav>`;
@@ -265,7 +268,7 @@ function showStep() {
   $('tutor').innerHTML = `
     <header class="t-head">
       <button class="link" data-act="list">← All guides</button>
-      <p class="t-guide">${guide.emoji} ${esc(guide.title)} <button class="link" data-act="plan">📋 Lesson plan</button> ${voiceButton()}</p>
+      <p class="t-guide">${guide.emoji} ${esc(guide.title)} <button class="link" data-act="plan">📋 Lesson plan</button> ${voiceButton()} ${resetButton()}</p>
       <div class="t-progress" aria-label="Step ${at + 1} of ${total}">
         ${guide.steps.map((s, i) => `<button class="dot${i === at ? ' here' : ''}${done.includes(i) ? ' done' : ''}" data-go="${i}" title="Step ${i + 1}: ${esc(s.title)}" aria-label="Step ${i + 1}: ${esc(s.title)}${done.includes(i) ? ' (done)' : ''}"></button>`).join('')}
       </div>
@@ -503,11 +506,20 @@ function onClick(e) {
       toast('All progress reset');
       return showPage('home');
     case 'reset':
-      if (!confirm(`Reset your progress in the ${guide.title} guide? Your place, finished steps, time and quiz answers are cleared.`)) return;
+      if (!confirm(`Reset your progress in the ${guide.title} guide? Your place, finished steps, time and quiz answers are cleared. Every other guide stays as it is.`)) return;
+      stopTimer();
       unsaved = 0;
       progress.reset(guide.id);
       at = 0;
+      toast(`${guide.title} reset`);
       return showPlan();
+    case 'reset-guide': {
+      const g = GUIDES.find((x) => x.id === b.dataset.id);
+      if (!g || !confirm(`Reset your progress in the ${g.title} guide? Your place, finished steps, time and quiz answers are cleared. Every other guide stays as it is.`)) return;
+      progress.reset(g.id);
+      toast(`${g.title} reset`);
+      return showPage(page);
+    }
     default:
   }
 }

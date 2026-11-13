@@ -398,7 +398,8 @@ export function progressPage(loaded, progress, activity) {
     const s = guideStats(guide, progress);
     return `<li><button class="link" data-open="${guide.id}">${esc(guide.emoji)} ${esc(guide.title)}</button>
       <span class="bar"><span data-fill="${s.percent}"></span></span>
-      <span class="small muted">${s.done}/${s.total} steps${s.time ? ` · ${mins(s.time)}` : ''}</span></li>`;
+      <span class="small muted">${s.done}/${s.total} steps${s.time ? ` · ${mins(s.time)}` : ''}</span>
+      ${s.done || s.time || s.answered ? `<button class="reset-btn" data-act="reset-guide" data-id="${guide.id}" aria-label="Reset ${esc(guide.title)}">↺ Reset</button>` : ''}</li>`;
   }).join('');
   return `<header class="page-head"><h2>Progress</h2></header>
     <dl class="stats-grid">
@@ -409,7 +410,13 @@ export function progressPage(loaded, progress, activity) {
       <div class="card"><dt>Streak</dt><dd>${activity.streak()} <span class="muted">days · best ${activity.longest()}</span></dd></div>
     </dl>
     <h3 class="section-title">By guide</h3>
-    <ul class="progress-rows">${rows}</ul>`;
+    <p class="muted small">↺ Reset starts one guide over; the others stay as they are.</p>
+    <ul class="progress-rows">${rows}</ul>
+    <section class="card settings">
+      <h3 class="card-title">Start over</h3>
+      <p class="muted">Clears every guide's place, finished steps, time, quiz answers and your streak${t.done ? '' : ' (there\'s nothing saved yet)'}. Download a copy first if you want one.</p>
+      <div class="t-actions"><button data-act="export">⬇ Download my progress</button> <button data-act="reset-all" class="danger">Reset all progress</button></div>
+    </section>`;
 }
 
 // ---- Account ----

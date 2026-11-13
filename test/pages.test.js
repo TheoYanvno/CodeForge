@@ -168,3 +168,19 @@ test('skill badges: one per language and tool, earned by finishing every guide t
   assert.match(page, /Coming soon/);
   assert.match(page, /Electron/);
 });
+
+test('Progress has a Reset for each started guide and Reset all; resetting one guide leaves the others', async () => {
+  const { progress, activity } = fresh();
+  progress.complete('setup', 0);
+  progress.complete('github', 0); progress.complete('github', 1);
+  const loaded = await Promise.all(GUIDES.filter((g) => ['setup', 'github', 'htmlcss'].includes(g.id)).map(async (g) => ({ guide: g, data: (await g.load()).default })));
+  const html = pages.progressPage(loaded, progress, activity);
+  assert.match(html, /data-act="reset-guide" data-id="setup"/);
+  assert.match(html, /data-act="reset-guide" data-id="github"/);
+  assert.doesNotMatch(html, /data-act="reset-guide" data-id="htmlcss"/, 'nothing to reset in a guide not started');
+  assert.match(html, /data-act="reset-all"/);
+  assert.match(pages.settingsPage(), /data-act="reset-all"/, 'Settings keeps Reset all too');
+  progress.reset('setup');
+  assert.deepStrictEqual(progress.get('setup').done, []);
+  assert.deepStrictEqual(progress.get('github').done, [0, 1]);
+});
