@@ -10,6 +10,7 @@ import { GUIDES, COMING } from './lessons/index.js';
 import { Activity } from './activity.js';
 import { Accounts, keyFor, PROGRESS_KEY, ACTIVITY_KEY } from './accounts.js';
 import * as pages from './pages.js';
+import { Voice, speakableText } from './voice.js';
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -20,6 +21,7 @@ const FILE_NAMES = { html: 'index.html', css: 'style.css', js: 'script.js' };
 // localStorage itself can throw in locked-down browsers; everything below copes with null.
 const store = (() => { try { return globalThis.localStorage; } catch { return null; } })();
 const accounts = new Accounts(store);
+const voice = new Voice(store);   // read aloud: off until it's turned on, remembered in this browser
 let user = null;            // the signed-in name, or null for a guest
 let progress;               // guide progress for whoever is signed in
 let activity;               // study days for the streak, for whoever is signed in
@@ -138,6 +140,7 @@ function startTimer() {
 }
 
 function stopTimer() {
+  voice.stop();
   if (timer) clearInterval(timer);
   timer = null;
   saveTime();
@@ -169,6 +172,23 @@ window.addEventListener('pagehide', saveTime);
 
 const mins = (m) => (m >= 60 ? `${Math.floor(m / 60)} h${m % 60 ? ` ${m % 60} min` : ''}` : `${m} min`);
 
+/** The 🔊 Read aloud switch at the top of every lesson; hidden where the browser can't speak. */
+function voiceButton() {
+  if (!voice.supported) return '';
+  return `<button class="voice-btn" data-act="voice" aria-pressed="${voice.on}" title="Have each step read to you by your device's voice">${voice.on ? '🔊 Read aloud: on' : '🔈 Read aloud: off'}</button>`;
+}
+
+/** What read aloud says on the screen that's showing: the step, or the lesson plan's goals. */
+function readAloud() {
+  if (!voice.on || !guide) return;
+  if (at < guide.steps.length && document.querySelector('.t-progress')) {
+    const step = guide.steps[at];
+    voice.speak(`Step ${at + 1}. ${step.title}.\n${speakableText(step.body)}`);
+  } else if (document.querySelector('.plan')) {
+    voice.speak(`${guide.title}. Lesson plan.\n${guide.goals?.length ? `By the end you'll be able to: ${guide.goals.join('. ')}.` : ''}`);
+  }
+}
+
 function showPlan() {
   stopTimer();
   const plan = lessonPlan(guide);
@@ -178,7 +198,7 @@ function showPlan() {
   const started = p.done.length || Object.keys(p.time).length;
   $('tutor').innerHTML = `
     <header class="t-head"><button class="link" data-act="list">← All guides</button>
-      <p class="t-guide">${guide.emoji} ${esc(guide.title)}</p><h2>Lesson plan</h2>
+      <p class="t-guide">${guide.emoji} ${esc(guide.title)} ${voiceButton()}</p><h2>Lesson plan</h2>
       <p class="muted">${guide.steps.length} steps in ${plan.sessions.length} session${plan.sessions.length > 1 ? 's' : ''} · about ${mins(plan.minutes)} · ${quizCount} quiz questions</p></header>
     <article class="t-body">
       ${guide.goals?.length ? `<h3>By the end you'll be able to</h3><ul>${guide.goals.map((g) => `<li>${esc(g)}</li>`).join('')}</ul>` : ''}
@@ -205,6 +225,7 @@ function showPlan() {
       <button data-act="start" class="primary">${started ? 'Continue' : 'Start step 1'} →</button></nav>`;
   fillBars();
   window.scrollTo(0, 0);
+  readAloud();
 }
 
 /** A project's lessons on its plan page: each with ✓ or a button to open it. */
@@ -244,7 +265,7 @@ function showStep() {
   $('tutor').innerHTML = `
     <header class="t-head">
       <button class="link" data-act="list">← All guides</button>
-      <p class="t-guide">${guide.emoji} ${esc(guide.title)} <button class="link" data-act="plan">📋 Lesson plan</button></p>
+      <p class="t-guide">${guide.emoji} ${esc(guide.title)} <button class="link" data-act="plan">📋 Lesson plan</button> ${voiceButton()}</p>
       <div class="t-progress" aria-label="Step ${at + 1} of ${total}">
         ${guide.steps.map((s, i) => `<button class="dot${i === at ? ' here' : ''}${done.includes(i) ? ' done' : ''}" data-go="${i}" title="Step ${i + 1}: ${esc(s.title)}" aria-label="Step ${i + 1}: ${esc(s.title)}${done.includes(i) ? ' (done)' : ''}"></button>`).join('')}
       </div>
@@ -288,6 +309,7 @@ function showStep() {
   window.scrollTo(0, 0);
   showPace();
   startTimer();
+  readAloud();
 }
 
 /** Fills the code box with the current view: the step's changes as a diff, or one whole file. */
@@ -460,6 +482,12 @@ function onClick(e) {
       lastTick = Date.now();
       showPace();
       return toast('Timer reset to 0:00');
+    case 'voice':
+      voice.on = !voice.on;
+      b.setAttribute('aria-pressed', String(voice.on));
+      b.textContent = voice.on ? '🔊 Read aloud: on' : '🔈 Read aloud: off';
+      if (voice.on) readAloud();
+      return toast(voice.on ? 'Read aloud is on: each step is read to you' : 'Read aloud is off');
     case 'export': return exportProgress();
     case 'signout':
       saveTime();
