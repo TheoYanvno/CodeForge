@@ -726,4 +726,4 @@ You built an app that pulls live data from the internet. You learned:
 
 ### Next
 
-The **SuperBook** guide.
+The **Electron basics** guide, then the lessons before **Sticky Notes**. You'll use fetch again in the Quote & Joke Generator and SuperBook.

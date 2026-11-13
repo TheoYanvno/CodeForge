@@ -415,4 +415,4 @@ You can find bugs instead of guessing at them. You learned:
 
 ### Next
 
-Keep DevTools open for every project from here on. Next, the **Canvas drawing** lesson starts the road to Snake.
+Keep DevTools open for every project from here on. Next, **Reacting to the player** builds a guessing game with a coach, then the Canvas drawing lesson starts the road to **Snake**.

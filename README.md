@@ -8,55 +8,92 @@ It's a learning guide, not a code playground: you build your own copy in your ow
 
 **Tech:** vanilla JavaScript (ES modules) · HTML/CSS (Orbitron and Segoe UI, dark-first) · a small safe Markdown renderer · LCS line diffs · sandboxed `<iframe srcdoc>` for the read-only results · `localStorage` · `node:test`
 
-![The CodeForge home page: the sidebar, the welcome banner, Start your journey, your progress ring and a featured project](docs/tutor.png)
+![The CodeForge home page: the sidebar, the welcome banner, your level and points, Start your journey, your progress ring and a featured project](docs/tutor.png)
+
+![Achievements: the Beginner, Junior developer and Associate developer levels, and a badge for each topic](docs/achievements.png)
 
 <img src="docs/tutor-quiz.png" alt="A lesson step's quick quiz on a phone" width="300">
 
 ## The guides
 
-Take them in order. Each **basics** guide builds a small project of its own and teaches what the project guides right after it need.
+Take them in order: the course runs from beginner to advanced in six tiers. Each **basics** guide builds a small project of its own, each short **lesson** teaches one idea with its own example, and each **project** combines the lessons right before it, so every step is something you've already practiced ("You learned this in…" links back). A project's plan page lists the lessons it needs, with a tick for each one you've finished.
+
+Every Foundations project ends with three **practice labs** that build a developer's daily habits: **Find the bug**, **Review this change** (the reviewer's side of a pull request) and **Build it yourself** (a spec and a blank page).
+
+### Tier 1: Foundations
+
+Your tools, GitHub, your first page, JavaScript, reading errors, and your first game.
 
 | Guide | Steps | What you learn |
 |---|---|---|
-| 🧰 Get set up | 9 in 3 sessions · about 2 h · 9 quiz questions | What to install and why: VS Code and the best extensions, browser developer tools, Git and GitHub, Node.js and Python, then publishing a first page |
-| 🐙 GitHub from zero | 9 in 4 sessions · about 2.5 h · 12 quiz questions | Everything from making an account to pushing commits: 2FA, a profile README, repositories, the commit cycle, signing in, branches and pull requests, fixing mistakes and GitHub Pages, building a learning log |
-| 🎨 HTML & CSS basics | 9 in 3 sessions · about 2 h · 17 quiz questions | Elements, semantic structure, selectors, the box model, Flexbox and media queries, building a profile page |
-| 🧮 JavaScript basics | 8 in 3 sessions · about 2 h · 14 quiz questions | Variables, functions, events, if/else, arrays and loops, building a tip calculator |
-| 🐍 [Snake](https://github.com/TheoYanvno/snake-game) | 13 in 4 sessions · about 3 h · 26 quiz questions | Canvas drawing, a game loop, keyboard and swipe controls, keeping rules separate from drawing |
-| 💬 [Quote & Joke Generator](https://github.com/TheoYanvno/quote-and-joke-generator) | 10 in 5 sessions · about 3 h · 18 quiz questions | Random picks without repeats, a date-seeded daily pick, salted password hashing, sessions and lockouts, a REST API as one function |
-| 📅 [Task Calendar](https://github.com/TheoYanvno/task-calendar) | 11 in 5 sessions · about 3 h · 20 quiz questions | Date keys without time-zone bugs, repeat rules, holiday math, theming with custom properties, .ics and Google Calendar links |
-| 🔢 [Sudoku Solver](https://github.com/TheoYanvno/sudoku-solver) | 12 in 5 sessions · about 3 h · 22 quiz questions | Bitmasks, constraint propagation, recursion and backtracking, generating puzzles with one answer |
-| 🖥️ Electron basics | 7 in 3 sessions · about 2 h · 8 quiz questions | Main and renderer processes, a safe preload bridge, IPC and system notifications, building a desktop reminders app |
-| 🗒️ [Sticky Notes](https://github.com/TheoYanvno/sticky-notes) | 11 in 5 sessions · about 3 h · 20 quiz questions | State as plain objects, a reversible checklist, keeping focus across redraws, pointer-event dragging, safe saving |
-| 🐍 Python basics | 8 in 3 sessions · about 2 h · 11 quiz questions | Lists, dictionaries, functions, try/except, JSON files and unittest, building a command-line budget tracker |
-| 🔥 [Bonfire Notes](https://github.com/TheoYanvno/bonfire-notes) | 10 in 5 sessions · about 3 h · 18 quiz questions | Front matter, a safe Markdown converter, hash routing, RSS and redirects, canvas particles |
-| 🗄️ SQL basics | 8 in 3 sessions · about 2 h · 15 quiz questions | Tables, safe INSERTs, WHERE, ORDER BY, LIKE, GROUP BY and JOIN, building a book library |
-| 🦸 [Marvel Character Database](https://github.com/TheoYanvno/marvel-character-database) | 11 in 5 sessions · about 3 h · 20 quiz questions | Related tables and link tables, parameterized SQL, ranked search, GROUP BY and HAVING, UNION across both sides of a relationship, SQLite in the browser |
-| 🎯 Reacting to the player | 7 in 3 sessions · about 2 h · 13 quiz questions | The input, evaluate, respond loop, game state, and grading moves against the best move, building a guessing game with a coach |
-| ♟️ [Chess Coach](https://github.com/TheoYanvno/chess-coach) | 13 in 5 sessions · about 3.5 h · 24 quiz questions | Legal move generation, evaluation, negamax with alpha-beta pruning, grading moves and explaining them |
-| 🌤️ Web APIs | 7 in 3 sessions · about 2 h · 13 quiz questions | Request URLs, fetch with async and await, res.ok, JSON, and loading and error states, building a weather app |
-| 📖 [SuperBook](https://github.com/TheoYanvno/SuperBook) | 10 in 5 sessions · about 3 h · 18 quiz questions | Fetching from three public APIs, caching and late responses, question matching with stemming and weighted keywords, writing on a canvas, right-to-left languages |
-| 🏥 [Gotham Hospital System](https://github.com/TheoYanvno/gotham-hospital-system) | 10 in 5 sessions · about 4.5 h · 17 quiz questions | A day schedule as a table, SQLite keys and CHECK constraints, booking rules and the overlap test, a partial unique index, upserts and reports, salted PBKDF2 sign-in, sessions, and 401/403 role permissions |
-| ⚛️ React basics | 6 in 2 sessions · about 1.5 h · 12 quiz questions | Components and JSX, props, state and events, lists with keys, controlled forms, useEffect for saving and fetching, building with esbuild for GitHub Pages |
+| 🧰 Get set up | 9 in 3 sessions · about 2 hours · 9 quiz questions | What to install and why: VS Code and the best extensions, browser developer tools, Git and GitHub, Node.js and Python, then publishing a first page |
+| 🐙 GitHub from zero | 13 in 5 sessions · about 3.5 hours · 18 quiz questions | Everything from making an account to pushing commits: 2FA, a profile README, repositories, the commit cycle, signing in, branches and pull requests, fixing mistakes and GitHub Pages, building a learning log, then team Git: issues, reviewing pull requests, merge conflicts and GitHub Actions CI |
+| 🎨 HTML & CSS basics | 14 in 5 sessions · about 3.5 hours · 25 quiz questions | Elements, semantic structure, selectors, the box model, Flexbox and media queries, accessibility (alt text, a skip link, focus rings, contrast), building a profile page, then three practice labs |
+| 🧮 JavaScript basics | 11 in 4 sessions · about 3 hours · 18 quiz questions | Variables, functions, events, if/else, arrays and loops, building a tip calculator, then three practice labs |
+| 📘 Lessons | 1 | 🐞 Reading errors and DevTools |
+| 🎯 Reacting to the player | 10 in 4 sessions · about 3 hours · 17 quiz questions | The input, evaluate, respond loop, game state, and grading moves against the best move, building a guessing game with a coach, then three practice labs |
+| 📘 Lessons | 4 | 🖌️ Canvas drawing · ⏱️ Game loops and timers · 🎮 Keyboard and swipe input · 💾 Saving a best score |
+| 🐍 [Snake](https://github.com/TheoYanvno/snake-game) | 17 in 5 sessions · about 4.5 hours · 32 quiz questions | Canvas drawing, a game loop, keyboard and swipe controls, keeping rules separate from drawing, the Two by Two (Noah's ark) theme with verses linked to SuperBook, then three practice labs |
 
-### Lessons: one idea each, before every project
+### Tier 2: Working with data in the browser
 
-Every project is now a combination of the lessons right before it. Each lesson teaches one idea with its own small example, diagrams, a quiz on every step and challenges at the end. The project then puts them together, and each project step says which lesson it uses ("You learned this in…"), so you know what you're building, how, and why. A project's plan page lists the lessons it needs, with a tick for each one you've finished.
+Fetching from APIs, saving data, dates, dragging, accounts and a desktop app.
 
-| Before | Lessons (34) |
-|---|---|
-| 🐍 Snake | Canvas drawing · Game loops and timers · Keyboard and swipe input · Saving a best score |
-| 💬 Quote & Joke Generator | Arrays of objects and random picks · Filtering lists · Fetching quotes and jokes · Saving favorites · Accounts: sign up, hashed passwords and sessions · Sharing: copy, share sheet and links |
-| 📅 Task Calendar | Dates and time zones · A month grid with CSS Grid · Repeating events · Drag and drop · .ics calendar files |
-| 🔢 Sudoku Solver | Grids as 2D arrays · Bitmasks · Recursion and backtracking |
-| 🗒️ Sticky Notes | App state as plain objects · Dragging with pointer events · Saving data safely |
-| 🔥 Bonfire Notes | Parsing Markdown with regular expressions · Hash routing · Canvas particles |
-| 🦸 Marvel Character Database | Link tables (many-to-many) · Ranked search |
-| ♟️ Chess Coach | Boards and move generation · Minimax and alpha-beta search |
-| 📖 SuperBook | Caching and late responses · Matching questions to answers · Drawing text on a canvas |
-| 🏥 Gotham Hospital System | Time slots and overlap checks · Roles and permissions · A small Node server |
+| Guide | Steps | What you learn |
+|---|---|---|
+| 🌤️ Web APIs | 7 in 3 sessions · about 2 hours · 13 quiz questions | Request URLs, fetch with async and await, res.ok, JSON, and loading and error states, building a weather app |
+| 🖥️ Electron basics | 7 in 3 sessions · about 2 hours · 8 quiz questions | Main and renderer processes, a safe preload bridge, IPC and system notifications, building a desktop reminders app |
+| 📘 Lessons | 3 | 🗂️ App state as plain objects · 🖐️ Dragging with pointer events · 🛟 Saving data safely |
+| 🗒️ [Sticky Notes](https://github.com/TheoYanvno/sticky-notes) | 11 in 5 sessions · about 3 hours · 20 quiz questions | State as plain objects, a reversible checklist, keeping focus across redraws, pointer-event dragging, safe saving |
+| 📘 Lessons | 5 | 🗓️ Dates and time zones in JavaScript · 🧱 A month grid with CSS Grid · 🔁 Repeating events · 🫳 Drag and drop · 📆 .ics calendar files |
+| 📅 [Task Calendar](https://github.com/TheoYanvno/task-calendar) | 11 in 5 sessions · about 3 hours · 20 quiz questions | Date keys without time-zone bugs, repeat rules, holiday math, theming with custom properties, .ics and Google Calendar links |
+| 📘 Lessons | 6 | 🎲 Arrays of objects and random picks · 🔎 Filtering lists · 📡 Fetching quotes and jokes · 💖 Saving favorites · 🔐 Accounts: sign up, hashed passwords and sessions · 📤 Sharing: copy, share sheet and links |
+| 💬 [Quote & Joke Generator](https://github.com/TheoYanvno/quote-and-joke-generator) | 10 in 5 sessions · about 3 hours · 18 quiz questions | Random picks without repeats, a date-seeded daily pick, salted password hashing, sessions and lockouts, a REST API as one function |
 
-The tests check that every idea a project step uses is taught in a lesson the project lists, and that the lesson comes first.
+### Tier 3: Python and SQL
+
+Python, a static site generator, and databases from your first table to many-to-many searches.
+
+| Guide | Steps | What you learn |
+|---|---|---|
+| 🐍 Python basics | 8 in 3 sessions · about 2 hours · 11 quiz questions | Lists, dictionaries, functions, try/except, JSON files and unittest, building a command-line budget tracker |
+| 📘 Lessons | 3 | 🧩 Parsing Markdown with regular expressions · 🧭 Hash routing · ✨ Canvas particles |
+| 🔥 [Bonfire Notes](https://github.com/TheoYanvno/bonfire-notes) | 10 in 5 sessions · about 3 hours · 18 quiz questions | Front matter, a safe Markdown converter, hash routing, RSS and redirects, canvas particles |
+| 🗄️ SQL basics | 8 in 3 sessions · about 2 hours · 15 quiz questions | Tables, safe INSERTs, WHERE, ORDER BY, LIKE, GROUP BY and JOIN, building a book library |
+| 📘 Lessons | 2 | 🔗 Link tables (many-to-many) · 🏆 Ranked search |
+| 🦸 [Marvel Character Database](https://github.com/TheoYanvno/marvel-character-database) | 11 in 5 sessions · about 3 hours · 20 quiz questions | Related tables and link tables, parameterized SQL, ranked search, GROUP BY and HAVING, UNION across both sides of a relationship, SQLite in the browser |
+
+### Tier 4: React and apps
+
+Components, state and effects, then React apps as they are published.
+
+| Guide | Steps | What you learn |
+|---|---|---|
+| ⚛️ React basics | 6 in 2 sessions · about 1.5 hours · 12 quiz questions | Components and JSX, props, state and events, lists with keys, controlled forms, useEffect for saving and fetching, building with esbuild for GitHub Pages |
+
+### Tier 5: Algorithms
+
+Grids, bitmasks, recursion and backtracking, then game-tree search.
+
+| Guide | Steps | What you learn |
+|---|---|---|
+| 📘 Lessons | 3 | 🔲 Grids as 2D arrays · 🎚️ Bitmasks · 🌳 Recursion and backtracking |
+| 🔢 [Sudoku Solver](https://github.com/TheoYanvno/sudoku-solver) | 12 in 5 sessions · about 3 hours · 22 quiz questions | Bitmasks, constraint propagation, recursion and backtracking, generating puzzles with one answer |
+| 📘 Lessons | 2 | ♞ Boards and move generation · 🌲 Minimax and alpha-beta search |
+| ♟️ [Chess Coach](https://github.com/TheoYanvno/chess-coach) | 13 in 5 sessions · about 3.5 hours · 24 quiz questions | Legal move generation, evaluation, negamax with alpha-beta pruning, grading moves and explaining them |
+
+### Tier 6: Full stack and bigger systems
+
+A server, roles and permissions, caching, several APIs at once and a hospital system.
+
+| Guide | Steps | What you learn |
+|---|---|---|
+| 📘 Lessons | 3 | 🕒 Time slots and overlap checks · 🛂 Roles and permissions · 🖥️ A small Node server |
+| 🏥 [Gotham Hospital System](https://github.com/TheoYanvno/gotham-hospital-system) | 10 in 5 sessions · about 4.5 hours · 17 quiz questions | A day schedule as a table, SQLite keys and CHECK constraints, booking rules and the overlap test, a partial unique index, upserts and reports, salted PBKDF2 sign-in, sessions, and 401/403 role permissions |
+| 📘 Lessons | 3 | ⚡ Caching and late responses · 🎯 Matching questions to answers · ✍️ Drawing text on a canvas |
+| 📖 [SuperBook](https://github.com/TheoYanvno/SuperBook) | 10 in 5 sessions · about 3 hours · 18 quiz questions | Fetching from three public APIs, caching and late responses, question matching with stemming and weighted keywords, writing on a canvas, right-to-left languages |
+
+55 guides: 35 lessons, 10 basics guides and 10 projects. The tests check that every idea a project step uses is taught in a lesson the project lists, that the lesson comes first, and that no step anyone may have finished ever changes its number (progress is saved by guide and step).
 
 ### Coming soon
 
@@ -70,13 +107,13 @@ The basics guides that run in a terminal or on the desktop (Python, Electron and
 
 ## The app
 
-- **Home:** a welcome banner with your next guide, the Start your journey tracks (Setup, HTML & CSS, JavaScript, Python, SQL, React, and C# coming soon), a progress ring for the basics, and a featured project.
-- **Lessons** and **Projects:** every guide in course order, grouped by the project each set of lessons leads into, and the project guides on their own.
+- **Home:** a welcome banner with your next guide, your **level and points**, the Start your journey tracks (Setup, HTML & CSS, JavaScript, Python, SQL, React, and C# coming soon), a progress ring for the basics, and a featured project.
+- **Lessons** and **Projects:** every guide in course order, in six tiers from Foundations to Full stack, grouped by the project each set of lessons leads into, and the project guides on their own.
 - **Coding Challenges:** the extra exercises from the end of every guide, in one place.
-- **Achievements:** badges for your first step, streaks, quiz answers and finished guides, with how far along you are on each.
-- **Progress:** steps and guides finished, your quiz score, your time and your streak, and a bar for every guide.
+- **Achievements:** three **levels** (Beginner for finishing Foundations, Junior developer through the React tier with the Debugging, Testing and Git & teamwork badges, and Associate developer for all six tiers with the Algorithms, Security, Backend & APIs and Capstone badges), a **topic badge** for each topic from HTML & CSS to Security, **points** (10 per step or lab, 5 per quiz answer), and milestones for streaks, quiz answers and finished guides, each with how far along you are.
+- **Progress:** your level, steps and guides finished, your quiz score, your time and your streak, a bar for every guide with **↺ Reset** to start just that guide over, and **Reset all progress**.
 - **Account:** make an account on this device to keep your progress apart from anyone else using the same browser. Passwords are never stored: only a salted PBKDF2-SHA256 hash (210,000 rounds) made with the browser's Web Crypto. Progress you made as a guest can move into your new account. Accounts don't sync between devices, since there's no server.
-- **Settings:** download your progress as a file, or reset it. Everything is saved in your browser only.
+- **Settings:** download your progress as a file, or reset all of it. Everything is saved in your browser only.
 - A **streak card** counts the days in a row you've studied.
 
 ## How a guide works
@@ -86,8 +123,10 @@ The basics guides that run in a terminal or on the desktop (Python, Electron and
 - **The code:** *What changes* shows the step as a diff (added lines in green, removed lines struck through). The `index.html`, `style.css` and `script.js` tabs show each whole file after the step, with a **Copy** button. **Download this step as one page** saves the finished step as a single HTML file.
 - **See it run** shows the finished step working, read-only, in a sandboxed frame.
 - **Quick quiz:** multiple-choice questions on the idea behind the code, with an explanation for each answer. Only your first answer counts.
+- **🔊 Read aloud:** a button at the top of every lesson has your device's own voice (the Web Speech API) read each step: the explanation and diagram captions, not the code. It's off until you turn it on, and remembered.
+- **↺ Reset this guide** at the top of every lesson starts just that guide over; every other guide keeps its progress.
 - **Pace timer:** ⏱ counts your time on a step (only while the page is visible) against its planned time. **↺ Reset timer** starts the step's timer again from 0:00.
-- **Progress:** your place, the steps you've finished, your time per step and your quiz answers are saved in your browser. The finish page shows steps done, your quiz score and your time against the plan, and **Reset this guide** starts it over.
+- **Progress:** your place, the steps you've finished, your time per step and your quiz answers are saved in your browser. The finish page shows steps done, your quiz score and your time against the plan.
 - **Read-along steps** at the end of each guide show how the real project is organized, with its tests.
 
 Guides are written in Markdown ([`guides/`](guides/), format in [`guides/README.md`](guides/README.md)) and built into the modules in `src/lessons/` by [`scripts/build-guides.js`](scripts/build-guides.js). The tests check that every step's code really contains what the step says you write (and didn't before it), and that every guide is a full lesson: goals, sessions of five steps or fewer, a planned time and a quiz for every step, and at least three diagrams.
@@ -118,6 +157,8 @@ npm run guides # rebuild src/lessons/ after editing a guide in guides/
 | `src/tutor.js` | The pages: guide list, lesson plan, steps with their code, See it run, download, quizzes, pace timer and progress |
 | `src/tutor-core.js` | Building each step's code, Markdown with diagrams and tables, line diff, the step checks the tests use, lesson plan, pace, quiz grading and progress (no DOM, tested in Node) |
 | `src/accounts.js` | Accounts on this device: salted PBKDF2-SHA256 password hashes, sign in and out, and moving guest progress into a new account |
+| `src/voice.js` | Read aloud: turning a step into sentences worth hearing, and the on/off switch |
+| `src/pages.js` | Home, Lessons, Projects, Challenges, Achievements (levels, topic badges, points), Progress and Settings, as plain functions tested in Node |
 | `src/preview.js` | Puts a step's HTML, CSS and JavaScript together into one page |
 | `src/lessons/` | The built guides, plus the guide list in `index.js` |
 | `guides/` | The guides in Markdown |

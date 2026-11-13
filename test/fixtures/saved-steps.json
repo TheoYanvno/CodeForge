@@ -1,0 +1,434 @@
+{
+ "appstate": [
+  "State, render, actions",
+  "One state object, one render",
+  "Actions that make a new state",
+  "Undo, almost for free"
+ ],
+ "backtracking": [
+  "Recursion and backtracking",
+  "A function that calls itself",
+  "A backtracking solver",
+  "Watch it solve, and guess smarter"
+ ],
+ "bitmasks": [
+  "A number is a row of switches",
+  "On, off and test",
+  "Counting bits, and \"only one left\"",
+  "Possible digits for real cells"
+ ],
+ "bonfire": [
+  "A post is a text file",
+  "Slugs, reading time and order",
+  "A home page and a page for each post",
+  "Headings, paragraphs and inline styles",
+  "Lists and tables",
+  "Heading links and a table of contents",
+  "Tags, newer and older, and not-found pages",
+  "An RSS feed, and links that never break",
+  "Floating embers and a reading progress bar",
+  "The Python static site generator"
+ ],
+ "caching": [
+  "Why apps remember, and how they get it wrong",
+  "A slow source and a cache",
+  "Only the latest answer wins",
+  "Ages, background refresh and a size limit"
+ ],
+ "calendar": [
+  "Dates you can trust",
+  "A month on the screen",
+  "Tasks on the calendar",
+  "Repeating tasks",
+  "Done, one day at a time",
+  "Drag a task to another day",
+  "US holidays from their rules",
+  "A theme for every month, and \"This month\"",
+  "Saving, and exporting to any calendar",
+  "Email reminders and places",
+  "Weather, tests and how the files fit together"
+ ],
+ "canvas": [
+  "What a canvas is, and why games use it",
+  "A canvas and its 2D context",
+  "Drawing a grid of cells",
+  "Circles, text, and drawing from data"
+ ],
+ "canvastext": [
+  "How canvas text works",
+  "Centered text, sized to fit",
+  "Wrapping into lines",
+  "Pressing it in, letter by letter"
+ ],
+ "chess": [
+  "A position as data, drawn as a board",
+  "Moving around the board with step()",
+  "Click a piece, click a square",
+  "How the pieces move",
+  "Pawns",
+  "Check and legal moves",
+  "Castling, en passant and the end of the game",
+  "Scoring a position",
+  "Looking ahead with negamax and alpha-beta",
+  "Faster and smarter, with levels",
+  "Grading every move",
+  "Hints, hanging pieces and the game report",
+  "How the real project is organized and tested"
+ ],
+ "dates": [
+  "What a Date really is",
+  "Local days, written as YYYY-MM-DD",
+  "Adding days, and showing dates nicely"
+ ],
+ "dragdrop": [
+  "How drag and drop works in the browser",
+  "Chips you can pick up",
+  "Days that accept a drop",
+  "A way to move without a mouse"
+ ],
+ "electron": [
+  "What Electron is, and why use it",
+  "Set up the project",
+  "The main process opens a window",
+  "The page: a renderer with a clock",
+  "The preload bridge and IPC",
+  "System notifications from the main process",
+  "Packaging, and what's next"
+ ],
+ "favorites": [
+  "Favorites are a list of ids",
+  "A heart that toggles",
+  "Remembering favorites after a reload",
+  "A favorites list built from the ids"
+ ],
+ "feedback": [
+  "The page and a secret number",
+  "Input: reading and checking a guess",
+  "State: what's still possible",
+  "Finding the best move",
+  "Feedback on every move",
+  "The end-of-game report",
+  "How Chess Coach uses the same idea"
+ ],
+ "fetchjson": [
+  "Requests, responses and JSON",
+  "Loading jokes with fetch and await",
+  "When the server says no, or doesn't answer",
+  "Their shape, your shape"
+ ],
+ "filtering": [
+  "What filtering is",
+  "A filter function with two tests",
+  "Category buttons built from the data",
+  "Search, and saying when nothing matches"
+ ],
+ "gameloop": [
+  "What a game loop is",
+  "State, and an update that changes it",
+  "Letting a timer run the loop",
+  "Start and pause without two loops"
+ ],
+ "github": [
+  "Git and GitHub: what they are",
+  "Make your account and secure it",
+  "A profile employers want to see",
+  "Create a repository and clone it",
+  "The commit cycle",
+  "Push, pull, and signing in",
+  "Branches and pull requests",
+  "When things go wrong",
+  "Your learning log, Pages and what's next"
+ ],
+ "gotham": [
+  "Quarter hours and providers",
+  "The clinic in SQLite",
+  "Can this visit be booked?",
+  "Booking, open times and double booking",
+  "Patient search and insurance",
+  "Reports with SQL",
+  "Passwords, hashes and sessions",
+  "Roles and permissions",
+  "Week and month views",
+  "How the real project is built"
+ ],
+ "grids": [
+  "Two ways to store a grid",
+  "An array of rows",
+  "One flat array, and the box math",
+  "Peers, worked out once"
+ ],
+ "hashrouting": [
+  "How hash routing works",
+  "Read the hash and redraw",
+  "Routes with parts, like a post's slug",
+  "Titles, the active link and focus"
+ ],
+ "htmlcss": [
+  "Headings and paragraphs",
+  "Lists, links and an image",
+  "Give the page structure",
+  "CSS: selectors, colors and fonts",
+  "The box model: padding, border and margin",
+  "A button with a hover effect",
+  "Flexbox: the header in one row",
+  "Fit any screen: a media query",
+  "Put it online with GitHub Pages"
+ ],
+ "icsfiles": [
+  "What an .ics file is",
+  "Escaping text, and one VEVENT",
+  "Dates, ids and repeat rules",
+  "A file the browser downloads"
+ ],
+ "input": [
+  "Events, and one door for every input",
+  "turn(): the one place the rules live",
+  "The keyboard, through a lookup object",
+  "Swipes on a phone"
+ ],
+ "jsbasics": [
+  "The page: inputs for the bill",
+  "Variables: finding elements on the page",
+  "Functions that do the math",
+  "Reading inputs and showing results",
+  "Events: update as you type",
+  "Decisions with if and else",
+  "Tip buttons from an array",
+  "Publish it and keep going"
+ ],
+ "linktables": [
+  "When both sides have many",
+  "Three tables and a two-column key",
+  "Joining through the link table",
+  "Joining, leaving, and counting with LEFT JOIN"
+ ],
+ "markdownre": [
+  "Regular expressions in ten minutes",
+  "Escape first, then the inline styles",
+  "Links, and only safe ones",
+  "Headings, lists and paragraphs"
+ ],
+ "marvel": [
+  "Characters as cards",
+  "A real database in the page",
+  "Powers, teams and a profile",
+  "Search across tables",
+  "Heroes, villains and antiheroes",
+  "In the MCU",
+  "A photo slot on every card",
+  "Linking people to records",
+  "Both sides, and a rogues gallery",
+  "The stats bar",
+  "How the real project is built"
+ ],
+ "matching": [
+  "Matching without AI",
+  "Normalize the text",
+  "Stems and keyword scores",
+  "\"I'm not sure\" beats a wrong answer"
+ ],
+ "minimax": [
+  "Game trees and minimax",
+  "A game to search",
+  "Minimax: the computer plays O",
+  "Alpha-beta pruning"
+ ],
+ "monthgrid": [
+  "How a month grid works",
+  "Seven columns with CSS Grid",
+  "Blanks, days and today",
+  "Previous and next month"
+ ],
+ "movegen": [
+  "A board, squares and directions",
+  "Drawing the board from an array",
+  "Jumping and sliding moves",
+  "Click a piece, see its moves"
+ ],
+ "nodeserver": [
+  "Why a server?",
+  "Hello, server",
+  "A JSON API that checks everything",
+  "Sessions, hashed passwords and the front end"
+ ],
+ "particles": [
+  "What a particle system is",
+  "A sharp canvas behind the page",
+  "Many embers, born and gone",
+  "Gentle on people and batteries"
+ ],
+ "pointerdrag": [
+  "Pointer events: one set for every device",
+  "A note you can drag",
+  "Staying on the board",
+  "A handle, saving once, and the keyboard"
+ ],
+ "python": [
+  "Your first Python program",
+  "Variables, numbers and strings",
+  "Lists and loops",
+  "Functions and dictionaries",
+  "Decisions and a menu loop",
+  "Bad input: try, except and checks",
+  "Saving to a file with JSON",
+  "Testing and publishing"
+ ],
+ "quote": [
+  "Content as data, and a random pick",
+  "Jokes, and a punchline that waits",
+  "Categories and today's pick",
+  "A typewriter, a card flip and a shortcut",
+  "Copy, share and save",
+  "Signing up and storing passwords safely",
+  "Logging in, sessions and lockouts",
+  "A REST API as one function",
+  "Log in, and favorites that follow you",
+  "The Node server, SQLite and the tests"
+ ],
+ "randompick": [
+  "Why content lives in an array of objects",
+  "The data: an array of quote objects",
+  "A random pick, and never the same one twice",
+  "Showing the pick on the card"
+ ],
+ "rankedsearch": [
+  "Finding is easy, ranking is the point",
+  "LIKE, safely",
+  "Matching through powers with EXISTS",
+  "Rank, and say why"
+ ],
+ "reactbasics": [
+  "Why React?",
+  "JSX and props",
+  "State and events",
+  "Lists, keys and forms",
+  "Effects: saving and fetching",
+  "Building and publishing"
+ ],
+ "repeating": [
+  "A rule, not copies",
+  "Daily and weekly with days-between",
+  "Monthly, and the 31st problem",
+  "Skipping one day, and what's next"
+ ],
+ "roles": [
+  "Authentication and authorization",
+  "One permissions table, one can()",
+  "Hide it, and check again anyway",
+  "Which records, and a log of everything"
+ ],
+ "safesave": [
+  "Everything that can go wrong with saved data",
+  "Save a moment after the last change",
+  "Never trust saved data",
+  "Versions, upgrades and backups"
+ ],
+ "setup": [
+  "What you need, and why",
+  "Install VS Code and its extensions",
+  "A browser and its developer tools",
+  "Git and a GitHub account",
+  "Install Node.js",
+  "Install Python",
+  "The terminal and your projects folder",
+  "Your first page",
+  "Put it on GitHub"
+ ],
+ "sharing": [
+  "Two browser features for sharing",
+  "Copy, and say it worked",
+  "The share sheet, with a fallback",
+  "A link to one exact quote"
+ ],
+ "signup": [
+  "Why passwords are never stored",
+  "Hashing a password with Web Crypto",
+  "Signing up: save the salt and hash, nothing else",
+  "Signing in, and a session"
+ ],
+ "snake": [
+  "The page: a canvas, a score and a Start button",
+  "Drawing the board",
+  "The snake is just a list of cells",
+  "Moving one cell at a time",
+  "The game loop",
+  "Steering with the keyboard",
+  "Food, growing and the score",
+  "Crashing (and winning)",
+  "Best score, and the space bar",
+  "Speed levels that get faster as you score",
+  "Swipe controls for phones",
+  "A no-walls mode where the board wraps around",
+  "How the real project is organized"
+ ],
+ "sql": [
+  "A real database inside the page",
+  "CREATE TABLE: columns and types",
+  "INSERT: adding rows safely",
+  "SELECT and WHERE",
+  "ORDER BY and LIKE: sorting and searching",
+  "COUNT and GROUP BY: summaries",
+  "JOIN: authors get their own table",
+  "Publish it, and what's next"
+ ],
+ "sticky": [
+  "A note as data, drawn on the page",
+  "Four colors, a + button and a limit of three",
+  "Deleting, safely",
+  "Turning a note into a checklist",
+  "Ticking, editing and adding items",
+  "Keeping your cursor when the page redraws",
+  "Dragging a note by its top bar",
+  "Resizing, and where new notes go",
+  "Saving in localStorage",
+  "Never trust saved data",
+  "From the browser to the Windows desktop"
+ ],
+ "storage": [
+  "What localStorage is",
+  "Loading and saving the best score safely",
+  "A new best only when you beat it",
+  "Several values at once with JSON"
+ ],
+ "sudoku": [
+  "The page and a 9 x 9 grid",
+  "Rows, columns, boxes and peers",
+  "Reading a puzzle and catching mistakes",
+  "Possible digits as bitmasks",
+  "Rule one: only one digit fits",
+  "Rule two: only one spot for a digit",
+  "Spotting a dead end",
+  "Guess, check, and undo",
+  "Watch it solve",
+  "Counting solutions, and randomness you can repeat",
+  "Carving a puzzle with one answer",
+  "How the real project is organized"
+ ],
+ "superbook": [
+  "A desert with three books",
+  "A table of contents",
+  "Fetching a chapter",
+  "Three APIs, one shape",
+  "Matching a question to a topic",
+  "Which books, and the answer",
+  "Letters pressed into sand",
+  "Grains, wind and reduced motion",
+  "Other languages, and right to left",
+  "How the real project is built"
+ ],
+ "timeslots": [
+  "Minutes, ranges and the overlap rule",
+  "Minutes, and a day of quarter hours",
+  "Refusing a double booking",
+  "Every free start time"
+ ],
+ "webapi": [
+  "What's an API? Building a request URL",
+  "fetch, promises and async/await",
+  "Reading JSON: the current weather",
+  "Weather codes and the current conditions card",
+  "The five-day forecast",
+  "Searching, loading and errors",
+  "Keys, limits, CORS and what's next"
+ ]
+}

@@ -1,11 +1,11 @@
-// The guides, in the order they're meant to be taken (easiest first). There are two kinds:
+// Every guide (TIERS below puts them in the order they're meant to be taken, easiest first). There are two kinds:
 //   lessons  teach one skill each: the Start here and basics guides, and the short skill lessons
 //            (kind: 'skill') that come right before the first project that uses them
 //   projects rebuild one of my portfolio projects by combining lessons taken before it; `needs` lists
 //            those lessons (each must come earlier in this list), and a project step that uses one
 //            says "You learned this in ..." (the `uses:` line in the guide)
 // A guide's file is only downloaded when it's opened.
-export const GUIDES = [
+const ALL = [
   { id: 'setup', title: 'Get set up: the software you need', emoji: '🧰', level: 'Start here', time: 'about 2 hours', steps: 9, available: true,
     summary: 'What to download and why: VS Code and the best extensions, browser developer tools, Git and GitHub, Node.js and Python. You finish by publishing your first page.',
     load: () => import('./setup.js') },
@@ -164,6 +164,35 @@ export const GUIDES = [
     summary: 'Components and JSX, props, state and events, lists with keys, controlled forms, useEffect for saving and fetching, and building with esbuild for GitHub Pages.',
     load: () => import('./reactbasics.js') },
 ];
+
+/**
+ * The course, from beginner to advanced, in six tiers. Each tier ends with what you can build after it, and
+ * every lesson comes before the first project that needs it. Progress is saved by guide id and step number,
+ * so moving a guide here never touches anyone's saved progress (test/order.test.js checks that).
+ */
+export const TIERS = [
+  { id: 'foundations', title: 'Foundations', blurb: 'Your tools, GitHub, your first page, JavaScript, reading errors, and your first game.',
+    guides: ['setup', 'github', 'htmlcss', 'jsbasics', 'debugging', 'feedback', 'canvas', 'gameloop', 'input', 'storage', 'snake'] },
+  { id: 'browser', title: 'Working with data in the browser', blurb: 'Fetching from APIs, saving data, dates, dragging, accounts and a desktop app.',
+    guides: ['webapi', 'electron', 'appstate', 'pointerdrag', 'safesave', 'sticky', 'dates', 'monthgrid', 'repeating', 'dragdrop', 'icsfiles', 'calendar',
+      'randompick', 'filtering', 'fetchjson', 'favorites', 'signup', 'sharing', 'quote'] },
+  { id: 'pysql', title: 'Python and SQL', blurb: 'Python, a static site generator, and databases from your first table to many-to-many searches.',
+    guides: ['python', 'markdownre', 'hashrouting', 'particles', 'bonfire', 'sql', 'linktables', 'rankedsearch', 'marvel'] },
+  { id: 'react', title: 'React and apps', blurb: 'Components, state and effects, then React apps as they are published.',
+    guides: ['reactbasics'] },
+  { id: 'algorithms', title: 'Algorithms', blurb: 'Grids, bitmasks, recursion and backtracking, then game-tree search.',
+    guides: ['grids', 'bitmasks', 'backtracking', 'sudoku', 'movegen', 'minimax', 'chess'] },
+  { id: 'fullstack', title: 'Full stack and bigger systems', blurb: 'A server, roles and permissions, caching, several APIs at once and a hospital system.',
+    guides: ['timeslots', 'roles', 'nodeserver', 'gotham', 'caching', 'matching', 'canvastext', 'superbook'] },
+];
+
+/** The guides in course order, each tagged with its tier. */
+export const GUIDES = TIERS.flatMap((t) => t.guides.map((id) => {
+  const g = ALL.find((x) => x.id === id);
+  if (!g) throw new Error(`TIERS lists "${id}", which isn't a guide`);
+  return { ...g, tier: t.id };
+}));
+for (const g of ALL) if (!GUIDES.some((x) => x.id === g.id)) throw new Error(`"${g.id}" isn't in any tier`);
 
 // Projects on my roadmap. Their guides are written once each project is built, so they're
 // listed as coming soon and don't count toward progress. `group` picks the section they show in.

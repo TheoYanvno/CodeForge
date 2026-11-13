@@ -804,4 +804,4 @@ You built a game that reacts to the player and coaches them. You learned:
 
 ### Next
 
-The **Chess Coach** guide.
+The **Canvas drawing** lesson starts the road to **Snake**. The **Chess Coach** project, which grows this coach into a chess coach, waits for you in the Algorithms tier.

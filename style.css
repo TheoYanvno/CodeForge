@@ -396,3 +396,17 @@ pre.full code { white-space: pre; }
 .reset-btn { margin-left: 6px; padding: 2px 10px; font: inherit; font-size: .78rem; color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 999px; cursor: pointer; vertical-align: middle; }
 .reset-btn:hover, .reset-btn:focus-visible { color: var(--text); border-color: #e0736a; }
 .progress-rows .reset-btn { margin-left: 0; justify-self: end; }
+
+/* Topic badges, levels and the course tiers */
+.skill-badge[data-tone="red"] .skill-glyph { background: linear-gradient(135deg, #f87171, #b91c1c); font-size: 1.4rem; }
+.level-card { display: flex; align-items: center; gap: 14px; margin-top: 16px; }
+.level-card .level-icon { font-size: 2.2rem; line-height: 1; }
+.level-card .level-body { flex: 1; min-width: 0; }
+.level-card .level-title { margin: 0 0 2px; }
+.level-card p { margin: 0 0 4px; }
+.level-card .meter { max-width: 420px; }
+.levels .badge-icon { font-size: 1.8rem; }
+.tier-head { margin: 28px 0 6px; padding-top: 12px; border-top: 1px solid var(--line); }
+.tier-head h3 { margin: 0; font-family: var(--display, inherit); font-size: 1.15rem; }
+.tier-head p { margin: 4px 0 0; }
+@media (max-width: 600px) { .level-card { flex-wrap: wrap; } }

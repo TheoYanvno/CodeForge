@@ -2,6 +2,7 @@
 // and Settings. These are plain functions that turn the guide list and your saved progress into
 // HTML, with no DOM code, so they can be tested in Node. tutor.js puts them on the page.
 import { gradeQuiz } from './tutor-core.js';
+import { TIERS } from './lessons/index.js';
 
 export const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
@@ -53,6 +54,7 @@ export function courseSections(guides) {
   const sections = [];
   let lessons = [];
   for (const g of guides) {
+    if (lessons.length && g.tier !== lessons[0].tier) { sections.push({ project: null, lessons }); lessons = []; }   // a tier ends: its lessons stand alone
     if (isLesson(g)) { lessons.push(g); continue; }
     sections.push({ project: g, lessons });
     lessons = [];
@@ -96,21 +98,30 @@ export const nextGuide = (guides, progress, filter = () => true) =>
   guides.find((g) => g.available && filter(g) && !guideStats(g, progress).finished) ?? null;
 
 /**
- * Skill badges: one per language or tool, earned by finishing the guides that teach it. Only guides
- * that exist count, so a badge grows as lessons are added; one with no guides yet shows as coming soon.
+ * Topic badges: one for each topic a developer needs, earned by finishing every guide that teaches it
+ * (its lessons, quizzes and labs). Only guides that exist count, so a badge grows as lessons are added,
+ * and a topic with no guides yet shows as coming soon.
  */
 export const SKILLS = [
-  { id: 'skill-html', glyph: '</>', tone: 'orange', title: 'HTML', guides: ['htmlcss', 'canvas', 'snake'] },
-  { id: 'skill-css', glyph: '{ }', tone: 'blue', title: 'CSS', guides: ['htmlcss', 'monthgrid', 'calendar'] },
-  { id: 'skill-js', glyph: 'JS', tone: 'yellow', title: 'JavaScript', guides: ['jsbasics', 'gameloop', 'input', 'filtering', 'fetchjson', 'quote'] },
-  { id: 'skill-react', glyph: '⚛', tone: 'cyan', title: 'React', guides: ['reactbasics'] },
-  { id: 'skill-python', glyph: 'Py', tone: 'blue', title: 'Python', guides: ['python'] },
-  { id: 'skill-sql', glyph: 'SQL', tone: 'teal', title: 'SQL', guides: ['sql', 'linktables', 'marvel'] },
-  { id: 'skill-csharp', glyph: 'C#', tone: 'purple', title: 'C#', guides: ['csharpbasics'] },
-  { id: 'skill-electron', glyph: '⚡', tone: 'slate', title: 'Electron', guides: ['electron', 'appstate', 'safesave', 'sticky'] },
+  { id: 'topic-htmlcss', glyph: '</>', tone: 'orange', title: 'HTML & CSS', guides: ['htmlcss', 'monthgrid'] },
+  { id: 'topic-js', glyph: 'JS', tone: 'yellow', title: 'JavaScript', guides: ['jsbasics', 'feedback', 'gameloop', 'input', 'filtering', 'fetchjson'] },
+  { id: 'topic-debugging', glyph: '🐞', tone: 'red', title: 'Debugging', guides: ['debugging'] },
+  { id: 'topic-git', glyph: '⎇', tone: 'slate', title: 'Git & teamwork', guides: ['github'] },
+  { id: 'topic-a11y', glyph: '♿', tone: 'blue', title: 'Accessibility', guides: ['htmlcss', 'dragdrop'] },
+  { id: 'topic-testing', glyph: '✓', tone: 'teal', title: 'Testing', guides: ['testing'] },
+  { id: 'topic-python', glyph: 'Py', tone: 'blue', title: 'Python', guides: ['python', 'bonfire'] },
+  { id: 'topic-sql', glyph: 'SQL', tone: 'teal', title: 'SQL', guides: ['sql', 'linktables', 'rankedsearch', 'marvel'] },
+  { id: 'topic-react', glyph: '⚛', tone: 'cyan', title: 'React', guides: ['reactbasics'] },
+  { id: 'topic-typescript', glyph: 'TS', tone: 'blue', title: 'TypeScript', guides: ['typescript'] },
+  { id: 'topic-deploying', glyph: '🚀', tone: 'purple', title: 'Deploying', guides: ['deploying'] },
+  { id: 'topic-algorithms', glyph: 'O(n)', tone: 'purple', title: 'Algorithms', guides: ['grids', 'bitmasks', 'backtracking', 'sudoku', 'movegen', 'minimax', 'chess'] },
+  { id: 'topic-security', glyph: '🔐', tone: 'red', title: 'Security', guides: ['signup', 'roles'] },
+  { id: 'topic-backend', glyph: '⇅', tone: 'slate', title: 'Backend & APIs', guides: ['webapi', 'nodeserver', 'gotham'] },
+  { id: 'topic-electron', glyph: '⚡', tone: 'slate', title: 'Desktop apps', guides: ['electron', 'appstate', 'safesave', 'sticky'] },
+  { id: 'topic-capstone', glyph: '🏁', tone: 'orange', title: 'Capstone', guides: ['capstone'] },
 ];
 
-/** Every skill badge with the guides it needs (by title), how many are done, and whether it's earned. */
+/** Every topic badge with the guides it needs (by title), how many are done, and whether it's earned. */
 export function skillBadges(guides, progress) {
   return SKILLS.map((s) => {
     const needed = s.guides.map((id) => guides.find((g) => g.id === id && g.available)).filter(Boolean);
@@ -118,6 +129,55 @@ export function skillBadges(guides, progress) {
     const soon = needed.length === 0;
     return { ...s, needed: needed.map((g) => g.title), value: done, target: needed.length, soon, earned: !soon && done === needed.length };
   });
+}
+
+/** Points: 10 for every finished step (labs included) and 5 for every quiz question answered. */
+export function points(guides, progress) {
+  const t = totals(guides, progress);
+  return t.done * 10 + t.answered * 5;
+}
+
+/**
+ * The three levels. Each needs whole tiers of the course finished plus some topic badges; a level whose
+ * lessons aren't all written yet can't be earned until they are, and says so.
+ */
+export const LEVELS = [
+  { id: 'beginner', icon: '🌱', title: 'Beginner', tiers: ['foundations'], badges: [],
+    description: 'Finish Foundations: setup, GitHub, HTML & CSS, JavaScript, debugging, the number coach and Snake.' },
+  { id: 'junior', icon: '🌿', title: 'Junior developer', tiers: ['foundations', 'browser', 'pysql', 'react'], badges: ['topic-debugging', 'topic-testing', 'topic-git'],
+    description: 'Finish every tier through React and apps, with the Debugging, Testing and Git & teamwork badges.' },
+  { id: 'associate', icon: '🌳', title: 'Associate developer', tiers: ['foundations', 'browser', 'pysql', 'react', 'algorithms', 'fullstack'], badges: ['topic-algorithms', 'topic-security', 'topic-backend', 'topic-capstone'],
+    description: 'Finish all six tiers with the Algorithms, Security, Backend & APIs and Capstone badges, and the final readiness check.' },
+];
+
+/** Each level with how far along you are, and the level you've reached (or null). */
+export function levels(guides, progress) {
+  const badges = skillBadges(guides, progress);
+  const list = LEVELS.map((l) => {
+    const inTiers = guides.filter((g) => g.available && l.tiers.includes(g.tier));
+    const done = inTiers.filter((g) => guideStats(g, progress).finished).length;
+    const need = l.badges.map((id) => badges.find((b) => b.id === id));
+    const soon = need.some((b) => b.soon);
+    const value = done + need.filter((b) => b.earned).length;
+    const target = inTiers.length + need.length;
+    return { ...l, value, target, soon, earned: !soon && target > 0 && value >= target };
+  });
+  return { list, current: [...list].reverse().find((l) => l.earned) ?? null, next: list.find((l) => !l.earned) ?? null };
+}
+
+/** The level card on Home and Progress: your level (or the one you're working toward) and your points. */
+export function levelCard(guides, progress) {
+  const { current, next } = levels(guides, progress);
+  const pct = next ? Math.round((100 * next.value) / Math.max(1, next.target)) : 100;
+  return `<section class="card level-card">
+    <span class="level-icon" aria-hidden="true">${current ? current.icon : '🌰'}</span>
+    <div class="level-body">
+      <p class="level-title"><strong>${current ? esc(current.title) : 'Starting out'}</strong> · ${points(guides, progress)} points</p>
+      ${next ? `<p class="muted small">Next: <strong>${esc(next.title)}</strong>. ${esc(next.description)}${next.soon ? ' Some of its lessons are still being written.' : ''}</p>
+      <span class="meter" role="img" aria-label="${next.value} of ${next.target}"><span data-fill="${pct}"></span></span>` : '<p class="muted small">You reached the top level. 🎉</p>'}
+    </div>
+    <button class="link" data-page="achievements">Badges →</button>
+  </section>`;
 }
 
 /** Every achievement with how far along you are. */
@@ -251,6 +311,7 @@ export function homePage(guides, progress, activity) {
         <p class="hero-next">Next: ${esc(next.title)}</p>` : '<p class="hero-next">You finished every guide. 🎉</p>'}
       </div>
     </section>
+    ${levelCard(guides, progress)}
     <h3 class="section-title">Start your journey</h3>
     <div class="tracks">${tracks}</div>
     <div class="home-row">
@@ -311,11 +372,19 @@ export function comingSoon(list) {
 
 export function lessonsPage(guides, progress, coming = []) {
   const lessons = guides.filter(isLesson);
+  let tier = null;
+  const tierHead = (id) => {
+    if (!id || id === tier) return '';
+    tier = id;
+    const n = TIERS.findIndex((t) => t.id === id);
+    return n < 0 ? '' : `<header class="tier-head"><h3>Tier ${n + 1} · ${esc(TIERS[n].title)}</h3><p class="muted small">${esc(TIERS[n].blurb)}</p></header>`;
+  };
   const sections = courseSections(guides).map(({ project, lessons: list }) => {
-    if (!project) return list.length ? `<section class="course-part"><h3 class="section-title">More lessons</h3><ol class="guides">${guideCards(list, progress, guides)}</ol></section>` : '';
+    const head = tierHead((project ?? list[0])?.tier);
+    if (!project) return list.length ? `${head}<section class="course-part"><h3 class="section-title">${list[0]?.tier ? 'Lessons' : 'More lessons'}</h3><ol class="guides">${guideCards(list, progress, guides)}</ol></section>` : '';
     const need = needsOf(project, guides, progress);
     const ready = need.every((n) => n.finished);
-    return `<section class="course-part">
+    return `${head}<section class="course-part">
       ${list.length ? `<h3 class="section-title">Lessons before ${esc(project.title)}</h3><ol class="guides">${guideCards(list, progress, guides)}</ol>` : ''}
       <div class="project-gate${ready ? ' ready' : ''}">
         <p class="gate-title">🛠️ Project: <strong>${esc(project.title)}</strong> ${ready ? '<span class="pill ok">Ready to build</span>' : `<span class="pill">${need.filter((n) => n.finished).length} of ${need.length} lessons done</span>`}</p>
@@ -365,8 +434,16 @@ export function achievementsPage(guides, progress, activity) {
   const skills = skillBadges(guides, progress);
   return `<header class="page-head"><h2>Achievements</h2>
       <p class="muted">${earned} of ${list.length} earned. Locked ones show how far along you are.</p></header>
-    <h3 class="section-title">Skill badges</h3>
-    <p class="muted small">One for each language and tool. Earn it by finishing every guide that teaches it.</p>
+    <h3 class="section-title">Level</h3>
+    <ul class="badges levels">${levels(guides, progress).list.map((l) => `<li class="badge level-badge${l.earned ? ' earned' : ''}">
+      <span class="badge-icon" aria-hidden="true">${l.icon}</span>
+      <strong>${esc(l.title)}</strong>
+      <span class="muted small">${esc(l.description)}</span>
+      ${l.earned ? '<span class="pill ok">Earned</span>' : `<span class="meter" role="img" aria-label="${l.value} of ${l.target}"><span data-fill="${Math.round((100 * l.value) / Math.max(1, l.target))}"></span></span><span class="small muted">${l.value} / ${l.target}${l.soon ? ' · lessons coming' : ''}</span>`}
+    </li>`).join('')}</ul>
+    <p class="muted small">${points(guides, progress)} points so far: 10 for every step and lab you finish, 5 for every quiz question you answer.</p>
+    <h3 class="section-title">Topic badges</h3>
+    <p class="muted small">One for each topic a developer needs. Earn it by finishing every guide that teaches it, with its quizzes and labs.</p>
     <ul class="badges skills">${skills.map((b) => `<li class="badge skill-badge${b.earned ? ' earned' : ''}${b.soon ? ' soon' : ''}" data-tone="${b.tone}">
       <span class="skill-glyph" aria-hidden="true">${esc(b.glyph)}</span>
       <strong>${esc(b.title)}</strong>
@@ -402,6 +479,7 @@ export function progressPage(loaded, progress, activity) {
       ${s.done || s.time || s.answered ? `<button class="reset-btn" data-act="reset-guide" data-id="${guide.id}" aria-label="Reset ${esc(guide.title)}">↺ Reset</button>` : ''}</li>`;
   }).join('');
   return `<header class="page-head"><h2>Progress</h2></header>
+    ${levelCard(guides, progress)}
     <dl class="stats-grid">
       <div class="card"><dt>Steps finished</dt><dd>${t.done} <span class="muted">/ ${t.total}</span></dd></div>
       <div class="card"><dt>Guides finished</dt><dd>${t.finished} <span class="muted">/ ${t.guides}</span></dd></div>

@@ -138,35 +138,57 @@ test('the Lessons page puts each project after the lessons it needs, with done m
   assert.match(pages.needChips(GUIDES.find((g) => g.id === 'snake'), GUIDES, progress), /need ok">✓ HTML &amp; CSS basics/);
 });
 
-test('skill badges: one per language and tool, earned by finishing every guide that teaches it', () => {
+test('topic badges: one per topic, earned by finishing every guide that teaches it', () => {
   const { progress, activity } = fresh();
   const ids = pages.SKILLS.map((s) => s.id);
-  assert.deepStrictEqual(pages.SKILLS.map((s) => s.title), ['HTML', 'CSS', 'JavaScript', 'React', 'Python', 'SQL', 'C#', 'Electron']);
+  assert.deepStrictEqual(pages.SKILLS.map((s) => s.title), ['HTML & CSS', 'JavaScript', 'Debugging', 'Git & teamwork', 'Accessibility', 'Testing', 'Python', 'SQL',
+    'React', 'TypeScript', 'Deploying', 'Algorithms', 'Security', 'Backend & APIs', 'Desktop apps', 'Capstone']);
   assert.strictEqual(new Set(ids).size, ids.length);
   const badge = (id) => pages.skillBadges(GUIDES, progress).find((b) => b.id === id);
-  // React and C# have no guides yet, so they show as coming soon and can't be earned
-  for (const id of ['skill-react', 'skill-csharp']) {
+  // topics with no guides yet show as coming soon and can't be earned
+  for (const id of ['topic-testing', 'topic-typescript', 'topic-deploying', 'topic-capstone']) {
     const b = badge(id);
-    if (!b.target) { assert.ok(b.soon); assert.ok(!b.earned); }
+    assert.ok(b.soon && !b.earned, id);
   }
   const finish = (id) => { const g = GUIDES.find((x) => x.id === id); for (let i = 0; i < g.steps; i++) progress.complete(id, i); };
-  const py = badge('skill-python');
-  assert.ok(!py.earned && py.target === 1);
-  finish('python');
-  assert.ok(badge('skill-python').earned);
-  const html = badge('skill-html');
-  assert.ok(html.target >= 1 && html.value === 0);
+  assert.ok(!badge('topic-debugging').earned);
+  finish('debugging');
+  assert.ok(badge('topic-debugging').earned);
+  assert.strictEqual(badge('topic-a11y').value, 0);
   finish('htmlcss');
-  assert.strictEqual(badge('skill-html').value, 1);
-  assert.strictEqual(badge('skill-css').value, 1, 'HTML & CSS basics counts toward both');
+  assert.strictEqual(badge('topic-htmlcss').value, 1);
+  assert.strictEqual(badge('topic-a11y').value, 1, 'HTML & CSS basics counts toward HTML & CSS and Accessibility');
   // a guide a badge lists that doesn't exist yet is skipped, not counted
-  const sql = badge('skill-sql');
-  assert.strictEqual(sql.target, pages.SKILLS.find((s) => s.id === 'skill-sql').guides.filter((id) => GUIDES.some((g) => g.id === id)).length);
+  const sql = badge('topic-sql');
+  assert.strictEqual(sql.target, pages.SKILLS.find((s) => s.id === 'topic-sql').guides.filter((id) => GUIDES.some((g) => g.id === id)).length);
   const page = pages.achievementsPage(GUIDES, progress, activity);
-  assert.match(page, /Skill badges/);
+  assert.match(page, /Topic badges/);
   assert.match(page, /class="skill-glyph" aria-hidden="true">Py</);
   assert.match(page, /Coming soon/);
-  assert.match(page, /Electron/);
+  assert.match(page, /Associate developer/);
+});
+
+test('levels: Beginner is earned by finishing Foundations; points come from steps and quiz answers', () => {
+  const { progress, activity } = fresh();
+  const level = () => pages.levels(GUIDES, progress);
+  assert.strictEqual(level().current, null);
+  assert.strictEqual(level().next.id, 'beginner');
+  assert.strictEqual(pages.points(GUIDES, progress), 0);
+  const foundations = GUIDES.filter((g) => g.tier === 'foundations');
+  assert.deepStrictEqual(foundations.map((g) => g.id), ['setup', 'github', 'htmlcss', 'jsbasics', 'debugging', 'feedback', 'canvas', 'gameloop', 'input', 'storage', 'snake']);
+  for (const g of foundations.slice(0, -1)) for (let i = 0; i < g.steps; i++) progress.complete(g.id, i);
+  assert.strictEqual(level().current, null, 'Snake is still open');
+  const snake = GUIDES.find((g) => g.id === 'snake');
+  for (let i = 0; i < snake.steps; i++) progress.complete('snake', i);
+  assert.strictEqual(level().current.id, 'beginner');
+  assert.strictEqual(level().next.id, 'junior');
+  assert.ok(level().next.soon, 'Junior needs the Testing badge, whose lessons are still being written');
+  const steps = foundations.reduce((t, g) => t + g.steps, 0);
+  assert.strictEqual(pages.points(GUIDES, progress), steps * 10);
+  progress.answer('snake', '0.0', 1);
+  assert.strictEqual(pages.points(GUIDES, progress), steps * 10 + 5);
+  assert.match(pages.homePage(GUIDES, progress, activity), /<strong>Beginner<\/strong> · \d+ points/);
+  assert.match(pages.achievementsPage(GUIDES, progress, activity), /level-badge earned[\s\S]*Beginner/);
 });
 
 test('Progress has a Reset for each started guide and Reset all; resetting one guide leaves the others', async () => {

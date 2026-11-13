@@ -681,4 +681,4 @@ You wrote your first JavaScript program, and it's a real tool you can use at a r
 
 ### Next
 
-You're ready for the project guides. **Snake** is the best next step: a game loop, the keyboard and a canvas.
+Before the projects, learn to fix what breaks: the **Reading errors and DevTools** lesson. Then **Reacting to the player** and the lessons on the road to **Snake**.
