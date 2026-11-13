@@ -8,7 +8,8 @@ export default {
   "Style text and colors with CSS selectors",
   "Use the box model (padding, border, margin) to space things out",
   "Put things in a row with Flexbox and adapt the page to a phone with a media query",
-  "Publish a page for free on GitHub Pages"
+  "Publish a page for free on GitHub Pages",
+  "Make a page that works with a keyboard and a screen reader: alt text, a skip link, focus rings and color contrast"
  ],
  "prereqs": [
   "The Get set up guide (VS Code and a browser installed)",
@@ -29,6 +30,11 @@ export default {
    "title": "Buttons and layout",
    "from": 5,
    "to": 8
+  },
+  {
+   "title": "A page for everyone",
+   "from": 9,
+   "to": 10
   }
  ],
  "start": {
@@ -42,7 +48,8 @@ export default {
    "card": "",
    "buttons": "",
    "layout": "",
-   "responsive": ""
+   "responsive": "",
+   "a11y": ""
   }
  },
  "steps": [
@@ -463,7 +470,103 @@ export default {
    "session": 2,
    "kind": "read",
    "minutes": 20
+  },
+  {
+   "title": "Accessibility: a page that works with a screen reader",
+   "body": "**Accessibility** (often shortened to **a11y**, an \"a\", 11 letters, then a \"y\") means people can use your page however they use a computer: with a mouse, only a keyboard, a screen reader that reads the page out loud, zoomed in to 200%, or on a small phone in bright sun. About one in four adults in the US has a disability, and every one of them is a possible visitor, teammate or employer. Accessible pages are also easier for everyone and rank better in search.\n\nGood news: semantic HTML (the header, nav, main and footer you already used) does most of the work. A screen reader announces \"navigation\" and \"main\" and lets people jump between them. Here are the next three habits:\n\n| Habit | Why it matters |\n|---|---|\n| Every image has `alt` text that says what it shows (or `alt=\"\"` if it's only decoration) | A screen reader reads the alt text in place of the picture |\n| Links say where they go (\"See my code on GitHub\", not \"click here\") | People often list every link on a page, out of context |\n| A **skip link** as the first thing on the page | Keyboard users can jump past the menu straight to the content instead of pressing Tab through every link |\n\nYour avatar already has good alt text. This step adds a skip link that points at `<main>`, gives `<main>` the id it points to, and names the `<nav>` with `aria-label` so a screen reader says \"Main menu, navigation\".\n\n```svg A skip link is the first stop for the Tab key: one press of Enter jumps past the menu to the main content\n<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 140\" font-family=\"sans-serif\" font-size=\"12\">\n  <rect x=\"10\" y=\"10\" width=\"110\" height=\"26\" rx=\"6\" fill=\"#fef9c3\" stroke=\"#ca8a04\"/><text x=\"65\" y=\"28\" text-anchor=\"middle\">Skip to content</text>\n  <rect x=\"10\" y=\"46\" width=\"320\" height=\"30\" rx=\"6\" fill=\"#111827\"/><text x=\"24\" y=\"66\" fill=\"#fff\">Anthony Evo</text><text x=\"200\" y=\"66\" fill=\"#fff\">About · Learning · Contact</text>\n  <rect x=\"10\" y=\"86\" width=\"320\" height=\"44\" rx=\"6\" fill=\"#e0e7ff\" stroke=\"#6366f1\"/><text x=\"24\" y=\"112\">main id=\"main\": your content</text>\n  <path d=\"M125 23 C 330 20, 340 95, 300 100\" fill=\"none\" stroke=\"#16a34a\" stroke-width=\"2\"/><text x=\"250\" y=\"40\" fill=\"#16a34a\">Enter jumps here</text>\n</svg>\n```\n\n> Try it: on any big website, press **Tab** once after the page loads. Many show a \"Skip to main content\" link.",
+   "checks": [
+    {
+     "pane": "html",
+     "label": "a skip link to the main content",
+     "test": "/<a class=\"skip\" href=\"#main\">/",
+     "hint": "<a class=\"skip\" href=\"#main\">Skip to content</a>"
+    },
+    {
+     "pane": "html",
+     "label": "main with the id the skip link points at",
+     "test": "/<main id=\"main\">/",
+     "hint": "<main id=\"main\">"
+    },
+    {
+     "pane": "html",
+     "label": "the menu named for screen readers",
+     "test": "/<nav aria-label=\"[^\"]+\">/",
+     "hint": "<nav aria-label=\"Main menu\">"
+    }
+   ],
+   "quiz": [
+    {
+     "q": "What should the alt text of a photo of you say?",
+     "options": [
+      "\"image\" or \"photo\"",
+      "What it shows, like \"Anthony smiling in front of a whiteboard\"",
+      "The file name, like \"IMG_2041.jpg\""
+     ],
+     "answer": 1,
+     "why": "A screen reader reads the alt text instead of the picture, so it should give the same information the picture does."
+    },
+    {
+     "q": "Why add a skip link?",
+     "options": [
+      "It makes the page load faster",
+      "Search engines need it to find the page",
+      "Keyboard users can jump straight to the content instead of tabbing through every menu link"
+     ],
+     "answer": 2,
+     "why": "Without it, someone using only a keyboard presses Tab through the whole menu on every page before reaching the content."
+    }
+   ],
+   "session": 3,
+   "minutes": 15,
+   "html": {
+    "top": "<a class=\"skip\" href=\"#main\">Skip to content</a>\n\n<header class=\"site-head\">\n  <h1>Anthony Evo</h1>\n  <nav aria-label=\"Main menu\">\n    <a href=\"#about\">About</a>\n    <a href=\"#learning\">Learning</a>\n    <a href=\"#contact\">Contact</a>\n  </nav>\n</header>\n\n<main id=\"main\">\n  <section id=\"about\" class=\"card\">\n    <img class=\"avatar\" src=\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%232563eb'/%3E%3Ctext x='50' y='62' font-size='34' text-anchor='middle' fill='white' font-family='sans-serif'%3EAE%3C/text%3E%3C/svg%3E\" alt=\"The initials AE in a blue circle\">\n    <h2>Hi, I'm Anthony</h2>\n    <p>I'm learning to build websites, and this page is my first project.</p>\n  </section>"
+   }
+  },
+  {
+   "title": "Accessibility: keyboard focus and color contrast",
+   "body": "Put your mouse away and press **Tab** on your page. Each press moves the **focus** to the next link or button, and Enter clicks it. The browser draws a focus ring around whatever has focus, and people who use a keyboard depend on it the way you depend on your mouse pointer. Never remove it with `outline: none` unless you draw a better one.\n\n`:focus-visible` styles the focus ring only when someone is using the keyboard, so mouse clicks don't show it:\n\n```css\na:focus-visible {\n  outline: 3px solid #f59e0b;\n  outline-offset: 3px;\n}\n```\n\nThe skip link should stay out of sight until it gets focus. Moving it off the screen (not `display: none`, which would hide it from the keyboard too) and bringing it back on `:focus` does that.\n\n**Color contrast** is the other half. Text needs enough difference from its background to read: the rule (WCAG, the web's accessibility standard) is a contrast ratio of at least **4.5 to 1** for normal text and 3 to 1 for large text. Your dark gray text on light gray passes easily. Light gray text on white usually fails.\n\n```svg Contrast ratio: how much lighter the background is than the text. 4.5 : 1 or more passes for normal text\n<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 330 110\" font-family=\"sans-serif\" font-size=\"13\">\n  <rect x=\"10\" y=\"10\" width=\"95\" height=\"56\" rx=\"8\" fill=\"#fff\" stroke=\"#e5e7eb\"/><text x=\"57\" y=\"36\" text-anchor=\"middle\" fill=\"#1f2937\">Readable</text><text x=\"57\" y=\"56\" text-anchor=\"middle\" font-size=\"11\" fill=\"#16a34a\">14.7 : 1 ✓</text>\n  <rect x=\"117\" y=\"10\" width=\"95\" height=\"56\" rx=\"8\" fill=\"#fff\" stroke=\"#e5e7eb\"/><text x=\"164\" y=\"36\" text-anchor=\"middle\" fill=\"#6b7280\">Okay</text><text x=\"164\" y=\"56\" text-anchor=\"middle\" font-size=\"11\" fill=\"#16a34a\">4.8 : 1 ✓</text>\n  <rect x=\"224\" y=\"10\" width=\"95\" height=\"56\" rx=\"8\" fill=\"#fff\" stroke=\"#e5e7eb\"/><text x=\"271\" y=\"36\" text-anchor=\"middle\" fill=\"#d1d5db\">Too faint</text><text x=\"271\" y=\"56\" text-anchor=\"middle\" font-size=\"11\" fill=\"#dc2626\">1.5 : 1 ✗</text>\n  <text x=\"165\" y=\"92\" text-anchor=\"middle\" fill=\"#334155\">Check yours in DevTools: inspect the text, click its color</text>\n</svg>\n```\n\n> Check contrast in Chrome: right-click the text → **Inspect**, then click the color square next to `color` in the Styles panel. It shows the ratio with a ✓ or ⚠. Lighthouse (in DevTools) runs a full accessibility check of the page.",
+   "checks": [
+    {
+     "pane": "css",
+     "label": "a clear focus ring for keyboard users",
+     "test": "/:focus-visible\\s*\\{[^}]*outline:/",
+     "hint": "a:focus-visible { outline: 3px solid #f59e0b; }"
+    },
+    {
+     "pane": "css",
+     "label": "the skip link hidden until it has focus",
+     "test": "/\\.skip:focus\\s*\\{/",
+     "hint": ".skip:focus { left: 16px; }"
+    }
+   ],
+   "quiz": [
+    {
+     "q": "Why not hide the skip link with `display: none`?",
+     "options": [
+      "It would make the page slower",
+      "Hidden elements can't get keyboard focus, so nobody could ever use it",
+      "`display: none` doesn't work on links"
+     ],
+     "answer": 1,
+     "why": "Moving it off screen keeps it in the Tab order, and `:focus` brings it back when someone reaches it."
+    },
+    {
+     "q": "What contrast ratio does normal-size text need to pass WCAG's AA level?",
+     "options": [
+      "1.5 to 1",
+      "2 to 1",
+      "4.5 to 1"
+     ],
+     "answer": 2,
+     "why": "4.5 to 1 is the minimum for body text; large text (about 24px, or 19px bold) needs 3 to 1."
+    }
+   ],
+   "session": 3,
+   "minutes": 15,
+   "css": {
+    "a11y": "a:focus-visible,\n.btn:focus-visible {\n  outline: 3px solid #f59e0b;\n  outline-offset: 3px;\n}\n\n.skip {\n  position: absolute;\n  left: -9999px;\n  top: 8px;\n  padding: 8px 14px;\n  background: #ffffff;\n  color: #1f2937;\n  border-radius: 8px;\n}\n\n.skip:focus {\n  left: 16px;\n  z-index: 10;\n}"
+   }
   }
  ],
- "finish": "You built and published a complete web page. Along the way you used:\n\n- **HTML** elements and attributes: headings, paragraphs, lists, links, images\n- **Semantic structure**: header, nav, main, section, footer, plus ids and classes\n- **CSS** rules and selectors, colors and fonts\n- The **box model**: padding, border, margin and border-radius\n- **Flexbox** for rows, `max-width` and `margin: 0 auto` for readable, centered content\n- A **media query** so it works on phones\n- **Git, GitHub and GitHub Pages** to publish it\n\n### Challenges\n\n1. Add a **Projects** section with a card for each project you build in these guides, and add it to the menu.\n2. Make the menu link for the section you're in look different with `:hover` and `:focus`.\n3. Try a dark theme: change the colors in `body`, `.card` and `.site-head`.\n\n### Next\n\nThe **JavaScript basics** guide makes a page that *does* something: a tip calculator that updates as you type."
+ "finish": "You built and published a complete web page. Along the way you used:\n\n- **HTML** elements and attributes: headings, paragraphs, lists, links, images\n- **Semantic structure**: header, nav, main, section, footer, plus ids and classes\n- **CSS** rules and selectors, colors and fonts\n- The **box model**: padding, border, margin and border-radius\n- **Flexbox** for rows, `max-width` and `margin: 0 auto` for readable, centered content\n- A **media query** so it works on phones\n- **Git, GitHub and GitHub Pages** to publish it\n- **Accessibility**: alt text, a skip link, a named menu, focus rings and color contrast, so everyone can use it\n\n### Challenges\n\n1. Add a **Projects** section with a card for each project you build in these guides, and add it to the menu.\n2. Make the menu link for the section you're in look different with `:hover` and `:focus`.\n3. Try a dark theme: change the colors in `body`, `.card` and `.site-head`, then check every color pair still has 4.5 to 1 contrast.\n4. Run Lighthouse (DevTools → Lighthouse → Accessibility) on your published page and fix anything it finds.\n\n### Next\n\nThe **JavaScript basics** guide makes a page that *does* something: a tip calculator that updates as you type."
 };
