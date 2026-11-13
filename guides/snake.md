@@ -4,7 +4,7 @@ title: Snake
 blocks-html: page
 blocks-css: base
 blocks-js: setup, directions, state, food, rules, draw, loop, controls, go
-goals: Draw a grid and shapes on a <canvas>; Keep game data separate from drawing; Run a game loop with setTimeout and stop it cleanly; Handle keyboard and swipe input through one function; Find and fix edge cases like the snake's tail; Save a best score with storage that can fail
+goals: Draw a grid and shapes on a <canvas>; Keep game data separate from drawing; Run a game loop with setTimeout and stop it cleanly; Handle keyboard and swipe input through one function; Find and fix edge cases like the snake's tail; Save a best score with storage that can fail; Practice like a developer: find a bug, review a change and build something from a blank page
 prereqs: Basic HTML and CSS (elements, ids, a few properties); JavaScript variables, functions, if and for loops; Arrays and objects (you'll use them a lot)
 ---
 
@@ -1343,6 +1343,141 @@ quiz: Why does `createGame()` take a `rand` option?
 - [x] Tests can pass a fake random function, so every run is the same
 - [ ] So players can pick the food's color
 why: Random tests are flaky. A fixed `rand` makes the food land in the same place on every run.
+
+## Step: The Two by Two theme: Noah's ark
+time: 15
+kind: read
+
+The real Snake has a theme now: **Two by Two**. The snake is Noah's ark, the body is a line of animals, and each catch brings another pair on board. It's all drawing and text on top of the same rules, which is the point: because the rules (`step()`, `turn()`, food) never touch the canvas, the whole look changed without touching them.
+
+The theme lives in its own file, `src/theme.js`, with no browser code so the tests can check it:
+
+```js
+export const ANIMALS = ['🐑', '🐄', '🐘', '🦁', '🐪', '🦒' /* … */];
+
+// The animal for the nth body segment (the line starts with a pair of doves).
+export function animalFor(index) {
+  return index <= 2 ? '🕊️' : ANIMALS[(index - 3) % ANIMALS.length];
+}
+
+// The pair waiting to be gathered is the next animal to join the line.
+export const nextPair = (length) => animalFor(length);
+```
+
+`% ANIMALS.length` (remainder) wraps the list around, so a very long line starts the animals over instead of running out.
+
+**Drawing an emoji on a canvas** is `fillText` with a font that has color emoji, centered in the cell:
+
+```js
+ctx.font = `${size}px "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif`;
+ctx.textAlign = 'center';
+ctx.textBaseline = 'middle';
+ctx.fillText(animalFor(i), (c.x + 0.5) * cell, (c.y + 0.55) * cell);
+```
+
+The body is drawn from the tail forward and the ark last, so the ark is always on top. The ark itself is a few paths: a hull, a little house and a roof.
+
+**The verses.** The start, pause and game-over screens show a verse from Genesis 6 to 9 in the World English Bible (it's public domain), each with a link that opens that chapter in **SuperBook**:
+
+```js
+export const superBook = ({ book, chapter }) =>
+  `https://theoyanvno.github.io/SuperBook/?book=${encodeURIComponent(book)}&chapter=${chapter}`;
+```
+
+`encodeURIComponent` makes any book name safe to put in a link, the same habit as in the Web APIs lesson.
+
+> Try it in your copy: swap `ANIMALS` for your own list (fish for an ocean theme, planets for space), and change only the drawing code. If you had to change `step()`, a rule leaked into the drawing.
+
+quiz: Why could the whole look change without touching `step()` or `turn()`?
+- [ ] Emoji are faster to draw
+- [x] The rules only change the game's data; drawing reads that data, so a new look only changes the drawing code
+- [ ] The theme replaces the game loop
+why: Keeping rules separate from drawing is the main idea of this guide. A new theme is the proof that it works.
+
+quiz: What does `ANIMALS[(index - 3) % ANIMALS.length]` do when the line is longer than the list?
+- [ ] It throws an error
+- [ ] It returns undefined
+- [x] It wraps around and starts the list again
+why: `%` gives the remainder, which always lands inside the list, so the line never runs out of animals.
+
+## Session: Practice labs
+
+## Step: Lab: find the bug
+time: 10
+kind: read
+
+Every project ends with three labs: find a bug, review a change, and build something yourself.
+
+A player says: "If I press the left arrow while moving right, I lose instantly." Here's their `turn()`:
+
+```js
+function turn(name) {
+  if (queue.length >= 2) return;
+  queue.push(name);
+}
+```
+
+Think about what's in the cell right behind the head before you answer.
+
+quiz: Why does pressing the opposite direction end the game?
+- [ ] The key isn't in DIRECTIONS
+- [x] Nothing stops a turn to the exact opposite direction, so the head moves straight back into its own neck, which counts as hitting itself
+- [ ] setTimeout runs twice
+why: Your guide's version checks `name === OPPOSITE[last]`, where `last` is the direction after any turns already queued. Comparing with the queue, not only `direction`, also stops two fast presses (up, then left while moving right) from sneaking a reverse through.
+
+## Step: Lab: review this change
+time: 10
+kind: read
+
+You're the reviewer. A pull request called **"Restart faster"** changes `start()`:
+
+```text
+ function start() {
+-  clearTimeout(timer);    // never run two loops at once
+   newGame();
+   draw();
+   tick();
+ }
+```
+
+The author says "clearTimeout wasn't doing anything".
+
+quiz: What happens if this is merged?
+- [ ] Nothing: the old loop stops on its own
+- [x] Pressing Play again while a game runs starts a second loop next to the first, so the snake moves twice as fast and the timers pile up
+- [ ] The game won't start at all
+why: Each `tick()` schedules the next one. Without `clearTimeout(timer)`, the old chain keeps going alongside the new one.
+
+quiz: What's a good way to answer "it wasn't doing anything"?
+- [ ] Approve to avoid an argument
+- [x] Explain the case it covers (restarting mid-game) and suggest a test that starts twice and checks only one loop runs
+- [ ] Rewrite their whole pull request
+why: Code that seems to do nothing often guards an edge case. Naming the case, and a test that proves it, settles it for good.
+
+## Step: Lab: build it yourself
+time: 60
+kind: read
+
+From an empty folder, build **Catch the Stars**: stars fall from the top of a canvas and you move a basket left and right to catch them.
+
+**The spec:**
+
+1. A canvas grid like Snake's, with the basket on the bottom row.
+2. A game loop with `setTimeout`: each tick, every star falls one cell and a new star sometimes appears.
+3. Arrow keys and swipes move the basket through one `move()` function.
+4. Catching a star scores a point; missing three ends the game.
+5. Rules (falling, catching, missing) in functions that never touch the canvas, and one `draw()` that only reads the state.
+6. A best score saved with storage that can fail.
+
+**Hints, only if you're stuck:** keep stars as an array of `{ x, y }`, move each down with `map`, and remove caught or missed ones with `filter`. Speed up a little every 5 points, like Snake's speed levels.
+
+**Done when:** you can change the look (say, raindrops and a bucket) without touching a single rule.
+
+quiz: Where should the "is this star caught?" check go?
+- [ ] In draw(), since that's where the basket is drawn
+- [x] In a rules function that compares the star's cell with the basket's, before drawing
+- [ ] In the keyboard handler
+why: Rules decide what happens; drawing only shows it. That split is what made Snake's theme change easy.
 
 ## Finish
 

@@ -3,7 +3,7 @@ id: htmlcss
 title: HTML & CSS basics: a profile page
 blocks-html: top, middle, bottom
 blocks-css: base, card, buttons, layout, responsive, a11y
-goals: Write a page with headings, paragraphs, lists, links and images; Give a page structure with header, nav, main, section and footer; Style text and colors with CSS selectors; Use the box model (padding, border, margin) to space things out; Put things in a row with Flexbox and adapt the page to a phone with a media query; Publish a page for free on GitHub Pages; Make a page that works with a keyboard and a screen reader: alt text, a skip link, focus rings and color contrast
+goals: Write a page with headings, paragraphs, lists, links and images; Give a page structure with header, nav, main, section and footer; Style text and colors with CSS selectors; Use the box model (padding, border, margin) to space things out; Put things in a row with Flexbox and adapt the page to a phone with a media query; Publish a page for free on GitHub Pages; Make a page that works with a keyboard and a screen reader: alt text, a skip link, focus rings and color contrast; Practice like a developer: find a bug, review a change and build something from a blank page
 prereqs: The Get set up guide (VS Code and a browser installed); No coding experience needed
 ---
 
@@ -775,6 +775,89 @@ a:focus-visible,
   z-index: 10;
 }
 ```
+
+## Session: Practice labs
+
+## Step: Lab: find the bug
+time: 10
+kind: read
+
+Every project ends with three labs that build the habits a developer uses every day: finding a bug, reviewing someone else's change, and building something from a blank page.
+
+A teammate says the cards on their profile page are squashed together: no space between them, even though the CSS asks for a margin. Here's their rule:
+
+```css
+.card {
+  background: #ffffff;
+  padding: 24px
+  margin: 16px 0;
+  border-radius: 12px;
+}
+```
+
+Find it before you read the quiz. Then check your idea in DevTools: in **Elements**, click a card and look at the Styles panel. A declaration the browser couldn't read is shown struck through with a ⚠ warning.
+
+> CSS doesn't stop at a mistake the way JavaScript does. It skips what it can't read and carries on, so the page "works" and the bug hides. DevTools is how you see what was skipped.
+
+quiz: Why is there no margin between the cards?
+- [ ] `margin` doesn't work on sections
+- [x] `padding: 24px` has no semicolon, so the browser reads `24px margin: 16px 0` as one broken value and drops both lines
+- [ ] `border-radius` cancels the margin
+why: A missing `;` joins two declarations into one invalid one. Add it back and both the padding and the margin work.
+
+## Step: Lab: review this change
+time: 10
+kind: read
+
+You're the reviewer. A teammate opened a pull request called **"Cleaner header"** with this change:
+
+```text
+-  <nav aria-label="Main menu">
+-    <a href="#about">About</a>
++  <div class="menu">
++    <span onclick="location.hash='about'">About</span>
+```
+
+It looks the same on screen. Before you approve, think about who it changes things for.
+
+> Reviewing isn't only "does it look right". It's also: does it still work for everyone, could it break something, and is there a simpler way?
+
+quiz: What's the best review comment?
+- [ ] "Looks good, approved."
+- [ ] "Please use a different class name."
+- [x] "A span with onclick can't be reached with Tab or announced as a link, and the menu loses its name. Could we keep the `<nav>` and `<a href>` and change only the styling?"
+why: Real links and a named `<nav>` work with a keyboard and a screen reader for free. The change takes that away to save nothing.
+
+quiz: Which kind of review should you leave?
+- [ ] Approve: it looks the same
+- [x] Request changes, with the comment, because it breaks keyboard and screen reader use
+- [ ] No review: it's not your code
+why: "Request changes" says the problem needs fixing before merging, and the comment says exactly why.
+
+## Step: Lab: build it yourself
+time: 45
+kind: read
+
+No step-by-step this time. Build a one-page **Projects** site from an empty folder, using only what you learned. Look things up in this guide or on MDN as much as you like: that's how developers work.
+
+**The spec:**
+
+1. A header with your name and a menu with two links: Projects and Contact.
+2. A Projects section with three cards. Each card has a title, one sentence and a link.
+3. A Contact section with a button-style email link.
+4. Cards sit in a row on wide screens and stack on phones (Flexbox or Grid, and a media query).
+5. Accessible: a skip link, alt text on any image, a visible focus ring and 4.5 to 1 contrast.
+6. Published on GitHub Pages.
+
+**Hints, only if you're stuck:** `display: flex; flex-wrap: wrap; gap: 16px` puts cards in a row that wraps. `flex: 1 1 200px` on each card lets them share the row. Check your work with DevTools' device toolbar (the phone icon) and Lighthouse.
+
+**Done when:** you can send someone the link, and it works with only a keyboard.
+
+quiz: You're stuck on how to make the cards wrap. What's the best next move?
+- [ ] Start over from scratch
+- [x] Look it up (this guide's Flexbox step or MDN), try one change, and check it in DevTools
+- [ ] Skip that part of the spec
+why: Looking things up and testing small changes is the job. Nobody remembers every property.
 
 ## Finish
 

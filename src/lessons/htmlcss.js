@@ -9,7 +9,8 @@ export default {
   "Use the box model (padding, border, margin) to space things out",
   "Put things in a row with Flexbox and adapt the page to a phone with a media query",
   "Publish a page for free on GitHub Pages",
-  "Make a page that works with a keyboard and a screen reader: alt text, a skip link, focus rings and color contrast"
+  "Make a page that works with a keyboard and a screen reader: alt text, a skip link, focus rings and color contrast",
+  "Practice like a developer: find a bug, review a change and build something from a blank page"
  ],
  "prereqs": [
   "The Get set up guide (VS Code and a browser installed)",
@@ -35,6 +36,11 @@ export default {
    "title": "A page for everyone",
    "from": 9,
    "to": 10
+  },
+  {
+   "title": "Practice labs",
+   "from": 11,
+   "to": 13
   }
  ],
  "start": {
@@ -566,6 +572,73 @@ export default {
    "css": {
     "a11y": "a:focus-visible,\n.btn:focus-visible {\n  outline: 3px solid #f59e0b;\n  outline-offset: 3px;\n}\n\n.skip {\n  position: absolute;\n  left: -9999px;\n  top: 8px;\n  padding: 8px 14px;\n  background: #ffffff;\n  color: #1f2937;\n  border-radius: 8px;\n}\n\n.skip:focus {\n  left: 16px;\n  z-index: 10;\n}"
    }
+  },
+  {
+   "title": "Lab: find the bug",
+   "body": "Every project ends with three labs that build the habits a developer uses every day: finding a bug, reviewing someone else's change, and building something from a blank page.\n\nA teammate says the cards on their profile page are squashed together: no space between them, even though the CSS asks for a margin. Here's their rule:\n\n```css\n.card {\n  background: #ffffff;\n  padding: 24px\n  margin: 16px 0;\n  border-radius: 12px;\n}\n```\n\nFind it before you read the quiz. Then check your idea in DevTools: in **Elements**, click a card and look at the Styles panel. A declaration the browser couldn't read is shown struck through with a ⚠ warning.\n\n> CSS doesn't stop at a mistake the way JavaScript does. It skips what it can't read and carries on, so the page \"works\" and the bug hides. DevTools is how you see what was skipped.",
+   "quiz": [
+    {
+     "q": "Why is there no margin between the cards?",
+     "options": [
+      "`margin` doesn't work on sections",
+      "`padding: 24px` has no semicolon, so the browser reads `24px margin: 16px 0` as one broken value and drops both lines",
+      "`border-radius` cancels the margin"
+     ],
+     "answer": 1,
+     "why": "A missing `;` joins two declarations into one invalid one. Add it back and both the padding and the margin work."
+    }
+   ],
+   "session": 4,
+   "minutes": 10,
+   "kind": "read"
+  },
+  {
+   "title": "Lab: review this change",
+   "body": "You're the reviewer. A teammate opened a pull request called **\"Cleaner header\"** with this change:\n\n```text\n-  <nav aria-label=\"Main menu\">\n-    <a href=\"#about\">About</a>\n+  <div class=\"menu\">\n+    <span onclick=\"location.hash='about'\">About</span>\n```\n\nIt looks the same on screen. Before you approve, think about who it changes things for.\n\n> Reviewing isn't only \"does it look right\". It's also: does it still work for everyone, could it break something, and is there a simpler way?",
+   "quiz": [
+    {
+     "q": "What's the best review comment?",
+     "options": [
+      "\"Looks good, approved.\"",
+      "\"Please use a different class name.\"",
+      "\"A span with onclick can't be reached with Tab or announced as a link, and the menu loses its name. Could we keep the `<nav>` and `<a href>` and change only the styling?\""
+     ],
+     "answer": 2,
+     "why": "Real links and a named `<nav>` work with a keyboard and a screen reader for free. The change takes that away to save nothing."
+    },
+    {
+     "q": "Which kind of review should you leave?",
+     "options": [
+      "Approve: it looks the same",
+      "Request changes, with the comment, because it breaks keyboard and screen reader use",
+      "No review: it's not your code"
+     ],
+     "answer": 1,
+     "why": "\"Request changes\" says the problem needs fixing before merging, and the comment says exactly why."
+    }
+   ],
+   "session": 4,
+   "minutes": 10,
+   "kind": "read"
+  },
+  {
+   "title": "Lab: build it yourself",
+   "body": "No step-by-step this time. Build a one-page **Projects** site from an empty folder, using only what you learned. Look things up in this guide or on MDN as much as you like: that's how developers work.\n\n**The spec:**\n\n1. A header with your name and a menu with two links: Projects and Contact.\n2. A Projects section with three cards. Each card has a title, one sentence and a link.\n3. A Contact section with a button-style email link.\n4. Cards sit in a row on wide screens and stack on phones (Flexbox or Grid, and a media query).\n5. Accessible: a skip link, alt text on any image, a visible focus ring and 4.5 to 1 contrast.\n6. Published on GitHub Pages.\n\n**Hints, only if you're stuck:** `display: flex; flex-wrap: wrap; gap: 16px` puts cards in a row that wraps. `flex: 1 1 200px` on each card lets them share the row. Check your work with DevTools' device toolbar (the phone icon) and Lighthouse.\n\n**Done when:** you can send someone the link, and it works with only a keyboard.",
+   "quiz": [
+    {
+     "q": "You're stuck on how to make the cards wrap. What's the best next move?",
+     "options": [
+      "Start over from scratch",
+      "Look it up (this guide's Flexbox step or MDN), try one change, and check it in DevTools",
+      "Skip that part of the spec"
+     ],
+     "answer": 1,
+     "why": "Looking things up and testing small changes is the job. Nobody remembers every property."
+    }
+   ],
+   "session": 4,
+   "minutes": 45,
+   "kind": "read"
   }
  ],
  "finish": "You built and published a complete web page. Along the way you used:\n\n- **HTML** elements and attributes: headings, paragraphs, lists, links, images\n- **Semantic structure**: header, nav, main, section, footer, plus ids and classes\n- **CSS** rules and selectors, colors and fonts\n- The **box model**: padding, border, margin and border-radius\n- **Flexbox** for rows, `max-width` and `margin: 0 auto` for readable, centered content\n- A **media query** so it works on phones\n- **Git, GitHub and GitHub Pages** to publish it\n- **Accessibility**: alt text, a skip link, a named menu, focus rings and color contrast, so everyone can use it\n\n### Challenges\n\n1. Add a **Projects** section with a card for each project you build in these guides, and add it to the menu.\n2. Make the menu link for the section you're in look different with `:hover` and `:focus`.\n3. Try a dark theme: change the colors in `body`, `.card` and `.site-head`, then check every color pair still has 4.5 to 1 contrast.\n4. Run Lighthouse (DevTools → Lighthouse → Accessibility) on your published page and fix anything it finds.\n\n### Next\n\nThe **JavaScript basics** guide makes a page that *does* something: a tip calculator that updates as you type."

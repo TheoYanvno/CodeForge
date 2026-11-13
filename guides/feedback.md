@@ -4,7 +4,7 @@ title: Reacting to the player: a guessing game with a coach
 blocks-html: page
 blocks-css: base
 blocks-js: state, coach, render, play, go
-goals: Explain the input, evaluate, respond loop behind every interactive program; Keep a game's state in one object and change it only in one place; Handle form submissions and validate what the player typed; Find the best possible move and grade the player's move against it; Explain each grade in words, the way Chess Coach does; Write an end-of-game report from saved moves
+goals: Explain the input, evaluate, respond loop behind every interactive program; Keep a game's state in one object and change it only in one place; Handle form submissions and validate what the player typed; Find the best possible move and grade the player's move against it; Explain each grade in words, the way Chess Coach does; Write an end-of-game report from saved moves; Practice like a developer: find a bug, review a change and build something from a blank page
 prereqs: The JavaScript basics guide (functions, events, if/else, arrays)
 ---
 
@@ -706,6 +706,84 @@ quiz: In Chess Coach, what plays the role of `bestGuess()`?
 - [x] The search that finds the best move and its score
 - [ ] The board drawing
 why: Both coaches grade the player by comparing their move with the best move the computer can find.
+
+## Session: Practice labs
+
+## Step: Lab: find the bug
+time: 10
+kind: read
+
+Every project ends with three labs: find a bug, review a change, and build something yourself.
+
+A player says: "I guessed 50, it said too low, I guessed 50 again and the coach called it **Best**!" Here's the code that narrows the range after a guess:
+
+```js
+if (guess < game.secret) {
+  game.low = guess;
+} else {
+  game.high = guess;
+}
+```
+
+Reproduce it first (the debugging checklist's step 1), then put a breakpoint on the `if` and watch `game.low`.
+
+quiz: Why does guessing 50 twice get a Best?
+- [ ] rateGuess() is grading the wrong guess
+- [x] After "too low" the range should start at `guess + 1`, but it starts at `guess`, so 50 still counts as possible and sits in the middle
+- [ ] The secret changes every turn
+why: 50 was just ruled out, so the smallest possible answer is 51. With `game.low = guess + 1` (and `game.high = guess - 1`), a repeat is graded Wasted.
+
+## Step: Lab: review this change
+time: 10
+kind: read
+
+You're the reviewer. A pull request called **"Easier testing"** adds one line to `newGame()`:
+
+```text
+   game = {
+     secret: Math.floor(Math.random() * 100) + 1,
+     ...
+   };
++  console.log('secret is', game.secret);
+```
+
+The author says it helped them test the coach.
+
+quiz: What should the review say?
+- [ ] Approve: logging is good practice
+- [x] Request changes: anyone who opens the Console sees the answer. Logging was right while testing, but it shouldn't be merged
+- [ ] Ask them to log it twice to be sure
+why: Debug logs are tools for you while you work. Left in, this one spoils the game and leaks information, the same way a password in a log would.
+
+quiz: What's a better way to test the coach with a known secret?
+- [ ] Hard-code the secret to 50 forever
+- [x] Let `newGame()` take an optional secret, like `newGame(42)`, and use that in the test
+- [ ] Remove Math.random()
+why: Passing the value in keeps the real game random while letting a test choose the answer. That's how the real projects' tests work.
+
+## Step: Lab: build it yourself
+time: 45
+kind: read
+
+From an empty folder, build **Higher or Lower** with a coach, using the input, evaluate, respond loop.
+
+**The spec:**
+
+1. Show a card number from 1 to 13. The player guesses whether the next card is higher or lower.
+2. Keep the whole game in one state object: the current card, the score, and every move with its grade.
+3. The coach grades each guess against the best choice: with a 3 showing, "higher" is the smart pick (most cards are higher). Grade it Best, Risky or Lucky.
+4. After 10 cards, show a summary: score, how many Best choices, and one tip.
+5. A New game button that resets the state, and the page drawn only from the state.
+
+**Hints, only if you're stuck:** the chance the next card is higher is `(13 - card) / 12`. Grade Best when the player picked the side with the bigger chance.
+
+**Done when:** the coach's grades make sense to someone who's never seen the code.
+
+quiz: Why draw the page only from the state object?
+- [ ] It uses less memory
+- [x] The page can never disagree with the game: change the state, redraw, and everything on screen matches
+- [ ] Browsers require it
+why: One source of truth is the habit behind this guide, Snake and every React app later.
 
 ## Finish
 

@@ -8,7 +8,8 @@ export default {
   "Find elements on the page and change their text",
   "React to typing and clicks with event listeners",
   "Make decisions with if and else",
-  "Build buttons from an array with a for...of loop"
+  "Build buttons from an array with a for...of loop",
+  "Practice like a developer: find a bug, review a change and build something from a blank page"
  ],
  "prereqs": [
   "The HTML & CSS basics guide (elements, ids, classes, simple CSS)"
@@ -28,6 +29,11 @@ export default {
    "title": "Arrays and loops",
    "from": 6,
    "to": 7
+  },
+  {
+   "title": "Practice labs",
+   "from": 8,
+   "to": 10
   }
  ],
  "start": {
@@ -414,6 +420,73 @@ export default {
    "session": 2,
    "kind": "read",
    "minutes": 15
+  },
+  {
+   "title": "Lab: find the bug",
+   "body": "Every project ends with three labs: find a bug, review a change, and build something yourself.\n\nSomeone rewrote `update()` to be shorter. Now a $50 bill with a 15% tip shows a total of **$507.50**:\n\n```js\nfunction update() {\n  const bill = billInput.value;\n  const percent = Number(tipInput.value);\n  const tip = tipAmount(bill, percent);\n  const total = bill + tip;\n  totalOut.textContent = money(total);\n}\n```\n\nBefore the quiz: what would `console.log(typeof bill, typeof tip)` print? Try it in the Console of your own copy.",
+   "quiz": [
+    {
+     "q": "Why is the total $507.50?",
+     "options": [
+      "tipAmount() has a math mistake",
+      "`bill` is still a string, so `bill + tip` joins \"50\" and 7.5 into \"507.5\"",
+      "money() adds an extra digit"
+     ],
+     "answer": 1,
+     "why": "Input values are always strings. `bill * percent` in tipAmount still worked because `*` converts to a number, but `+` joins text. `Number(billInput.value)` fixes it."
+    }
+   ],
+   "session": 3,
+   "minutes": 10,
+   "kind": "read"
+  },
+  {
+   "title": "Lab: review this change",
+   "body": "You're the reviewer. A pull request called **\"Stop dividing by zero\"** changes this:\n\n```text\n   const people = Number(peopleInput.value);\n-  if (people < 1 || !Number.isInteger(people)) {\n-    message.textContent = 'People must be a whole number, 1 or more.';\n-    return;\n-  }\n+  if (people == 0) people = 1;\n```\n\nThe author says \"now it never shows an error\".",
+   "quiz": [
+    {
+     "q": "What's wrong with the change?",
+     "options": [
+      "Nothing: fewer error messages is better",
+      "`people` is a `const`, so `people = 1` throws a TypeError, and it also drops the check for negative and decimal numbers",
+      "`==` should always be `===`, and that's the only issue"
+     ],
+     "answer": 1,
+     "why": "Reassigning a const crashes update(), and -2 or 1.5 people would now slip through. The old check was doing real work."
+    },
+    {
+     "q": "Which comment is the most useful?",
+     "options": [
+      "\"This is bad.\"",
+      "\"`people` is a const, so this line throws, and -2 or 2.5 people would get through. Could we keep the existing check, which already covers 0?\"",
+      "\"Please add more comments.\""
+     ],
+     "answer": 1,
+     "why": "It names the exact problem, why it matters, and a way forward, without making it personal."
+    }
+   ],
+   "session": 3,
+   "minutes": 10,
+   "kind": "read"
+  },
+  {
+   "title": "Lab: build it yourself",
+   "body": "From an empty folder, build a **unit converter** using what you learned: miles to kilometers and back, updating as you type.\n\n**The spec:**\n\n1. Two number inputs with labels: Miles and Kilometers.\n2. Typing in either one updates the other right away (1 mile = 1.609344 km), shown to 2 decimals.\n3. A negative or empty value shows a friendly message instead of a number.\n4. Three preset buttons built from an array, like `[1, 5, 26.2]`, that fill in the miles.\n5. Small functions that take numbers and return numbers (`toKm(miles)`, `toMiles(km)`), kept apart from the code that reads and writes the page.\n\n**Hints, only if you're stuck:** listen for `input` on each box. To avoid a loop, the miles handler sets only the km box, and the km handler sets only the miles box. `Number(x).toFixed(2)` rounds for display.\n\n**Done when:** it works, it's on GitHub Pages, and you can explain every line to someone else.",
+   "quiz": [
+    {
+     "q": "Why keep `toKm()` separate from the code that reads the inputs?",
+     "options": [
+      "Functions run faster",
+      "A function that only does math is easy to test and reuse, and the page code stays simple",
+      "JavaScript requires it"
+     ],
+     "answer": 1,
+     "why": "Splitting \"do the math\" from \"talk to the page\" is the same pattern the tip calculator uses, and real projects use everywhere."
+    }
+   ],
+   "session": 3,
+   "minutes": 45,
+   "kind": "read"
   }
  ],
  "finish": "You wrote your first JavaScript program, and it's a real tool you can use at a restaurant. You learned:\n\n- **Variables** with `const` and `let`, **strings** vs **numbers**, and `Number()`\n- **Functions** with parameters and `return`, and template literals\n- **The DOM**: `getElementById`, `value` and `textContent`\n- **Events**: `addEventListener('input' | 'click', ...)`\n- **Decisions**: `if`, comparison and logic operators, guard clauses\n- **Arrays** and **for...of** loops, `createElement`, `append` and `classList`\n\n### Challenges\n\n1. Add a **Round up** checkbox that rounds each person's share up to the next dollar (`Math.ceil`).\n2. Remember the last tip with `localStorage.setItem('tip', ...)` and load it when the page opens.\n3. Add a 25% button by changing only the array.\n\n### Next\n\nYou're ready for the project guides. **Snake** is the best next step: a game loop, the keyboard and a canvas."

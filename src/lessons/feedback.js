@@ -8,7 +8,8 @@ export default {
   "Handle form submissions and validate what the player typed",
   "Find the best possible move and grade the player's move against it",
   "Explain each grade in words, the way Chess Coach does",
-  "Write an end-of-game report from saved moves"
+  "Write an end-of-game report from saved moves",
+  "Practice like a developer: find a bug, review a change and build something from a blank page"
  ],
  "prereqs": [
   "The JavaScript basics guide (functions, events, if/else, arrays)"
@@ -28,6 +29,11 @@ export default {
    "title": "From numbers to chess",
    "from": 6,
    "to": 6
+  },
+  {
+   "title": "Practice labs",
+   "from": 7,
+   "to": 9
   }
  ],
  "start": {
@@ -387,6 +393,73 @@ export default {
    "session": 2,
    "kind": "read",
    "minutes": 15
+  },
+  {
+   "title": "Lab: find the bug",
+   "body": "Every project ends with three labs: find a bug, review a change, and build something yourself.\n\nA player says: \"I guessed 50, it said too low, I guessed 50 again and the coach called it **Best**!\" Here's the code that narrows the range after a guess:\n\n```js\nif (guess < game.secret) {\n  game.low = guess;\n} else {\n  game.high = guess;\n}\n```\n\nReproduce it first (the debugging checklist's step 1), then put a breakpoint on the `if` and watch `game.low`.",
+   "quiz": [
+    {
+     "q": "Why does guessing 50 twice get a Best?",
+     "options": [
+      "rateGuess() is grading the wrong guess",
+      "After \"too low\" the range should start at `guess + 1`, but it starts at `guess`, so 50 still counts as possible and sits in the middle",
+      "The secret changes every turn"
+     ],
+     "answer": 1,
+     "why": "50 was just ruled out, so the smallest possible answer is 51. With `game.low = guess + 1` (and `game.high = guess - 1`), a repeat is graded Wasted."
+    }
+   ],
+   "session": 3,
+   "minutes": 10,
+   "kind": "read"
+  },
+  {
+   "title": "Lab: review this change",
+   "body": "You're the reviewer. A pull request called **\"Easier testing\"** adds one line to `newGame()`:\n\n```text\n   game = {\n     secret: Math.floor(Math.random() * 100) + 1,\n     ...\n   };\n+  console.log('secret is', game.secret);\n```\n\nThe author says it helped them test the coach.",
+   "quiz": [
+    {
+     "q": "What should the review say?",
+     "options": [
+      "Approve: logging is good practice",
+      "Request changes: anyone who opens the Console sees the answer. Logging was right while testing, but it shouldn't be merged",
+      "Ask them to log it twice to be sure"
+     ],
+     "answer": 1,
+     "why": "Debug logs are tools for you while you work. Left in, this one spoils the game and leaks information, the same way a password in a log would."
+    },
+    {
+     "q": "What's a better way to test the coach with a known secret?",
+     "options": [
+      "Hard-code the secret to 50 forever",
+      "Let `newGame()` take an optional secret, like `newGame(42)`, and use that in the test",
+      "Remove Math.random()"
+     ],
+     "answer": 1,
+     "why": "Passing the value in keeps the real game random while letting a test choose the answer. That's how the real projects' tests work."
+    }
+   ],
+   "session": 3,
+   "minutes": 10,
+   "kind": "read"
+  },
+  {
+   "title": "Lab: build it yourself",
+   "body": "From an empty folder, build **Higher or Lower** with a coach, using the input, evaluate, respond loop.\n\n**The spec:**\n\n1. Show a card number from 1 to 13. The player guesses whether the next card is higher or lower.\n2. Keep the whole game in one state object: the current card, the score, and every move with its grade.\n3. The coach grades each guess against the best choice: with a 3 showing, \"higher\" is the smart pick (most cards are higher). Grade it Best, Risky or Lucky.\n4. After 10 cards, show a summary: score, how many Best choices, and one tip.\n5. A New game button that resets the state, and the page drawn only from the state.\n\n**Hints, only if you're stuck:** the chance the next card is higher is `(13 - card) / 12`. Grade Best when the player picked the side with the bigger chance.\n\n**Done when:** the coach's grades make sense to someone who's never seen the code.",
+   "quiz": [
+    {
+     "q": "Why draw the page only from the state object?",
+     "options": [
+      "It uses less memory",
+      "The page can never disagree with the game: change the state, redraw, and everything on screen matches",
+      "Browsers require it"
+     ],
+     "answer": 1,
+     "why": "One source of truth is the habit behind this guide, Snake and every React app later."
+    }
+   ],
+   "session": 3,
+   "minutes": 45,
+   "kind": "read"
   }
  ],
  "finish": "You built a game that reacts to the player and coaches them. You learned:\n\n- The **input → evaluate → respond** loop behind every interactive program\n- **State in one object**, changed in **one function**, and a page drawn from it\n- **Forms**: the submit event, `preventDefault()` and validating input\n- **Binary search**, and finding the best move to grade against\n- Writing **specific feedback**: a grade, what happened and a better move\n- An **end-of-game report** built from the saved history\n\n### Challenges\n\n1. Add difficulty levels: 1–10, 1–100 and 1–1000 (the target becomes `Math.ceil(Math.log2(max))`).\n2. Save the best game (fewest guesses) in `localStorage` and show it under the title.\n3. Swap roles: you pick a number, and the computer guesses it with binary search while you answer higher or lower.\n\n### Next\n\nThe **Chess Coach** guide."

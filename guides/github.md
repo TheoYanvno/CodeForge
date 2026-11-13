@@ -1,7 +1,7 @@
 ---
 id: github
 title: GitHub from zero: account to pull request
-goals: Explain what Git and GitHub are and how a local repository and GitHub work together; Make a GitHub account and protect it with two-factor authentication; Set up a profile that shows your work to employers; Create, clone and commit to a repository, and write good commit messages; Push your commits and pull other people's, and sign in to GitHub from the terminal; Work on a branch, open and merge a pull request, and fix common mistakes
+goals: Explain what Git and GitHub are and how a local repository and GitHub work together; Make a GitHub account and protect it with two-factor authentication; Set up a profile that shows your work to employers; Create, clone and commit to a repository, and write good commit messages; Push your commits and pull other people's, and sign in to GitHub from the terminal; Work on a branch, open and merge a pull request, and fix common mistakes; Track work with issues, review a teammate's pull request, resolve a merge conflict, and run tests on every push with GitHub Actions
 prereqs: The Get set up guide (Git and VS Code installed); No experience with Git needed
 ---
 
@@ -454,6 +454,191 @@ quiz: How do you turn a repository into a website?
 - [ ] Rename the repository to website
 why: GitHub Pages hosts any repository's HTML for free and updates on every push.
 
+## Session: Git on a team
+
+## Step: Issues: the team's to-do list
+time: 15
+kind: read
+
+On a team, nobody keeps the work in their head. Every bug, idea and task becomes an **issue**: a numbered page in the repository (**Issues** tab → **New issue**) with a title, a description and a conversation underneath.
+
+A good issue answers three questions:
+
+| Question | Example |
+|---|---|
+| What happens? | "The total shows 01.502.25 after adding two snacks" |
+| What should happen? | "The total should be 3.75" |
+| How do I see it? | "1. Add Chips 1.50  2. Add Soda 2.25" |
+
+Issues also have **labels** (`bug`, `good first issue`, `docs`), an **assignee** (who's on it) and can be grouped on a **Projects** board with To do, In progress and Done columns.
+
+Issues connect to the code. Write `Fixes #12` in a pull request's description (or a commit message), and when it's merged, issue 12 closes by itself with a link to the fix.
+
+```svg An issue becomes a branch, the branch becomes a pull request, and merging the pull request closes the issue
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 90" font-family="sans-serif" font-size="12">
+  <rect x="5" y="25" width="70" height="36" rx="8" fill="#dcfce7" stroke="#16a34a"/><text x="40" y="47" text-anchor="middle">Issue #12</text>
+  <rect x="92" y="25" width="70" height="36" rx="8" fill="#e0e7ff" stroke="#6366f1"/><text x="127" y="47" text-anchor="middle">branch</text>
+  <rect x="179" y="25" width="70" height="36" rx="8" fill="#fef9c3" stroke="#ca8a04"/><text x="214" y="47" text-anchor="middle">PR: Fixes #12</text>
+  <rect x="266" y="25" width="70" height="36" rx="8" fill="#ede9fe" stroke="#8b5cf6"/><text x="301" y="47" text-anchor="middle">merged ✓</text>
+  <path d="M75 43 H90 M162 43 H177 M249 43 H264" stroke="#111" stroke-width="2"/>
+  <text x="170" y="84" text-anchor="middle" fill="#334155">the issue closes by itself when the fix is merged</text>
+</svg>
+```
+
+quiz: What does writing `Fixes #12` in a pull request do?
+- [ ] Deletes issue 12
+- [x] Closes issue 12 automatically when the pull request is merged, with a link to the fix
+- [ ] Assigns issue 12 to you
+why: GitHub links the two, so anyone reading the issue later can see exactly which change fixed it.
+
+## Step: Reviewing a pull request
+time: 20
+kind: read
+
+On a team, code doesn't go into `main` until someone else has read it. That's a **code review**, and it's how teams catch bugs, share knowledge and keep code readable. You'll do it every day as a developer, on both sides.
+
+**Reviewing someone's pull request:**
+
+1. Open the pull request and read the description first: what is it for?
+2. Open **Files changed**. Click the **+** next to any line to leave a comment there. A **suggestion** block proposes exact replacement code the author can accept with one click.
+3. Finish with **Review changes** and pick one: **Comment**, **Approve**, or **Request changes**.
+
+**Good review comments** are about the code, not the person, and say why:
+
+| Instead of | Write |
+|---|---|
+| "This is wrong." | "`price` is still a string here, so `+` joins text. Could we wrap it in `Number()`?" |
+| "Why did you do this?" | "I'm not sure why this needs a second loop. Is it covering a case I'm missing?" |
+| (silence about good work) | "Nice: pulling this into `money()` makes the three places that show dollars match." |
+
+What to look for: Does it do what the description says? Could it break something else? Are names clear? Are there tests? Did a `console.log`, a secret or a `debugger;` sneak in?
+
+**When your pull request gets reviewed:** thank people, answer every comment, push new commits to the same branch to fix things (the pull request updates by itself), and mark conversations **Resolved** when they're done.
+
+```svg A review: comments on lines, then one verdict for the whole change
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 330 120" font-family="sans-serif" font-size="12">
+  <rect x="5" y="8" width="200" height="104" rx="8" fill="#f8fafc" stroke="#cbd5e1"/>
+  <text x="15" y="28" font-family="monospace" fill="#16a34a">+ const total = bill + tip;</text>
+  <rect x="15" y="36" width="180" height="34" rx="6" fill="#fef9c3" stroke="#ca8a04"/><text x="22" y="57" font-size="11">💬 bill is a string here…</text>
+  <text x="15" y="92" font-family="monospace" fill="#16a34a">+ money(total)</text>
+  <rect x="220" y="12" width="105" height="26" rx="6" fill="#f1f5f9" stroke="#94a3b8"/><text x="272" y="30" text-anchor="middle">Comment</text>
+  <rect x="220" y="46" width="105" height="26" rx="6" fill="#dcfce7" stroke="#16a34a"/><text x="272" y="64" text-anchor="middle">Approve</text>
+  <rect x="220" y="80" width="105" height="26" rx="6" fill="#fee2e2" stroke="#ef4444"/><text x="272" y="98" text-anchor="middle">Request changes</text>
+</svg>
+```
+
+> Practice now: open a pull request on your learning-log and review it yourself from **Files changed**. Each project from here on ends with a **Review this change** drill to practice the reviewer's side.
+
+quiz: Which review comment is the most helpful?
+- [ ] "This doesn't work."
+- [ ] "Redo this."
+- [x] "This runs before the list is loaded, so it shows 0 items. Could it move inside the load callback?"
+why: A good comment points at the exact problem, explains why, and suggests a way forward.
+
+quiz: Your pull request got a "Request changes" review. What do you do?
+- [ ] Close it and open a new one
+- [x] Fix the points on the same branch and push; the pull request updates by itself, then reply and ask for another look
+- [ ] Merge it anyway
+why: A pull request follows its branch, so new commits show up in it and the review continues in one place.
+
+## Step: Merge conflicts on a team
+time: 15
+kind: read
+
+You met merge conflicts in "When things go wrong". On a team they happen often, because two people change the same lines on different branches. GitHub shows **This branch has conflicts that must be resolved**. Nothing is broken: Git just won't guess which version is right.
+
+Fix it on your branch, in your editor:
+
+```text
+git switch my-branch
+git pull origin main        # bring in the newest main: Git marks the conflicts
+```
+
+Open each file Git lists. VS Code highlights each conflict with **Accept Current**, **Accept Incoming** and **Accept Both** buttons:
+
+```text
+<<<<<<< HEAD
+const TAX = 0.07;
+=======
+const TAX = 0.065;
+>>>>>>> main
+```
+
+Decide what the code should be (often a bit of both, and sometimes a question for the teammate who wrote the other side), delete the markers, then:
+
+```text
+npm test                    # make sure it still works
+git add .
+git commit                  # Git writes the merge message
+git push
+```
+
+The pull request updates and the conflict warning is gone.
+
+> Fewer conflicts: keep branches small and short-lived, pull `main` into your branch often, and don't reformat a whole file in the same pull request as a fix.
+
+quiz: What do the `<<<<<<<`, `=======` and `>>>>>>>` lines mean?
+- [ ] Git broke the file
+- [x] They mark the two versions of the lines that conflict: yours above `=======`, the other branch's below
+- [ ] They're comments you can leave in
+why: Git shows both sides so you can choose. The markers must be deleted before you commit.
+
+## Step: GitHub Actions: tests on every push
+time: 20
+kind: read
+
+**Continuous integration (CI)** means every push is checked automatically. On GitHub that's **GitHub Actions**: you describe the job in a file, and GitHub runs it on a fresh computer for every push and pull request, then shows a ✓ or ✗ next to the commit.
+
+Make `.github/workflows/test.yml` in your repository:
+
+```text
+name: Tests
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm test
+```
+
+| Line | Means |
+|---|---|
+| `on: [push, pull_request]` | Run for every push and every pull request |
+| `runs-on: ubuntu-latest` | On a fresh Linux computer that GitHub provides |
+| `actions/checkout` | Download this repository onto it |
+| `actions/setup-node` | Install Node.js |
+| `run: npm test` | Run your tests. If any fails, the check turns red |
+
+Push it and open the **Actions** tab to watch it run. From now on a pull request shows **All checks have passed** or which one failed, before anyone reviews it.
+
+The last piece is a **branch rule**: **Settings → Branches → Add rule** for `main`, with **Require a pull request** and **Require status checks to pass**. Now nobody (you included) can merge code that breaks the tests. Most companies work exactly this way, and my projects build their downloads the same way: Blueit's Windows app is built by a GitHub Actions workflow on every push.
+
+```svg CI: every push runs the tests on GitHub's computers, and a pull request can only be merged when the check is green
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 100" font-family="sans-serif" font-size="12">
+  <rect x="5" y="30" width="70" height="36" rx="8" fill="#e0e7ff" stroke="#6366f1"/><text x="40" y="52" text-anchor="middle">git push</text>
+  <rect x="95" y="30" width="110" height="36" rx="8" fill="#f1f5f9" stroke="#94a3b8"/><text x="150" y="46" text-anchor="middle">Actions runs</text><text x="150" y="60" text-anchor="middle" font-size="10">npm test</text>
+  <rect x="225" y="8" width="110" height="34" rx="8" fill="#dcfce7" stroke="#16a34a"/><text x="280" y="30" text-anchor="middle">✓ can merge</text>
+  <rect x="225" y="54" width="110" height="34" rx="8" fill="#fee2e2" stroke="#ef4444"/><text x="280" y="76" text-anchor="middle">✗ fix it first</text>
+  <path d="M75 48 H93 M205 42 L223 26 M205 54 L223 70" stroke="#111" stroke-width="2"/>
+</svg>
+```
+
+quiz: What does `on: [push, pull_request]` in a workflow file mean?
+- [ ] Run only when you click a button
+- [x] Run the job for every push and every pull request
+- [ ] Push the code to production
+why: The `on:` line is the trigger. Running on pull requests means a change is checked before it's merged.
+
+quiz: Why add a branch rule that requires the check to pass?
+- [ ] It makes the tests run faster
+- [x] Nobody can merge a change that breaks the tests into main, by accident or in a hurry
+- [ ] It hides failed tests
+why: A rule takes the decision out of people's hands, so main always works.
+
 ## Finish
 
 You can now do everything a developer does with GitHub every day:
@@ -465,6 +650,7 @@ You can now do everything a developer does with GitHub every day:
 - **Branches** and **pull requests**
 - Fixing mistakes: **restore**, **amend**, **revert**, **merge conflicts**, and keeping **secrets** out
 - **GitHub Pages** to publish websites
+- **Team Git**: issues, reviewing pull requests, resolving merge conflicts, and **GitHub Actions** running your tests on every push
 
 ### Challenges
 

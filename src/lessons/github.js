@@ -8,7 +8,8 @@ export default {
   "Set up a profile that shows your work to employers",
   "Create, clone and commit to a repository, and write good commit messages",
   "Push your commits and pull other people's, and sign in to GitHub from the terminal",
-  "Work on a branch, open and merge a pull request, and fix common mistakes"
+  "Work on a branch, open and merge a pull request, and fix common mistakes",
+  "Track work with issues, review a teammate's pull request, resolve a merge conflict, and run tests on every push with GitHub Actions"
  ],
  "prereqs": [
   "The Get set up guide (Git and VS Code installed)",
@@ -34,6 +35,11 @@ export default {
    "title": "Publish and keep going",
    "from": 8,
    "to": 8
+  },
+  {
+   "title": "Git on a team",
+   "from": 9,
+   "to": 12
   }
  ],
  "start": {},
@@ -238,7 +244,103 @@ export default {
    "session": 3,
    "kind": "read",
    "minutes": 15
+  },
+  {
+   "title": "Issues: the team's to-do list",
+   "body": "On a team, nobody keeps the work in their head. Every bug, idea and task becomes an **issue**: a numbered page in the repository (**Issues** tab → **New issue**) with a title, a description and a conversation underneath.\n\nA good issue answers three questions:\n\n| Question | Example |\n|---|---|\n| What happens? | \"The total shows 01.502.25 after adding two snacks\" |\n| What should happen? | \"The total should be 3.75\" |\n| How do I see it? | \"1. Add Chips 1.50  2. Add Soda 2.25\" |\n\nIssues also have **labels** (`bug`, `good first issue`, `docs`), an **assignee** (who's on it) and can be grouped on a **Projects** board with To do, In progress and Done columns.\n\nIssues connect to the code. Write `Fixes #12` in a pull request's description (or a commit message), and when it's merged, issue 12 closes by itself with a link to the fix.\n\n```svg An issue becomes a branch, the branch becomes a pull request, and merging the pull request closes the issue\n<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 90\" font-family=\"sans-serif\" font-size=\"12\">\n  <rect x=\"5\" y=\"25\" width=\"70\" height=\"36\" rx=\"8\" fill=\"#dcfce7\" stroke=\"#16a34a\"/><text x=\"40\" y=\"47\" text-anchor=\"middle\">Issue #12</text>\n  <rect x=\"92\" y=\"25\" width=\"70\" height=\"36\" rx=\"8\" fill=\"#e0e7ff\" stroke=\"#6366f1\"/><text x=\"127\" y=\"47\" text-anchor=\"middle\">branch</text>\n  <rect x=\"179\" y=\"25\" width=\"70\" height=\"36\" rx=\"8\" fill=\"#fef9c3\" stroke=\"#ca8a04\"/><text x=\"214\" y=\"47\" text-anchor=\"middle\">PR: Fixes #12</text>\n  <rect x=\"266\" y=\"25\" width=\"70\" height=\"36\" rx=\"8\" fill=\"#ede9fe\" stroke=\"#8b5cf6\"/><text x=\"301\" y=\"47\" text-anchor=\"middle\">merged ✓</text>\n  <path d=\"M75 43 H90 M162 43 H177 M249 43 H264\" stroke=\"#111\" stroke-width=\"2\"/>\n  <text x=\"170\" y=\"84\" text-anchor=\"middle\" fill=\"#334155\">the issue closes by itself when the fix is merged</text>\n</svg>\n```",
+   "quiz": [
+    {
+     "q": "What does writing `Fixes #12` in a pull request do?",
+     "options": [
+      "Deletes issue 12",
+      "Closes issue 12 automatically when the pull request is merged, with a link to the fix",
+      "Assigns issue 12 to you"
+     ],
+     "answer": 1,
+     "why": "GitHub links the two, so anyone reading the issue later can see exactly which change fixed it."
+    }
+   ],
+   "session": 4,
+   "minutes": 15,
+   "kind": "read"
+  },
+  {
+   "title": "Reviewing a pull request",
+   "body": "On a team, code doesn't go into `main` until someone else has read it. That's a **code review**, and it's how teams catch bugs, share knowledge and keep code readable. You'll do it every day as a developer, on both sides.\n\n**Reviewing someone's pull request:**\n\n1. Open the pull request and read the description first: what is it for?\n2. Open **Files changed**. Click the **+** next to any line to leave a comment there. A **suggestion** block proposes exact replacement code the author can accept with one click.\n3. Finish with **Review changes** and pick one: **Comment**, **Approve**, or **Request changes**.\n\n**Good review comments** are about the code, not the person, and say why:\n\n| Instead of | Write |\n|---|---|\n| \"This is wrong.\" | \"`price` is still a string here, so `+` joins text. Could we wrap it in `Number()`?\" |\n| \"Why did you do this?\" | \"I'm not sure why this needs a second loop. Is it covering a case I'm missing?\" |\n| (silence about good work) | \"Nice: pulling this into `money()` makes the three places that show dollars match.\" |\n\nWhat to look for: Does it do what the description says? Could it break something else? Are names clear? Are there tests? Did a `console.log`, a secret or a `debugger;` sneak in?\n\n**When your pull request gets reviewed:** thank people, answer every comment, push new commits to the same branch to fix things (the pull request updates by itself), and mark conversations **Resolved** when they're done.\n\n```svg A review: comments on lines, then one verdict for the whole change\n<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 330 120\" font-family=\"sans-serif\" font-size=\"12\">\n  <rect x=\"5\" y=\"8\" width=\"200\" height=\"104\" rx=\"8\" fill=\"#f8fafc\" stroke=\"#cbd5e1\"/>\n  <text x=\"15\" y=\"28\" font-family=\"monospace\" fill=\"#16a34a\">+ const total = bill + tip;</text>\n  <rect x=\"15\" y=\"36\" width=\"180\" height=\"34\" rx=\"6\" fill=\"#fef9c3\" stroke=\"#ca8a04\"/><text x=\"22\" y=\"57\" font-size=\"11\">💬 bill is a string here…</text>\n  <text x=\"15\" y=\"92\" font-family=\"monospace\" fill=\"#16a34a\">+ money(total)</text>\n  <rect x=\"220\" y=\"12\" width=\"105\" height=\"26\" rx=\"6\" fill=\"#f1f5f9\" stroke=\"#94a3b8\"/><text x=\"272\" y=\"30\" text-anchor=\"middle\">Comment</text>\n  <rect x=\"220\" y=\"46\" width=\"105\" height=\"26\" rx=\"6\" fill=\"#dcfce7\" stroke=\"#16a34a\"/><text x=\"272\" y=\"64\" text-anchor=\"middle\">Approve</text>\n  <rect x=\"220\" y=\"80\" width=\"105\" height=\"26\" rx=\"6\" fill=\"#fee2e2\" stroke=\"#ef4444\"/><text x=\"272\" y=\"98\" text-anchor=\"middle\">Request changes</text>\n</svg>\n```\n\n> Practice now: open a pull request on your learning-log and review it yourself from **Files changed**. Each project from here on ends with a **Review this change** drill to practice the reviewer's side.",
+   "quiz": [
+    {
+     "q": "Which review comment is the most helpful?",
+     "options": [
+      "\"This doesn't work.\"",
+      "\"Redo this.\"",
+      "\"This runs before the list is loaded, so it shows 0 items. Could it move inside the load callback?\""
+     ],
+     "answer": 2,
+     "why": "A good comment points at the exact problem, explains why, and suggests a way forward."
+    },
+    {
+     "q": "Your pull request got a \"Request changes\" review. What do you do?",
+     "options": [
+      "Close it and open a new one",
+      "Fix the points on the same branch and push; the pull request updates by itself, then reply and ask for another look",
+      "Merge it anyway"
+     ],
+     "answer": 1,
+     "why": "A pull request follows its branch, so new commits show up in it and the review continues in one place."
+    }
+   ],
+   "session": 4,
+   "minutes": 20,
+   "kind": "read"
+  },
+  {
+   "title": "Merge conflicts on a team",
+   "body": "You met merge conflicts in \"When things go wrong\". On a team they happen often, because two people change the same lines on different branches. GitHub shows **This branch has conflicts that must be resolved**. Nothing is broken: Git just won't guess which version is right.\n\nFix it on your branch, in your editor:\n\n```text\ngit switch my-branch\ngit pull origin main        # bring in the newest main: Git marks the conflicts\n```\n\nOpen each file Git lists. VS Code highlights each conflict with **Accept Current**, **Accept Incoming** and **Accept Both** buttons:\n\n```text\n<<<<<<< HEAD\nconst TAX = 0.07;\n=======\nconst TAX = 0.065;\n>>>>>>> main\n```\n\nDecide what the code should be (often a bit of both, and sometimes a question for the teammate who wrote the other side), delete the markers, then:\n\n```text\nnpm test                    # make sure it still works\ngit add .\ngit commit                  # Git writes the merge message\ngit push\n```\n\nThe pull request updates and the conflict warning is gone.\n\n> Fewer conflicts: keep branches small and short-lived, pull `main` into your branch often, and don't reformat a whole file in the same pull request as a fix.",
+   "quiz": [
+    {
+     "q": "What do the `<<<<<<<`, `=======` and `>>>>>>>` lines mean?",
+     "options": [
+      "Git broke the file",
+      "They mark the two versions of the lines that conflict: yours above `=======`, the other branch's below",
+      "They're comments you can leave in"
+     ],
+     "answer": 1,
+     "why": "Git shows both sides so you can choose. The markers must be deleted before you commit."
+    }
+   ],
+   "session": 4,
+   "minutes": 15,
+   "kind": "read"
+  },
+  {
+   "title": "GitHub Actions: tests on every push",
+   "body": "**Continuous integration (CI)** means every push is checked automatically. On GitHub that's **GitHub Actions**: you describe the job in a file, and GitHub runs it on a fresh computer for every push and pull request, then shows a ✓ or ✗ next to the commit.\n\nMake `.github/workflows/test.yml` in your repository:\n\n```text\nname: Tests\non: [push, pull_request]\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/setup-node@v4\n        with:\n          node-version: 22\n      - run: npm test\n```\n\n| Line | Means |\n|---|---|\n| `on: [push, pull_request]` | Run for every push and every pull request |\n| `runs-on: ubuntu-latest` | On a fresh Linux computer that GitHub provides |\n| `actions/checkout` | Download this repository onto it |\n| `actions/setup-node` | Install Node.js |\n| `run: npm test` | Run your tests. If any fails, the check turns red |\n\nPush it and open the **Actions** tab to watch it run. From now on a pull request shows **All checks have passed** or which one failed, before anyone reviews it.\n\nThe last piece is a **branch rule**: **Settings → Branches → Add rule** for `main`, with **Require a pull request** and **Require status checks to pass**. Now nobody (you included) can merge code that breaks the tests. Most companies work exactly this way, and my projects build their downloads the same way: Blueit's Windows app is built by a GitHub Actions workflow on every push.\n\n```svg CI: every push runs the tests on GitHub's computers, and a pull request can only be merged when the check is green\n<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 100\" font-family=\"sans-serif\" font-size=\"12\">\n  <rect x=\"5\" y=\"30\" width=\"70\" height=\"36\" rx=\"8\" fill=\"#e0e7ff\" stroke=\"#6366f1\"/><text x=\"40\" y=\"52\" text-anchor=\"middle\">git push</text>\n  <rect x=\"95\" y=\"30\" width=\"110\" height=\"36\" rx=\"8\" fill=\"#f1f5f9\" stroke=\"#94a3b8\"/><text x=\"150\" y=\"46\" text-anchor=\"middle\">Actions runs</text><text x=\"150\" y=\"60\" text-anchor=\"middle\" font-size=\"10\">npm test</text>\n  <rect x=\"225\" y=\"8\" width=\"110\" height=\"34\" rx=\"8\" fill=\"#dcfce7\" stroke=\"#16a34a\"/><text x=\"280\" y=\"30\" text-anchor=\"middle\">✓ can merge</text>\n  <rect x=\"225\" y=\"54\" width=\"110\" height=\"34\" rx=\"8\" fill=\"#fee2e2\" stroke=\"#ef4444\"/><text x=\"280\" y=\"76\" text-anchor=\"middle\">✗ fix it first</text>\n  <path d=\"M75 48 H93 M205 42 L223 26 M205 54 L223 70\" stroke=\"#111\" stroke-width=\"2\"/>\n</svg>\n```",
+   "quiz": [
+    {
+     "q": "What does `on: [push, pull_request]` in a workflow file mean?",
+     "options": [
+      "Run only when you click a button",
+      "Run the job for every push and every pull request",
+      "Push the code to production"
+     ],
+     "answer": 1,
+     "why": "The `on:` line is the trigger. Running on pull requests means a change is checked before it's merged."
+    },
+    {
+     "q": "Why add a branch rule that requires the check to pass?",
+     "options": [
+      "It makes the tests run faster",
+      "Nobody can merge a change that breaks the tests into main, by accident or in a hurry",
+      "It hides failed tests"
+     ],
+     "answer": 1,
+     "why": "A rule takes the decision out of people's hands, so main always works."
+    }
+   ],
+   "session": 4,
+   "minutes": 20,
+   "kind": "read"
   }
  ],
- "finish": "You can now do everything a developer does with GitHub every day:\n\n- A **secure account** with two-factor authentication and recovery codes\n- A **profile** with a README and pinned projects\n- **Create** and **clone** repositories, and the **status → add → commit** cycle with good messages\n- **Push** and **pull**, and signing in from the terminal\n- **Branches** and **pull requests**\n- Fixing mistakes: **restore**, **amend**, **revert**, **merge conflicts**, and keeping **secrets** out\n- **GitHub Pages** to publish websites\n\n### Challenges\n\n1. Make your profile README: a short introduction, your skills, and links to your three best projects, then pin those projects.\n2. Open an issue on your learning-log for something you want to learn next, then close it from a commit message with `Closes #1`.\n3. Fork a classmate's (or your own) repository, fix a typo on a branch, and open a pull request.\n\n### Next\n\nThe **HTML & CSS basics** guide: build a profile page and publish it with what you learned here."
+ "finish": "You can now do everything a developer does with GitHub every day:\n\n- A **secure account** with two-factor authentication and recovery codes\n- A **profile** with a README and pinned projects\n- **Create** and **clone** repositories, and the **status → add → commit** cycle with good messages\n- **Push** and **pull**, and signing in from the terminal\n- **Branches** and **pull requests**\n- Fixing mistakes: **restore**, **amend**, **revert**, **merge conflicts**, and keeping **secrets** out\n- **GitHub Pages** to publish websites\n- **Team Git**: issues, reviewing pull requests, resolving merge conflicts, and **GitHub Actions** running your tests on every push\n\n### Challenges\n\n1. Make your profile README: a short introduction, your skills, and links to your three best projects, then pin those projects.\n2. Open an issue on your learning-log for something you want to learn next, then close it from a commit message with `Closes #1`.\n3. Fork a classmate's (or your own) repository, fix a typo on a branch, and open a pull request.\n\n### Next\n\nThe **HTML & CSS basics** guide: build a profile page and publish it with what you learned here."
 };
