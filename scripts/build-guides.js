@@ -19,6 +19,7 @@ const root = fileURLToPath(new URL('..', import.meta.url));
 const PANES = new Set(['html', 'css', 'js']);
 
 export function parseGuide(text, file = 'guide') {
+  text = text.replace(/\r\n/g, '\n');   // Windows checkouts use CRLF line endings
   const [, front, rest] = text.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/) ?? [];
   if (!front) throw new Error(`${file}: missing --- front matter ---`);
   const meta = Object.fromEntries(front.split('\n').filter(Boolean).map((l) => {
