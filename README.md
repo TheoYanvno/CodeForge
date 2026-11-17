@@ -146,7 +146,7 @@ Guides are written in Markdown ([`guides/`](guides/), format in [`guides/README.
 No install needed. Serve the folder (ES modules don't load from `file://`):
 
 ```bash
-npm start      # python3 -m http.server 8000, then open http://localhost:8000
+npm start      # serves it with Node at http://localhost:8000 (Windows, macOS or Linux)
 npm test       # node --test (Node 18+)
 npm run guides # rebuild src/lessons/ after editing a guide in guides/
 ```
