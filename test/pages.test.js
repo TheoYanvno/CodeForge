@@ -146,10 +146,11 @@ test('topic badges: one per topic, earned by finishing every guide that teaches 
   assert.strictEqual(new Set(ids).size, ids.length);
   const badge = (id) => pages.skillBadges(GUIDES, progress).find((b) => b.id === id);
   // topics with no guides yet show as coming soon and can't be earned
-  for (const id of ['topic-testing', 'topic-typescript', 'topic-deploying', 'topic-capstone']) {
+  for (const id of ['topic-testing', 'topic-typescript', 'topic-capstone']) {
     const b = badge(id);
     assert.ok(b.soon && !b.earned, id);
   }
+  assert.ok(!badge('topic-deploying').soon, 'Deploying has its first guide (AWS from Windows)');
   const finish = (id) => { const g = GUIDES.find((x) => x.id === id); for (let i = 0; i < g.steps; i++) progress.complete(id, i); };
   assert.ok(!badge('topic-debugging').earned);
   finish('debugging');
