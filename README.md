@@ -52,7 +52,7 @@ Fetching from APIs, saving data, dates, dragging, accounts and a desktop app.
 
 ### Tier 3: Python and SQL
 
-Python, a static site generator, and databases from your first table to many-to-many searches.
+Python, a static site generator, databases from your first table to many-to-many searches, Flask APIs, a deploy to AWS, and bigger Python projects.
 
 | Guide | Steps | What you learn |
 |---|---|---|
@@ -62,14 +62,33 @@ Python, a static site generator, and databases from your first table to many-to-
 | 🗄️ SQL basics | 8 in 3 sessions · about 2 hours · 15 quiz questions | Tables, safe INSERTs, WHERE, ORDER BY, LIKE, GROUP BY and JOIN, building a book library |
 | 📘 Lessons | 2 | 🔗 Link tables (many-to-many) · 🏆 Ranked search |
 | 🦸 [Marvel Character Database](https://github.com/TheoYanvno/marvel-character-database) | 11 in 5 sessions · about 3 hours · 20 quiz questions | Related tables and link tables, parameterized SQL, ranked search, GROUP BY and HAVING, UNION across both sides of a relationship, SQLite in the browser |
+| 🗃️ [Dataset Catalog API](https://github.com/TheoYanvno/dataset-catalog-api) | 9 in 2 sessions · about 2.5 hours · 17 quiz questions | A four-table schema, all the SQL in one store module, validation that lists every problem, and a Flask JSON API with tests |
+| 🚀 Deploying a Flask API to AWS (from Windows) | 7 in 2 sessions · about 1.5 hours · 12 quiz questions | Put the Dataset Catalog API on AWS Elastic Beanstalk from a Windows PC: gunicorn and a Procfile, a zip Linux can read, MFA and a zero-spend budget on the Free plan, least-privilege roles, logs, new versions, and how to explain it in an interview. |
+| 📞 [Phone Number Lookup](https://github.com/TheoYanvno/phone-number-lookup) | 7 in 2 sessions · about 1.5 hours · 14 quiz questions | A command-line tool around Google's phonenumbers library: a frozen dataclass, errors turned into advice, E.164 and friendly formats |
+| 👪 [Flask REST API](https://github.com/TheoYanvno/family-api) | 5 in 2 sessions · about 1.5 hours · 10 quiz questions | REST methods and status codes, data behind a class with thin routes, get_json and jsonify, and an honest review of my 2023 code |
+| 🎨 [Colors of Eden](https://github.com/TheoYanvno/colors-of-eden) | 7 in 2 sessions · about 2 hours · 14 quiz questions | An API with a disk cache and offline fallback, SVG line art from code, traced drawings, and Python and JavaScript kept identical by tests |
+| 🎬 [Blueit](https://github.com/TheoYanvno/blueit) | 7 in 2 sessions · about 2 hours · 14 quiz questions | Reddit's official API with OAuth and backoff, a SQLite upsert, narration in timed pieces, SRT captions and FFmpeg driven safely |
+| 🎤 Python interview practice | 6 in 2 sessions · about 1.5 hours · 12 quiz questions | Write and explain code under pressure: a six-move routine, Big-O, counting and grouping, two sum, two pointers, a small class with clear errors, testing your own answer, and two-minute explanations of every project. |
 
 ### Tier 4: React and apps
 
-Components, state and effects, then React apps as they are published.
+Components, state and effects, then six React apps, each with the three lessons it needs.
 
 | Guide | Steps | What you learn |
 |---|---|---|
 | ⚛️ React basics | 6 in 2 sessions · about 1.5 hours · 12 quiz questions | Components and JSX, props, state and events, lists with keys, controlled forms, useEffect for saving and fetching, building with esbuild for GitHub Pages |
+| 📘 Lessons | 3 | 📡 Fetching data in React · 📊 Charts drawn with SVG · 🔍 Search as you type |
+| 🌤️ [Weatherboard](https://github.com/TheoYanvno/weather-forecast) | 6 in 2 sessions · about 1.5 hours · 8 quiz questions | One request per screen parsed by tested functions, a cache and late-answer protection, an SVG rain chart and a keyboard city search |
+| 📘 Lessons | 3 | 🧮 State updates with pure functions · 🫳 Drag and drop in React · 📦 Import and export JSON files |
+| 🚢 [Shipboard](https://github.com/TheoYanvno/dev-task-board) | 6 in 2 sessions · about 1.5 hours · 6 quiz questions | Rules in pure functions, exact drag and drop with a keyboard path, board, list and calendar views, safe export and import |
+| 📘 Lessons | 3 | 📝 Forms and validation in React · 🪙 Money math in cents · 🧾 Exporting a safe CSV |
+| 💵 [Cashflow](https://github.com/TheoYanvno/finance-tracker) | 5 in 2 sessions · about 1.5 hours · 6 quiz questions | Every money rule in whole cents, a validated dialog form, budgets and SVG charts, and a safe CSV export |
+| 📘 Lessons | 3 | 🥜 Filtering by allergens and diets · 🎯 Scoring recipes against your goals · 🛒 Scaling recipes and shopping lists |
+| 🥘 [Pantry](https://github.com/TheoYanvno/pantry) | 5 in 2 sessions · about 1.5 hours · 5 quiz questions | A profile that never breaks the page, safe filtering, fit scores with reasons, a one-click week plan and a shopping list by aisle |
+| 📘 Lessons | 3 | 🧠 Spaced repetition scheduling · 🗃️ Sharing decks as files · ⌨️ Keyboard shortcuts and accessibility |
+| 🧠 [TotalRecall](https://github.com/TheoYanvno/total-recall) | 5 in 2 sessions · about 1.5 hours · 5 quiz questions | Spaced repetition and four study modes, safe progress with streaks, shareable decks and keyboard-only study |
+| 📘 Lessons | 3 | 📖 Reusing the SuperBook Bible data in React · 🗺️ An interactive map with SVG pan and zoom · ⏰ Prayer times, reminders and notifications |
+| 📜 [AbramsTree](https://github.com/TheoYanvno/abrams-tree) | 5 in 2 sessions · about 1.5 hours · 5 quiz questions | Even reading plans with a fair streak, translations side by side, prayers with dependable reminders, and a map you can pan, zoom and play |
 
 ### Tier 5: Algorithms
 
@@ -93,17 +112,16 @@ A server, roles and permissions, caching, several APIs at once and a hospital sy
 | 📘 Lessons | 3 | ⚡ Caching and late responses · 🎯 Matching questions to answers · ✍️ Drawing text on a canvas |
 | 📖 [SuperBook](https://github.com/TheoYanvno/SuperBook) | 10 in 5 sessions · about 3 hours · 18 quiz questions | Fetching from three public APIs, caching and late responses, question matching with stemming and weighted keywords, writing on a canvas, right-to-left languages |
 
-55 guides: 35 lessons, 10 basics guides and 10 projects. The tests check that every idea a project step uses is taught in a lesson the project lists, that the lesson comes first, and that no step anyone may have finished ever changes its number (progress is saved by guide and step).
+86 guides: 55 lessons, 10 basics guides and 21 projects. The tests check that every idea a project step uses is taught in a lesson the project lists, that the lesson comes first, and that no step anyone may have finished ever changes its number (progress is saved by guide and step).
 
 ### Coming soon
 
 Guides are added as each project is built and published:
 
-- ⚛️ **React projects**, each with three lessons first: **Weatherboard** (a weather dashboard with hourly and 7-day forecasts), **Shipboard** (a task board for developers), **Cashflow** (a personal finance tracker), **Pantry** (a meal planner that picks recipes by your goals, nutrition needs and allergies), **AbramsTree** (a Bible study guide built on SuperBook, with prayers, prayer times and an interactive world map of biblical events) and **TotalRecall** (spaced-repetition flashcards for programming terms from the CodeForge lessons). React basics is ready now, so you can start there.
 - 🎮 **C# games**, original games built on stories from the Bible with a dark, gothic exorcist feel: **Gates of Sheol** (a roguelike through seeded catacombs), **Nehemiah's Watch** (tower defense on Jerusalem's wall), **Testimony** (a mystery where you test every spirit), **Wilderness** (survival and camp building on the Exodus) and **Legion** (a multiplayer arena against a demon horde).
 - 🛡️ **Security projects:** **SentinelEDR** (Windows endpoint detection), **NetSentinel** (network intrusion detection), **LogWatch** (a mini SIEM), **VulnScope** (asset and vulnerability management), **FileShield** (file integrity and ransomware-behavior detection), **AuthGuard** (identity and access management), **CloudSentinel** (cloud security posture), **SecureCode** (static application security testing), **IncidentIQ** (incident response and SOAR) and **ThreatIntel** (threat intelligence and IOCs).
 
-The basics guides that run in a terminal or on the desktop (Python, Electron and React) are read-along: each step shows the code to type and run on your own computer.
+The basics guides that run in a terminal or on the desktop (Python, Electron and React) and the React projects are read-along: each step shows the code to type and run on your own computer.
 
 ## The app
 
