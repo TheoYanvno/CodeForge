@@ -691,4 +691,4 @@ You rebuilt a real metadata catalog API. You learned:
 
 ### Next
 
-The **Flask REST APIs** guide uses SQLAlchemy models instead of hand-written SQL, so you can compare the two approaches.
+The **Flask REST API (Family)** guide keeps its data behind a Python class instead of a database, so you can compare the two approaches.
