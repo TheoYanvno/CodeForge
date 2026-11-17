@@ -111,7 +111,7 @@ export const SKILLS = [
   { id: 'topic-testing', glyph: '✓', tone: 'teal', title: 'Testing', guides: ['testing'] },
   { id: 'topic-python', glyph: 'Py', tone: 'blue', title: 'Python', guides: ['python', 'bonfire', 'catalogapi', 'phonelookup', 'flaskapis', 'colorsofeden', 'blueit', 'pyinterview'] },
   { id: 'topic-sql', glyph: 'SQL', tone: 'teal', title: 'SQL', guides: ['sql', 'linktables', 'rankedsearch', 'marvel', 'catalogapi', 'blueit'] },
-  { id: 'topic-react', glyph: '⚛', tone: 'cyan', title: 'React', guides: ['reactbasics', 'reactfetch', 'svgcharts', 'combobox', 'weatherboard', 'purestate', 'reactdnd', 'jsonfiles', 'shipboard', 'reactforms', 'cents', 'safecsv', 'cashflow'] },
+  { id: 'topic-react', glyph: '⚛', tone: 'cyan', title: 'React', guides: ['reactbasics', 'reactfetch', 'svgcharts', 'combobox', 'weatherboard', 'purestate', 'reactdnd', 'jsonfiles', 'shipboard', 'reactforms', 'cents', 'safecsv', 'cashflow', 'allergens', 'fitscore', 'scaling', 'pantry', 'srs', 'deckfiles', 'shortcuts', 'totalrecall', 'biblesync', 'svgmap', 'reminders', 'abramstree'] },
   { id: 'topic-typescript', glyph: 'TS', tone: 'blue', title: 'TypeScript', guides: ['typescript'] },
   { id: 'topic-deploying', glyph: '🚀', tone: 'purple', title: 'Deploying', guides: ['deploying'] },
   { id: 'topic-algorithms', glyph: 'O(n)', tone: 'purple', title: 'Algorithms', guides: ['grids', 'bitmasks', 'backtracking', 'sudoku', 'movegen', 'minimax', 'chess'] },
